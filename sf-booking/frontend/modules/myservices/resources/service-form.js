@@ -279,8 +279,7 @@
 	
 	jQuery('input[name="expiry_date"]').datepicker({
 		format: 'yyyy-mm-dd',													
-		startDate: date,
-		language: langcode
+		startDate: date
 	})
 	.on('changeDate', function(evt) {
 	}).on('hide', function(event) {

@@ -137,29 +137,10 @@ $current_user = wp_get_current_user();
 					<?php if($k %2 == 0){ ?>
 					<div class="item">
                     <?php } ?>
-                    <?php
-					$iconbox = 1;
-					if($service_finder_options['review-system']){
-						$iconbox++;
-					}
-					if($service_finder_options['request-quote'] && service_finder_request_quote_for_loggedin_user()){
-						$iconbox++;
-					}
-					if($service_finder_options['add-to-fav']){
-						$iconbox++;
-					}
-					?>
                       <div id="proid-<?php echo esc_attr($provider->provider_id) ?>">		
                       <div class="sf-feaProvideer-wrap clearfix">
                         <div class="sf-feaProvideer-label"><?php echo esc_html__('Featured','service-finder'); ?></div>
-                        <div class="sf-feaProvideer-pic">
-                        <img src="<?php echo esc_url($src); ?>" alt="">
-                        <?php if(service_finder_is_varified_user($provider->provider_id)){ ?>
-                        <span class="sf-featured-approve">
-                            <i class="fa fa-check"></i><span><?php esc_html_e('Verified Provider', 'service-finder'); ?></span>
-                        </span>
-                        <?php } ?>
-                        </div>
+                        <div class="sf-feaProvideer-pic"><img src="<?php echo esc_url($src); ?>" alt=""></div>
                         <div class="sf-feaProvideer-info">
                           <?php echo service_finder_displayRating(service_finder_getAverageRating($provider->provider_id)); ?>  
                           <h4 class="sf-feaProvideer-title"><?php echo esc_html($provider->full_name); ?></h4>
@@ -168,10 +149,9 @@ $current_user = wp_get_current_user();
 						  echo '<div class="sf-feaProvideer-address">'.service_finder_getshortAddress($provider->provider_id).'</div>';
 				  		  }
 						  ?>
-                          <?php echo service_finder_display_category_label($provider->provider_id); ?>
                           <div class="sf-feaProvideer-text"><?php echo service_finder_getExcerpts(nl2br(stripcslashes($provider->bio)),0,130); ?></div>
                         </div>
-                        <div class="sf-feaProvideer-iconwrap sf-iconbox-cnt-<?php echo esc_attr($iconbox); ?>">
+                        <div class="sf-feaProvideer-iconwrap">
                         	<?php
 							echo '<span class="sf-feaProvideer-icon sfp-yellow sf-services-slider-btn" data-providerid="'.$provider->provider_id.'"><span class="sf-feaPro-tooltip">'.esc_html__('Display Services','service-finder').'</span><i class="sl-icon-settings"></i></span>';
 

@@ -21,7 +21,7 @@ var user_id = "'.$currUser->ID.'";', 'after' );
 <div class="panel-heading sf-panel-heading">
   <h3 class="panel-tittle m-a0"><span class="fa fa-clock-o"></span> <?php esc_html_e('Schedule', 'service-finder'); ?> </h3>
 </div>
-<div class="panel-body sf-panel-body padding-30 sf-calview-custum">
+<div class="panel-body sf-panel-body padding-30">
   <h4 id="customer_calmonth"></h4>
   <div>
       <!--Calendar Navigation-->

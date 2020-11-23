@@ -130,6 +130,7 @@ class SERVICE_FINDER_MyAccount{
 				$data = array(
 						'company_name' => (!empty($arg['company_name'])) ? $arg['company_name'] : '',
 						'full_name' => $fname.' '.$lname,
+						'avatar_id' => (!empty($arg['plavatar'])) ? $arg['plavatar'] : '',
 						'phone' => (!empty($arg['phone'])) ? $arg['phone'] : '',
 						'gender' => (!empty($arg['gender'])) ? $arg['gender'] : '',
 						'email' => (!empty($arg['user_email'])) ? $arg['user_email'] : '',
@@ -157,9 +158,7 @@ class SERVICE_FINDER_MyAccount{
 						'digg' => (!empty($arg['digg'])) ? $arg['digg'] : '',
 						'instagram' => (!empty($arg['instagram'])) ? $arg['instagram'] : '',
 						'skypeid' => (!empty($arg['skypeid'])) ? $arg['skypeid'] : '',
-						'website' => (!empty($arg['website'])) ? $arg['website'] : '',
-						'radius' => (!empty($arg['serviceradius'])) ? esc_html($arg['serviceradius']) : 0,
-						'service_perform_at' => (!empty($arg['service_perform'])) ? esc_html($arg['service_perform']) : ''
+						'website' => (!empty($arg['website'])) ? $arg['website'] : ''
 						);
 				
 				$where = array(
@@ -175,15 +174,6 @@ class SERVICE_FINDER_MyAccount{
 				if(service_finder_user_has_capability('crop',$userId))
 				{
 					$this->update_user_avatar($_FILES,$_POST,$userId);
-				}else{
-					$data = array(
-							'avatar_id' => (!empty($arg['plavatar'])) ? $arg['plavatar'] : ''
-							);
-					
-					$where = array(
-							'wp_user_id' => $userId,
-							);
-					$wpdb->update($service_finder_Tables->providers,wp_unslash($data),$where);
 				}
 				
 				$bio = (!empty($arg['bio'])) ? $arg['bio'] : '';
@@ -493,8 +483,6 @@ class SERVICE_FINDER_MyAccount{
 			$client->setClientId($client_id);
 			$client->setClientSecret($client_secret);
 			$client->setRedirectUri($redirect_uri);
-			$client->setAccessType("offline");
-			$client->setApprovalPrompt('force');
 			$client->setScopes('https://www.googleapis.com/auth/calendar');	
 			
 			$authUrl = $client->createAuthUrl();
@@ -506,7 +494,7 @@ class SERVICE_FINDER_MyAccount{
 			
 			$success = array(
 						'status' => 'success',
-						'suc_message' => esc_html__('Google calendar disconnected successfully.', 'service-finder'),
+						'suc_message' => esc_html__('Google calendar info updated successfully.', 'service-finder'),
 						'connectlink' => $connectlink,
 						);
 			echo json_encode($success);
@@ -546,8 +534,7 @@ class SERVICE_FINDER_MyAccount{
 					$noticedata = array(
 							'admin_id' => 1,
 							'target_id' => $user_id, 
-							'topic' => 'Identity Upload',
-							'title' => esc_html__('Identity Upload', 'service-finder'),
+							'topic' => esc_html__('Identity Upload', 'service-finder'),
 							'notice' => sprintf(esc_html__('%s has uploaded their identity. %s name is: %s', 'service-finder'),service_finder_provider_replace_string(),service_finder_provider_replace_string(),service_finder_getProviderFullName($user_id)),
 							);
 					service_finder_add_notices($noticedata);

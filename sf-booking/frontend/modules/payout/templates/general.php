@@ -173,7 +173,7 @@ echo service_finder_get_documents_status($accountinfo);
     </div>
   </div>  
   
-  <div class="panel panel-default about-me-here" style="display:none;">
+  <div class="panel panel-default about-me-here">
     <div class="panel-heading sf-panel-heading">
       <h3 class="panel-tittle m-a0"><span class="fa fa-user"></span> <?php esc_html_e('Personal ID Number (Optional)', 'service-finder'); ?> </h3>
       <span class="id-number-info"><?php echo esc_html__('The government-issued ID number of the individual, as appropriate for the representatives country. (Examples are a Social Security Number in the U.S., or a Social Insurance Number in Canada).', 'service-finder'); ?></span>

@@ -73,7 +73,7 @@ jQuery(function() {
 			{ "data": "upgraderequestplan" },
 			{ "data": "amount" },
 			{ "data": "paymentstatus" },
-			{ "data": "actions" }
+			{ "data": "action" }
 		],
 		"columnDefs": [
 			{

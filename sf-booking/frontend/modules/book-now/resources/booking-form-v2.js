@@ -64,7 +64,7 @@
 	 if(providerlat != "" && providerlng != ""){
 	 initMap(providerlat,providerlng,zooml);
 	 }else{
-	 initMap(parseFloat(defaultlat),parseFloat(defaultlng),parseInt(defaultzoomlevel));	
+	 initMap(28.6430536,77.2223442,2);	
 	 }
 	 
 	 });
@@ -238,61 +238,6 @@
 		jQuery('#addcouponcode,.sf-couponcode-popup-overlay').fadeIn("slow");
 		jQuery('#addcouponcode input[name="couponcode"]').attr('id','couponcode-'+sid);
 		jQuery('.verifycoupon').attr('data-sid',sid);
-		
-		var $this = jQuery('#serbx-'+sid);
-		
-		
-		var serviceid = jQuery($this).data('id');
-
-		var costtype = jQuery($this).data('costtype');
-
-		var providerhours = jQuery($this).data('hours');
-
-		jQuery($this).removeClass('unselected').addClass('selected');
-
-		if(jQuery($this).hasClass('selected') && (costtype == 'hourly' || costtype == 'perperson')) { 
-
-			if(providerhours > 0){
-
-				jQuery('#hours-outer-bx-'+serviceid).show();
-
-				jQuery('#hours-'+serviceid).show();
-
-				jQuery('#hours-'+serviceid).val(providerhours);
-
-				jQuery('#hours-'+serviceid).attr('readonly','readonly');	
-
-			}else{
-
-				jQuery('#hours-'+serviceid).closest('.bootstrap-touchspin').show();
-
-				converttoslider(serviceid,costtype);
-
-			}
-
-		}else{ 
-
-			
-
-			if(providerhours > 0){
-
-				jQuery('#hours-outer-bx-'+serviceid).hide();
-
-				jQuery('#hours-'+serviceid).hide();	
-
-				jQuery('#hours-'+serviceid).val('');
-
-				jQuery('#hours-'+serviceid).removeAttr('readonly','readonly');	
-
-			}else{
-
-				jQuery('#hours-'+serviceid).closest('.bootstrap-touchspin').hide();
-
-			}
-
-		}
-
-		calculate_servicecost();
 	})
 	
 	jQuery('body').on('click', '.verifycoupon', function(){
@@ -1273,13 +1218,7 @@
 													return false;
 												}
 												if(woooption == "wallet"){
-													if(charge_admin_fee_from == 'customer')
-													{
-														var walletchargeamount = parseFloat(totalcost) + parseFloat(adminfee);
-													}else{
-														var walletchargeamount = parseFloat(totalcost);
-													}
-													if(parseFloat(walletamount) < parseFloat(walletchargeamount)){
+													if(parseFloat(walletamount) < (parseFloat(totalcost) + parseFloat(adminfee))){
 														jQuery( "<div class='alert alert-danger'>"+param.insufficient_wallet_amount+"</div>" ).insertBefore( "#bookingwalletpayment" );
 															jQuery("html, body").animate({
 															scrollTop: jQuery(".alert-danger").offset().top
@@ -1690,13 +1629,7 @@
 					
 						form.preventDefault();
 						
-						if(charge_admin_fee_from == 'customer')
-						{
-							var walletchargeamount = parseFloat(totalcost) + parseFloat(adminfee);
-						}else{
-							var walletchargeamount = parseFloat(totalcost);
-						}
-						if(parseFloat(walletamount) < parseFloat(walletchargeamount)){
+						if(parseFloat(walletamount) < (parseFloat(totalcost) + parseFloat(adminfee))){
 							jQuery( "<div class='alert alert-danger'>"+param.insufficient_wallet_amount+"</div>" ).insertBefore( "#book-now-section" );
 							jQuery("html, body").animate({
 								scrollTop: jQuery(".alert-danger").offset().top
@@ -1948,13 +1881,7 @@
 					
 						form.preventDefault();
 						
-						if(charge_admin_fee_from == 'customer')
-						{
-							var walletchargeamount = parseFloat(totalcost) + parseFloat(adminfee);
-						}else{
-							var walletchargeamount = parseFloat(totalcost);
-						}
-						if(parseFloat(walletamount) < parseFloat(walletchargeamount)){
+						if(parseFloat(walletamount) < (parseFloat(totalcost) + parseFloat(adminfee))){
 							jQuery( "<div class='alert alert-danger'>"+param.insufficient_wallet_amount+"</div>" ).insertBefore( "#book-now-section" );
 								jQuery("html, body").animate({
 								scrollTop: jQuery(".alert-danger").offset().top

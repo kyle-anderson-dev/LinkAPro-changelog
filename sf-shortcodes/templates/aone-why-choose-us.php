@@ -40,37 +40,24 @@ ob_start();
             <div class="row">
                 
                 <?php
-				$boxcnt = 0;
-				for($i = 1;$i <= 3; $i++ )
-				{
-				$show = (isset($service_finder_options['shortcode-why-choose-step'.$i.'-show'])) ? esc_html($service_finder_options['shortcode-why-choose-step'.$i.'-show']) : true;
-				if($show == true)
-				{
-				$boxcnt++;
-				}
-				}
                 for($i = 1;$i <= 3; $i++ )
 				{
-				$show = (isset($service_finder_options['shortcode-why-choose-step'.$i.'-show'])) ? $service_finder_options['shortcode-why-choose-step'.$i.'-show'] : true;
 				$steptitle = (!empty($service_finder_options['shortcode-why-choose-box'.$i.'-title'])) ? esc_html($service_finder_options['shortcode-why-choose-box'.$i.'-title']) : '';
 				$stepcontent = (!empty($service_finder_options['shortcode-why-choose-box'.$i.'-content'])) ? wp_kses_post($service_finder_options['shortcode-why-choose-box'.$i.'-content']) : '';
 
 				$stepicon = (!empty($service_finder_options['shortcode-why-choose-box'.$i.'-icon']['url'])) ? $service_finder_options['shortcode-why-choose-box'.$i.'-icon']['url'] : '';
-				$boxwidth = ($boxcnt == 2) ? 'col-md-6 col-sm-6' : 'col-md-4 col-sm-4';
-				if($show == true)
-				{
+				
 				?>
-				<div class="<?php echo esc_attr($boxwidth); ?>">
+				<div class="col-md-4 col-sm-4">
                   <div class="sf-why-choose w-t-element padding-lr-20">
                         <div class="sf-icon-xl margin-b-20">
                             <img src="<?php echo esc_url($stepicon); ?>" width="220" height="200" alt="">
                         </div>
-                        <h4 class="sf-tilte margin-b-10" style="color:<?php echo esc_attr($taglinecolor); ?>"><?php echo esc_html($steptitle); ?></h4>
-                        <p style="color:<?php echo esc_attr($taglinecolor); ?>"><?php echo wp_kses_post($stepcontent); ?></p>
+                        <h4 class="sf-tilte margin-b-10"><?php echo esc_html($steptitle); ?></h4>
+                        <p><?php echo wp_kses_post($stepcontent); ?></p>
                   </div>
                 </div>
 				<?php
-				}
 				}
 				?>
                 
@@ -97,38 +84,25 @@ $html = '<section class="section-full sf-overlay-wrapper text-center" style="bac
                     
                 <div class="section-content">
                     <div class="row">';
-					$boxcnt = 0;
+					
 					for($i = 1;$i <= 3; $i++ )
 					{
-					$show = (isset($service_finder_options['shortcode-why-choose-step'.$i.'-show'])) ? $service_finder_options['shortcode-why-choose-step'.$i.'-show'] : true;
-					if($show == true)
-					{
-					$boxcnt++;
-					}
-					}
-					for($i = 1;$i <= 3; $i++ )
-					{
-					$show = (isset($service_finder_options['shortcode-why-choose-step'.$i.'-show'])) ? $service_finder_options['shortcode-why-choose-step'.$i.'-show'] : true;
-					$show = (isset($service_finder_options['shortcode-how-works-step'.$i.'-show'])) ? $service_finder_options['shortcode-how-works-step'.$i.'-show'] : true;
 					$steptitle = (!empty($service_finder_options['shortcode-why-choose-box'.$i.'-title'])) ? esc_html($service_finder_options['shortcode-why-choose-box'.$i.'-title']) : '';
 					$stepcontent = (!empty($service_finder_options['shortcode-why-choose-box'.$i.'-content'])) ? wp_kses_post($service_finder_options['shortcode-why-choose-box'.$i.'-content']) : '';
 	
 					$stepicon = (!empty($service_finder_options['shortcode-why-choose-box'.$i.'-icon']['url'])) ? $service_finder_options['shortcode-why-choose-box'.$i.'-icon']['url'] : '';
-					$boxwidth = ($boxcnt == 2) ? 'col-md-6 col-sm-6' : 'col-md-4 col-sm-4';
-					if($show == true)
-					{
-					$html .= '<div class="'.esc_attr($boxwidth).'">
+					
+					$html .= '<div class="col-md-4">
 							  <div class="sf-why-choose w-t-element padding-lr-20">
 									<div class="sf-icon-xl margin-b-20">
 										<img src="'.esc_url($stepicon).'" width="220" height="200" alt="">
 									</div>
-									<h4 class="sf-tilte margin-b-10" style="color:'.esc_attr($taglinecolor).'">'.esc_html($steptitle).'</h4>
-									<p style="color:'.esc_attr($taglinecolor).'">'.wp_kses_post($stepcontent).'</p>
+									<h4 class="sf-tilte margin-b-10">'.esc_html($steptitle).'</h4>
+									<p>'.wp_kses_post($stepcontent).'</p>
 									
 							  </div>
 							</div>';
 					
-					}
 					}
 			$html .= '</div>
                 </div>

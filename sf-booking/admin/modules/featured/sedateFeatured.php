@@ -180,33 +180,9 @@ class SERVICE_FINDER_sedateFeatured extends SERVICE_FINDER_sedateManager{
 	public function service_finder_featured_approve(){
 	global $wpdb, $service_finder_Tables, $service_finder_options;
 
-	if($_POST['featured_amount'] > 0)
-	{
 	$res = $wpdb->query($wpdb->prepare('UPDATE '.$service_finder_Tables->feature.' SET `status` = "Payment Pending", `amount` = %f WHERE `id` = %d',$_POST['featured_amount'],$_POST['fid']));
-	}else{
-	$date = date('Y-m-d H:i:s');
-	$data = array(
-			'status' => 'Free',
-			'feature_status' => 'active',
-			'date' => $date,
-			);
 
-	$where = array(
-			'id' => $_POST['fid'],
-			);
-	$wpdb->update($service_finder_Tables->feature,wp_unslash($data),$where);
-	
 	$getfeature = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->feature.' WHERE `id` = %d',$_POST['fid']));
-	
-	$data = array(
-			'featured' => 1,
-			);
-	
-	$where = array(
-			'wp_user_id' => $getfeature->provider_id,
-			);
-	$wpdb->update($service_finder_Tables->providers,wp_unslash($data),$where);
-	}
 	
 	$email = service_finder_getProviderEmail($getfeature->provider_id);
 	
@@ -229,21 +205,33 @@ class SERVICE_FINDER_sedateFeatured extends SERVICE_FINDER_sedateManager{
 		$noticedata = array(
 				'provider_id' => $getfeature->provider_id,
 				'target_id' => $fid, 
-				'topic' => 'Feature Request Approved',
-				'title' => esc_html__('Feature Request Approved', 'service-finder'),
+				'topic' => esc_html__('Feature Request Approved', 'service-finder'),
 				'notice' => esc_html__('Your feature request has been approved.', 'service-finder')
 				);
 		service_finder_add_notices($noticedata);
 	
 	}
 	
-	service_finder_wpmailer($email,$msg_subject,$msg_body);
-	
-	$success = array(
-			'status' => 'success',
-			'suc_message' => esc_html__('Approved Successfully', 'service-finder'),
-			);
-	echo json_encode($success);
+	if(service_finder_wpmailer($email,$msg_subject,$msg_body)) {
+		$success = array(
+				'status' => 'success',
+				'suc_message' => esc_html__('Approved Successfully', 'service-finder'),
+				);
+		echo json_encode($success);
+	}else{
+		$adminemail = get_option( 'admin_email' );
+		$allowedhtml = array(
+			'a' => array(
+				'href' => array(),
+				'title' => array()
+			),
+		);
+		$error = array(
+				'status' => 'error',
+				'err_message' => sprintf( wp_kses(esc_html__('Couldn&#8217;t approved... please contact the <a href="mailto:%s">Administrator</a> !', 'service-finder'),$allowedhtml), $adminemail )
+				);
+		echo json_encode($error);
+	}
 	
 	exit(0);		
 	}
@@ -273,8 +261,7 @@ class SERVICE_FINDER_sedateFeatured extends SERVICE_FINDER_sedateManager{
 		$noticedata = array(
 				'provider_id' => $getfeature->provider_id,
 				'target_id' => $fid, 
-				'topic' => 'Featured Amount Edited',
-				'title' => esc_html__('Featured Amount Edited', 'service-finder'),
+				'topic' => esc_html__('Featured Amount Edited', 'service-finder'),
 				'notice' => esc_html__('Featured Amount has been updated', 'service-finder')
 				);
 		service_finder_add_notices($noticedata);

@@ -362,8 +362,7 @@
     });
 	
 	jQuery('.payout_customer_dob').datepicker({
-		format: 'yyyy-mm-dd',
-		language: langcode
+		format: 'yyyy-mm-dd',													
 	})
 	.on('changeDate', function(evt) {
 		// Revalidate the date field
@@ -373,8 +372,7 @@
 	});
 	
 	jQuery('.mp_dob').datepicker({
-		format: 'yyyy-mm-dd',	
-		language: langcode
+		format: 'yyyy-mm-dd',													
 	})
 	.on('changeDate', function(evt) {
 		// Revalidate the date field

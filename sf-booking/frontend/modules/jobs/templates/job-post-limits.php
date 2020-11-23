@@ -48,7 +48,7 @@ $jobexpire = '';
 $flag = 0;
 if($service_finder_options['increase-job-post-limit-plans']){
 for($i = 1;$i <= 3;$i++){
-	if($service_finder_options['job-post-plan'.$i]){
+	if($service_finder_options['plan'.$i]){
 	$flag = 1;
 	$plan_name = (!empty($service_finder_options['job-post-plan'.$i.'-name'])) ? $service_finder_options['job-post-plan'.$i.'-name'] : esc_html__('Plan ', 'service-finder').$i;
 	$plan_price = (!empty($service_finder_options['job-post-plan'.$i.'-price'])) ? $service_finder_options['job-post-plan'.$i.'-price'] : '0.0';

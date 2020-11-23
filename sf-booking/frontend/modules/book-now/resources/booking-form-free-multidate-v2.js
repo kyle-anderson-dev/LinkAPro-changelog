@@ -34,19 +34,6 @@
 	var serviceslot = '';
 	var singleservicehour = 0;
 	provider_id = jQuery('#provider').attr('data-provider');
-	
-	jQuery('body').on('change', '#servicedate-Modal select[name="members_list"]', function(){
-		var memberid = jQuery(this).val();
-		var avatarurl = jQuery('#servicedate-Modal select[name="members_list"] option:selected').data('avatar');
-		if(avatarurl != "" && avatarurl != "undefined" && avatarurl != undefined){
-			jQuery("#sf-bookingmember-image").show();	
-			jQuery("#sf-bookingmember-image").html('<img src="'+avatarurl+'">');	
-		}else{
-			jQuery("#sf-bookingmember-image").hide();	
-			jQuery("#sf-bookingmember-image").html('');
-		}
-	});
-	
 	/*Display Services*/
 	jQuery('form.book-now').on('change', 'select[name="region"]', function(){
 		var region = jQuery('select[name="region"]').val();
@@ -74,7 +61,7 @@
 	 if(providerlat != "" && providerlng != ""){
 	 initMap(providerlat,providerlng,zooml);
 	 }else{
-	 initMap(parseFloat(defaultlat),parseFloat(defaultlng),parseInt(defaultzoomlevel));
+	 initMap(28.6430536,77.2223442,2);	
 	 }
 	 
 	 });
@@ -272,8 +259,6 @@
 					jQuery('.loading-area').hide();
 					if(data != null){
 						if(data['status'] == 'success'){
-							jQuery("#sf-bookingmember-image").hide();
-							jQuery("#sf-bookingmember-image").html('');
 							jQuery('select[name="members_list"]').html(data['members']);
 							jQuery('.sf-select-box').selectpicker('refresh');
 						}
@@ -501,21 +486,6 @@
 		getservices(true);
 
 	});
-	
-	function hasservice()
-	{
-		service_flag = 0;
-		
-		jQuery("#bookingservices .aon-service-bx").each( function() {
-
-			if(jQuery(this).hasClass('selected')) {
-				service_flag = 1;	
-			}
-
-        });
-		
-		return service_flag;
-	}
 
 	/*Save services to a variable*/
 	function getservices($param = false){
@@ -1269,7 +1239,6 @@
 					}
 				}
 				jQuery("#step1").find(".alert").remove();
-				hasservice();
 				if(service_flag == 0 && booking_charge_on_service == 'yes' && (checkjobauthor == 0 && checkquoteauthor == 0 )){
 					jQuery("#step1").find('.tab-service-area').append('<div class="col-md-12 clearfix"><div class="alert alert-danger">'+param.select_service+'</div></div>');
 					return false;
@@ -1325,7 +1294,6 @@
 				}
 			}
 			jQuery("#step1").find(".alert").remove();
-			hasservice();
 			if(service_flag == 0 && booking_charge_on_service == 'yes' && (checkjobauthor == 0 && checkquoteauthor == 0 )){
 					jQuery("#step1").find('.tab-service-area').append('<div class="col-md-12 clearfix"><div class="alert alert-danger">'+param.select_service+'</div></div>');
 					return false;

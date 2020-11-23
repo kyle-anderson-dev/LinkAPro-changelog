@@ -179,11 +179,12 @@ $imagepath = SERVICE_FINDER_BOOKING_IMAGE_URL.'/markers';
 			
 									success:function (data, textStatus) {
 									jQuery(".loading-area").hide();	
-									jQuery(".result-title strong").html(data["count"]);
 									if(headerstyle == "map"){	
 										var  new_markers = jQuery.parseJSON(data["markers"]);
 										
-										if (new_markers.length > 0) {
+										jQuery(".result-title strong").html(data["count"]);
+									
+										 if (new_markers.length > 0) {
 											refresh_marker(map, new_markers);
 											initializeSearchMap();
 											jQuery("#no-result").hide();

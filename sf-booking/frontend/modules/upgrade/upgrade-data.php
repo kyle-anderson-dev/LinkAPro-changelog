@@ -52,15 +52,15 @@ $currencyCode = service_finder_currencycode();
 	);
 					
 	$orderParams = array(
-		'PAYMENTREQUEST_0_AMT' => $row->amount,
+		'PAYMENTREQUEST_0_AMT' => service_finder_get_featured_amount(),
 		'PAYMENTREQUEST_0_SHIPPINGAMT' => '0',
 		'PAYMENTREQUEST_0_CURRENCYCODE' => strtoupper($currencyCode),
-		'PAYMENTREQUEST_0_ITEMAMT' => $row->amount
+		'PAYMENTREQUEST_0_ITEMAMT' => service_finder_get_featured_amount()
 	);
 	$itemParams = array(
 		'L_PAYMENTREQUEST_0_NAME0' => 'Payment via paypal',
 		'L_PAYMENTREQUEST_0_DESC0' => 'Payment made for feature account',
-		'L_PAYMENTREQUEST_0_AMT0' => $row->amount,
+		'L_PAYMENTREQUEST_0_AMT0' => service_finder_get_featured_amount(),
 		'L_PAYMENTREQUEST_0_QTY0' => '1'
 	);
 	$params = $urlParams + $orderParams + $itemParams;
@@ -204,7 +204,7 @@ $feature_id = (isset($_POST['feature_id'])) ? esc_html($_POST['feature_id']) : '
 $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->feature.' WHERE `id` = %d',$feature_id));
 $userdata = service_finder_getUserInfo($row->provider_id);
 
-$price = $row->amount;
+$price = service_finder_get_featured_amount();
 
 $productinfo = 'Payment for Featured';
 $first_name = $userdata['fname'];

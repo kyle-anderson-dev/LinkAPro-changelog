@@ -28,8 +28,6 @@ $titlecolor = (!empty($service_finder_options['shortcode-statistics-title-color'
 $taglinecolor = (!empty($service_finder_options['shortcode-statistics-tagline-color'])) ? esc_html($service_finder_options['shortcode-statistics-tagline-color']) : '';
 $dividercolor = (!empty($service_finder_options['shortcode-statistics-divider-color'])) ? esc_html($service_finder_options['shortcode-statistics-divider-color']) : '';
 
-$textcolor = (!empty($service_finder_options['shortcode-statistics-text-color'])) ? esc_html($service_finder_options['shortcode-statistics-text-color']) : '';
-
 $providerreplacestring = (!empty($service_finder_options['provider-replace-string'])) ? $service_finder_options['provider-replace-string'] : esc_html__('Provider', 'service-finder');
 $customerreplacestring = (!empty($service_finder_options['customer-replace-string'])) ? $service_finder_options['customer-replace-string'] : esc_html__('Customer', 'service-finder');
 
@@ -48,18 +46,8 @@ ob_start();
             <div class="row">
                 
                 <?php
-                $boxcnt = 0;
-				for($i = 1;$i <= 4; $i++ )
+                for($i = 1;$i <= 4; $i++ )
 				{
-				$show = (isset($service_finder_options['shortcode-statistics-step'.$i.'-show'])) ? $service_finder_options['shortcode-statistics-step'.$i.'-show'] : true;
-				if($show == true)
-				{
-				$boxcnt++;
-				}
-				}
-				for($i = 1;$i <= 4; $i++ )
-				{
-				$show = (isset($service_finder_options['shortcode-statistics-step'.$i.'-show'])) ? $service_finder_options['shortcode-statistics-step'.$i.'-show'] : true;
 				$type = (!empty($service_finder_options['shortcode-statistics-box'.$i.'-type'])) ? esc_html($service_finder_options['shortcode-statistics-box'.$i.'-type']) : '';
 				$number = (!empty($service_finder_options['shortcode-statistics-box'.$i.'-number'])) ? esc_html($service_finder_options['shortcode-statistics-box'.$i.'-number']) : '';
 				$text = (!empty($service_finder_options['shortcode-statistics-box'.$i.'-title'])) ? esc_html($service_finder_options['shortcode-statistics-box'.$i.'-title']) : '';
@@ -68,24 +56,14 @@ ob_start();
 				switch($type){
 				case 'providers': 
 					if($number == 0 || $number == ''){
-					if(function_exists('service_finder_totalProviders'))
-					{
-						$total = service_finder_totalProviders();
-					}else{
-						$total = 0;
-					}
+					$total = service_finder_totalProviders();
 					$number = $total;
 					}
 					$text = (!empty($text)) ? $text : $providerreplacestring;
 					break;
 				case 'customers': 
 					if($number == 0 || $number == ''){
-					if(function_exists('service_finder_totalCustomers'))
-					{
-						$total = service_finder_totalCustomers();
-					}else{
-						$total = 0;
-					}
+					$total = service_finder_totalCustomers();
 					$number = $total;
 					}
 					$text = (!empty($text)) ? $text : $customerreplacestring;
@@ -108,23 +86,9 @@ ob_start();
 					$text = (!empty($text)) ? $text : '';
 					break;
 				}
-				if($boxcnt == 1)
-				{
-					$boxwidth = 'col-md-4 col-sm-6';
-				}elseif($boxcnt == 2)
-				{
-					$boxwidth = 'col-md-6 col-sm-6';
-				}elseif($boxcnt == 3)
-				{
-					$boxwidth = 'col-md-4 col-sm-6';
-				}elseif($boxcnt == 4)
-				{
-					$boxwidth = 'col-md-3 col-sm-6';
-				}
-				if($show == true)
-				{
+				
 				?>
-				<div class="<?php echo esc_attr($boxwidth); ?>">
+				<div class="col-md-3 col-sm-6">
                   <div class="sf-company-satus2 text-center">
                         <div class="sf-company-count counter"><?php echo esc_html($number); ?></div>
                         <div class="sf-company-satus-name"><?php echo esc_html($text); ?></div>
@@ -132,7 +96,6 @@ ob_start();
                   </div>
                 </div>
 				<?php
-				}
 				}
 				?>
                 
@@ -150,18 +113,9 @@ $html = '<section class="section-full bg-primary" style="background-image:url('.
             <div class="container">
             	
                 <div class="row equal-col-outer">';
-                $boxcnt = 0;
-				for($i = 1;$i <= 4; $i++ )
-				{
-				$show = (isset($service_finder_options['shortcode-statistics-step'.$i.'-show'])) ? $service_finder_options['shortcode-statistics-step'.$i.'-show'] : true;
-				if($show == true)
-				{
-				$boxcnt++;
-				}
-				}
+                
                 for($i = 1;$i <= 4; $i++ )
 				{
-				$show = (isset($service_finder_options['shortcode-statistics-step'.$i.'-show'])) ? $service_finder_options['shortcode-statistics-step'.$i.'-show'] : true;
 				$type = (!empty($service_finder_options['shortcode-statistics-box'.$i.'-type'])) ? esc_html($service_finder_options['shortcode-statistics-box'.$i.'-type']) : '';
 				$number = (!empty($service_finder_options['shortcode-statistics-box'.$i.'-number'])) ? esc_html($service_finder_options['shortcode-statistics-box'.$i.'-number']) : '';
 				$text = (!empty($service_finder_options['shortcode-statistics-box'.$i.'-title'])) ? esc_html($service_finder_options['shortcode-statistics-box'.$i.'-title']) : '';
@@ -169,24 +123,14 @@ $html = '<section class="section-full bg-primary" style="background-image:url('.
 				switch($type){
 				case 'providers': 
 					if($number == 0 || $number == ''){
-					if(function_exists('service_finder_totalProviders'))
-					{
-						$total = service_finder_totalProviders();
-					}else{
-						$total = 0;
-					}
+					$total = service_finder_totalProviders();
 					$number = $total;
 					}
 					$text = (!empty($text)) ? $text : $providerreplacestring;
 					break;
 				case 'customers': 
 					if($number == 0 || $number == ''){
-					if(function_exists('service_finder_totalCustomers'))
-					{
-						$total = service_finder_totalCustomers();
-					}else{
-						$total = 0;
-					}
+					$total = service_finder_totalCustomers();
 					$number = $total;
 					}
 					$text = (!empty($text)) ? $text : $customerreplacestring;
@@ -194,7 +138,7 @@ $html = '<section class="section-full bg-primary" style="background-image:url('.
 				case 'jobs': 
 					if($number == 0 || $number == ''){
 					$total = wp_count_posts('job_listing');
-					$number = (!empty($total->publish)) ? $total->publish : 0;
+					$number = $total->publish;
 					}
 					$text = (!empty($text)) ? $text : esc_html__('Jobs', 'service-finder');
 					break;
@@ -209,29 +153,14 @@ $html = '<section class="section-full bg-primary" style="background-image:url('.
 					$text = (!empty($text)) ? $text : '';
 					break;
 				}
-				if($boxcnt == 1)
-				{
-					$boxwidth = 'col-md-4 col-sm-6';
-				}elseif($boxcnt == 2)
-				{
-					$boxwidth = 'col-md-6 col-sm-6';
-				}elseif($boxcnt == 3)
-				{
-					$boxwidth = 'col-md-4 col-sm-6';
-				}elseif($boxcnt == 4)
-				{
-					$boxwidth = 'col-md-3 col-sm-6';
-				}
-				if($show == true)
-				{
-				$html .= '<div class="'.esc_attr($boxwidth).'equal-col sf-counter-wrap">
-                      <div class="sf-company-satus text-center" style="color:'.$textcolor.';">
+				
+				$html .= '<div class="col-md-3 col-sm-6 equal-col sf-counter-wrap">
+                      <div class="sf-company-satus text-center">
                             <div class="sf-icon-md margin-b-10"><i class="fa '.esc_attr($iconclass).'"></i></div>
                             <div class="sf-company-count counter">'.esc_html($number).'</div>
                             <div class="sf-company-satus-name">'.esc_html($text).'</div>
                       </div>
                     </div>';
-				}
 				}
                     
 		$html .= '</div>

@@ -475,9 +475,9 @@ function service_finder_getRelatedProviders($uid,$catid,$limit=5){
 	}
 	
 	if($restrictuserarea && $identitycheck){
-	$providers = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE admin_moderation = "approved" AND identity = "approved" AND account_blocked != "yes" '.$sql.' AND `wp_user_id` != %d ORDER BY RAND() LIMIT %d',$uid,$limit));
+	$providers = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE admin_moderation = "approved" AND identity = "approved" AND account_blocked != "yes" '.$sql.' AND `wp_user_id` != %d ORDER BY RAND() LIMIT %d',$customercity,$uid,$limit));
 	}else{
-	$providers = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE admin_moderation = "approved" AND account_blocked != "yes" '.$sql.' AND `wp_user_id` != %d ORDER BY RAND() LIMIT %d',$uid,$limit));
+	$providers = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE admin_moderation = "approved" AND account_blocked != "yes" '.$sql.' AND `wp_user_id` != %d ORDER BY RAND() LIMIT %d',$customercity,$uid,$limit));
 	}
 	}else{
 	
@@ -871,12 +871,7 @@ global $wpdb, $service_finder_Tables;
 				if($imageid > 0)
 				{
 					$image_attributes = wp_get_attachment_image_src( $imageid, $imagesize );
-					if($image_attributes[0] != '')
-					{
-						return $image_attributes[0];
-					}else{
-						return SERVICE_FINDER_BOOKING_IMAGE_URL.'/cat-placeholder.png';
-					}
+					return $image_attributes[0];
 				}else{
 					return SERVICE_FINDER_BOOKING_IMAGE_URL.'/cat-placeholder.png';
 				}
@@ -887,12 +882,7 @@ global $wpdb, $service_finder_Tables;
 				if($providerimage != ""){
 					$imageid = service_finder_get_image_id_by_link($providerimage);
 					$image_attributes = wp_get_attachment_image_src( $imageid, $imagesize );
-					if($image_attributes[0] != '')
-					{
-						return $image_attributes[0];
-					}else{
-						return SERVICE_FINDER_BOOKING_IMAGE_URL.'/cat-placeholder.png';
-					}
+					return $image_attributes[0];
 				}else{
 					return SERVICE_FINDER_BOOKING_IMAGE_URL.'/cat-placeholder.png';		
 				}
@@ -901,6 +891,42 @@ global $wpdb, $service_finder_Tables;
 		
 		}else{
 			return SERVICE_FINDER_BOOKING_IMAGE_URL.'/cat-placeholder.png';		
+		}
+												
+}
+
+/*Get Category Image*/
+function service_finder_getCategoryBGImage($cid,$imagesize = 'medium'){
+global $wpdb, $service_finder_Tables;
+		
+		if($cid > 0){
+		
+			if(service_finder_check_new_client())
+			{
+				$imageid = get_term_meta( $cid,'imageid', true );
+				if($imageid > 0)
+				{
+					$image_attributes = wp_get_attachment_image_src( $imageid, $imagesize );
+					return $image_attributes[0];
+				}else{
+					return '';
+				}
+				
+			}else{
+				$term_meta_image = get_option( "providers-category_image_".$cid );
+				$providerimage = (!empty($term_meta_image)) ? esc_attr( $term_meta_image ) : '';
+				if($providerimage != ""){
+					$imageid = service_finder_get_image_id_by_link($providerimage);
+					$image_attributes = wp_get_attachment_image_src( $imageid, $imagesize );
+					return $image_attributes[0];
+				}else{
+					return '';		
+				}
+			}
+		
+		
+		}else{
+			return '';		
 		}
 												
 }
@@ -1537,26 +1563,25 @@ function service_finder_get_image_id_by_link($link)
 /*Encrypt Qyery String*/
 function service_finder_encrypt($id, $key)
 {
-    //$id = base_convert($id, 10, 36); // Save some space
-    //$data = mcrypt_encrypt(MCRYPT_BLOWFISH, $key, $id, 'ecb');
-    //$data = bin2hex($data);
-	
-    return base64_encode($id);
+    $id = base_convert($id, 10, 36); // Save some space
+    $data = mcrypt_encrypt(MCRYPT_BLOWFISH, $key, $id, 'ecb');
+    $data = bin2hex($data);
+
+    return $data;
 }
 
 /*Decrypt Qyery String*/
 function service_finder_decrypt($encrypted_id, $key)
 {
-    //$data = pack('H*', $encrypted_id); // Translate back to binary
-    //$data = mcrypt_decrypt(MCRYPT_BLOWFISH, $key, $data, 'ecb');
-    //$data = base_convert($data, 36, 10);
+    $data = pack('H*', $encrypted_id); // Translate back to binary
+    $data = mcrypt_decrypt(MCRYPT_BLOWFISH, $key, $data, 'ecb');
+    $data = base_convert($data, 36, 10);
 
-    return base64_decode($encrypted_id);
+    return $data;
 }
 
-
 /*Mailing Function*/
-function service_finder_wpmailer($to,$subject,$message){
+function service_finder_wpmailer($to,$subject,$message,$password = 'no'){
 global $service_finder_options, $wp_filesystem;
 	if ( empty( $wp_filesystem ) ) {
           require_once ABSPATH . '/wp-admin/includes/file.php';
@@ -1577,8 +1602,15 @@ global $service_finder_options, $wp_filesystem;
 	}
 
 	$link_color = (!empty($service_finder_options['link-color'])) ? $service_finder_options['link-color'] : '#56C477';
-
+	
+	if($password == 'yes')
+	{
+	$template = $wp_filesystem->get_contents(SERVICE_FINDER_BOOKING_TEMPLATES_DIR.'/password-default.html', true);
+	$lockimage = '<img src="'.SERVICE_FINDER_BOOKING_IMAGE_URL.'/security.png" width="150" alt="" />';
+	}else{
 	$template = $wp_filesystem->get_contents(SERVICE_FINDER_BOOKING_TEMPLATES_DIR.'/default.html', true);
+	$lockimage = '';
+	}
 	
 	if(is_rtl()){  
 	$dir = 'rtl';
@@ -1586,8 +1618,8 @@ global $service_finder_options, $wp_filesystem;
 	$dir = 'ltr';
 	}
 	
-	$filter = array('%SITELOGO%','%MAILBODY%','%LINKCOLOR%','%CHARSET%','%DIRECTION%');
-	$replace = array($logo,wpautop($message),$link_color,get_bloginfo( 'charset' ),$dir);
+	$filter = array('%SITELOGO%','%MAILBODY%','%LINKCOLOR%','%CHARSET%','%DIRECTION%','%LOCKIMAGE%');
+	$replace = array($logo,wpautop($message),$link_color,get_bloginfo( 'charset' ),$dir,$lockimage);
 	$headers = array('Content-Type: text/html; charset='.get_bloginfo( 'charset' ));
 	$message = str_replace($filter, $replace, $template);
 
@@ -1791,20 +1823,15 @@ function service_finder_get_currency_list(){
     'BDT' => esc_html__( 'Bangladeshi Taka (&#2547;&nbsp;)', 'service-finder' ),
     'BRL' => esc_html__( 'Brazilian Real (&#82;&#36;)', 'service-finder' ),
     'BGN' => esc_html__( 'Bulgarian Lev (&#1083;&#1074;.)', 'service-finder' ),
-	'BZD' => esc_html__( 'Belize Dollar (BZ&#36;)', 'service-finder' ),
-	'BHD' => esc_html__( 'Bahraini dinar (BD)', 'service-finder' ),
     'CAD' => esc_html__( 'Canadian Dollars (&#36;)', 'service-finder' ),
     'CLP' => esc_html__( 'Chilean Peso (&#36;)', 'service-finder' ),
     'CNY' => esc_html__( 'Chinese Yuan (&yen;)', 'service-finder' ),
     'COP' => esc_html__( 'Colombian Peso (&#36;)', 'service-finder' ),
     'CZK' => esc_html__( 'Czech Koruna (&#75;&#269;)', 'service-finder' ),
-    'DZD' => esc_html__( 'Algerian Dinar', 'service-finder' ),
-	'DKK' => esc_html__( 'Danish Krone (kr.)', 'service-finder' ),
+    'DKK' => esc_html__( 'Danish Krone (kr.)', 'service-finder' ),
     'DOP' => esc_html__( 'Dominican Peso (RD&#36;)', 'service-finder' ),
     'EUR' => esc_html__( 'Euros (&euro;)', 'service-finder' ),
-    'GYD' => esc_html__( 'Guyanese dollar (GY$)', 'service-finder' ),
-	'GHS' => esc_html__( 'Ghanaian cedi (GH&#8373;)', 'service-finder' ),
-	'HKD' => esc_html__( 'Hong Kong Dollar (&#36;)', 'service-finder' ),
+    'HKD' => esc_html__( 'Hong Kong Dollar (&#36;)', 'service-finder' ),
     'HRK' => esc_html__( 'Croatia kuna (Kn)', 'service-finder' ),
     'HUF' => esc_html__( 'Hungarian Forint (&#70;&#116;)', 'service-finder' ),
     'ISK' => esc_html__( 'Icelandic krona (Kr.)', 'service-finder' ),
@@ -1855,6 +1882,7 @@ function service_finder_get_currency_list(){
 	'colones' => esc_html__( 'Costa Rica Colones', 'service-finder' ),
 	'BAM' => esc_html__( 'Bosnia and Herzegovina', 'service-finder' ),
 	'KZT' => esc_html__( 'Kazakhstan', 'service-finder' ),
+	'GHS' => esc_html__( 'Ghanaian cedi', 'service-finder' ),
     );
 	
 	return $currency;
@@ -1934,11 +1962,8 @@ switch ( $currency ) {
 		case 'NOK' : $currency_symbol = '&#107;&#114;'; break;
 		case 'ZAR' : $currency_symbol = '&#82;'; break;
 		case 'CZK' : $currency_symbol = '&#75;&#269;'; break;
-		case 'DZD' : $currency_symbol = 'DA'; break;
 		case 'MYR' : $currency_symbol = '&#82;&#77;'; break;
 		case 'DKK' : $currency_symbol = 'kr.'; break;
-		case 'GYD' : $currency_symbol = 'GY$'; break;
-		case 'GHS' : $currency_symbol = 'GH&#8373;'; break;
 		case 'HUF' : $currency_symbol = '&#70;&#116;'; break;
 		case 'IDR' : $currency_symbol = 'Rp'; break;
 		case 'INR' : $currency_symbol = 'Rs.'; break;
@@ -1976,9 +2001,6 @@ switch ( $currency ) {
 		case 'NE' : $currency_symbol = 'KM'; break;
 		case 'KZT' : $currency_symbol = 'KZT'; break;
 		case 'UAH' : $currency_symbol = '&#8372;'; break;
-		case 'BZD' : $currency_symbol = 'BZ&#36;'; break;
-		case 'BHD' : $currency_symbol = 'BD'; break;
-		case 'GHS' : $currency_symbol = 'GH&cent;'; break;
 		default    : $currency_symbol = ''; break;
 	}
 
@@ -2006,8 +2028,6 @@ $rating = 0;
 function service_finder_getAverageRating($providerid){
 global $wpdb,$service_finder_Tables,$service_finder_options;
 
-	$ratingstyle = (!empty($service_finder_options['rating-style'])) ? $service_finder_options['rating-style'] : '';
-	
 	if($service_finder_options['review-style'] == 'booking-review'){
 		$res = $wpdb->get_row($wpdb->prepare('SELECT rating FROM '.$service_finder_Tables->providers.' WHERE `wp_user_id` = %d',$providerid));
 		return $res->rating;
@@ -2021,17 +2041,13 @@ global $wpdb,$service_finder_Tables,$service_finder_options;
 		if(!empty($results)){
 			foreach($results as $result){
 			$comment_id = $result->comment_ID;
-				
-				if($ratingstyle == 'custom-rating'){
-					$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM `'.$service_finder_Tables->custom_rating.'` where `comment_id` = %d',$comment_id));
-					if(!empty($row)){
-						$comment_rating = $comment_rating + $row->avgrating;
-					}
-				}else{
-					$row = $wpdb->get_row($wpdb->prepare('SELECT `meta_value` FROM '.$wpdb->prefix.'commentmeta WHERE `comment_id` = %d AND `meta_key` = "pixrating"',$comment_id));
-					if(!empty($row)){
-						$comment_rating = $comment_rating + $row->meta_value;
-					}
+				$row = $wpdb->get_row($wpdb->prepare('SELECT `meta_value` FROM '.$wpdb->prefix.'commentmeta WHERE `comment_id` = %d AND `meta_key` = "pixrating"',$comment_id));
+				if(!empty($row)){
+					$comment_rating = $comment_rating + $row->meta_value;
+				}
+				$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM `'.$service_finder_Tables->custom_rating.'` where `comment_id` = %d',$comment_id));
+				if(!empty($row)){
+					$comment_rating = $comment_rating + $row->avgrating;
 				}
 			}
 			$avg_rating = $comment_rating/$total_comments;
@@ -2069,30 +2085,12 @@ global $wpdb,$service_finder_Tables,$service_finder_options;
 		}
 	}elseif($service_finder_options['review-style'] == 'open-review'){
 		$comment_postid = get_user_meta($providerid,'comment_post',true);
-		$ratingstyle = (!empty($service_finder_options['rating-style'])) ? $service_finder_options['rating-style'] : '';
 		$comment_rating = 0;
 		$results = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$wpdb->prefix.'comments WHERE `comment_approved` = 1 AND `comment_post_ID` = %d',$comment_postid));
 		$total_comments = count($results);
 		if(!empty($results)){
 			foreach($results as $result){
 			$comment_id = $result->comment_ID;
-				
-				if($ratingstyle == 'custom-rating'){
-				$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM `'.$service_finder_Tables->custom_rating.'` where `comment_id` = %d',$comment_id));
-				if(!empty($row)){
-					if(floatval($row->avgrating) > 0 && floatval($row->avgrating) < 1.5){
-						$onestar = $onestar + 1;
-					}elseif(floatval($row->avgrating) >= 1.5 && floatval($row->avgrating) < 2.5){
-						$twostar = $twostar + 1;
-					}elseif(floatval($row->avgrating) >= 2.5 && floatval($row->avgrating) < 3.5){
-						$threestar = $threestar + 1;
-					}elseif(floatval($row->avgrating) >= 3.5 && floatval($row->avgrating) < 4.5){
-						$fourstar = $fourstar + 1;
-					}elseif(floatval($row->avgrating) >= 4.5 && floatval($row->avgrating) <= 5){
-						$fivestar = $fivestar + 1;
-					}
-				}
-				}else{
 				$row = $wpdb->get_row($wpdb->prepare('SELECT `meta_value` FROM '.$wpdb->prefix.'commentmeta WHERE `comment_id` = %d AND `meta_key` = "pixrating"',$comment_id));
 				if(!empty($row)){
 					if(floatval($row->meta_value) > 0 && floatval($row->meta_value) < 1.5){
@@ -2107,6 +2105,20 @@ global $wpdb,$service_finder_Tables,$service_finder_options;
 						$fivestar = $fivestar + 1;
 					}
 				}
+				
+				$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM `'.$service_finder_Tables->custom_rating.'` where `comment_id` = %d',$comment_id));
+				if(!empty($row)){
+					if(floatval($row->avgrating) > 0 && floatval($row->avgrating) < 1.5){
+						$onestar = $onestar + 1;
+					}elseif(floatval($row->avgrating) >= 1.5 && floatval($row->avgrating) < 2.5){
+						$twostar = $twostar + 1;
+					}elseif(floatval($row->avgrating) >= 2.5 && floatval($row->avgrating) < 3.5){
+						$threestar = $threestar + 1;
+					}elseif(floatval($row->avgrating) >= 3.5 && floatval($row->avgrating) < 4.5){
+						$fourstar = $fourstar + 1;
+					}elseif(floatval($row->avgrating) >= 4.5 && floatval($row->avgrating) <= 5){
+						$fivestar = $fivestar + 1;
+					}
 				}
 			}
 		}
@@ -2263,9 +2275,8 @@ return $res->total;
 }
 
 function service_finder_check_business_hours_status($pid){
-global $service_finder_options;
 $business_hours_active_inactive = get_user_meta($pid,'business_hours_active_inactive',true); 
-if(($business_hours_active_inactive == 'active' || $business_hours_active_inactive == '') && $service_finder_options['business-hours-menu']){
+if($business_hours_active_inactive == 'active' || $business_hours_active_inactive == ''){
 return true;
 }else{
 return false;
@@ -2878,7 +2889,7 @@ function service_finder_load_search_result() {
 	
 	if(service_finder_themestyle() == 'style-3')
 	{
-		$msg .= service_finder_display_provider_boxes($provider->wp_user_id,$_POST['viewtype'],true,$providersavailability,$provider->distance);
+		$msg .= service_finder_display_provider_boxes($provider->wp_user_id,$_POST['viewtype'],true);
 	}else{
 	if($service_finder_options['search-template'] == 'style-1'){
 	$addressbox = '';
@@ -3674,7 +3685,7 @@ if( isset($service_finder_options['payulatam-type']) && $service_finder_options[
 	$reportsurl = "https://api.payulatam.com/reports-api/4.0/service.cgi";
 	$subscriptionurl = "https://api.payulatam.com/payments-api/rest/v4.3/";
 	
-	$fullname = '';//$userdata->user_login;
+	$fullname = $userdata->user_login;
 }
 
 $country = (isset($service_finder_options['payulatam-country'])) ? $service_finder_options['payulatam-country'] : '';
@@ -3975,26 +3986,6 @@ $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bo
 						</thead>
 						<tbody>';
 			foreach($results as $result){
-				
-				$totalrows = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->booked_services." WHERE `booking_id` = %d AND `service_id` = %d",$bookingid,$result->service_id));
-				
-				$totaldays = count($totalrows);
-				
-				if($totaldays > 1)
-				{
-				$startrow = $wpdb->get_row($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->booked_services." WHERE `booking_id` = %d AND `service_id` = %d order by id ASC limit 0,1",$bookingid,$result->service_id));
-				
-				$startdate = $startrow->date;
-				
-				$startrow = $wpdb->get_row($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->booked_services." WHERE `booking_id` = %d AND `service_id` = %d order by id DESC limit 0,1",$bookingid,$result->service_id));
-				
-				$enddate = $startrow->date;
-				$dates = service_finder_date_format($startdate).' - '.service_finder_date_format($enddate);
-				}else{
-				$startdate = service_finder_date_format($result->date);
-				$dates = $startdate;
-				}
-				
 				$starttime = ($result->without_padding_start_time != NULL) ? $result->without_padding_start_time : $result->start_time;
 				$endtime = ($result->without_padding_end_time != NULL) ? $result->without_padding_end_time : $result->end_time;
 				
@@ -4014,7 +4005,7 @@ $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bo
 				}
 				$html .= '<tr id="service-'.$result->id.'">
 							<td data-title="'.esc_html__( 'Service Name', 'service-finder' ).'">'.service_finder_get_service_name($result->service_id).'</td>
-							<td data-title="'.esc_html__( 'Date', 'service-finder' ).'">'.$dates.'</td>
+							<td data-title="'.esc_html__( 'Date', 'service-finder' ).'">'.service_finder_date_format($result->date).'</td>
 							<td data-title="'.esc_html__( 'Start Time', 'service-finder' ).'">'.$starttime.'</td>
 							<td data-title="'.esc_html__( 'End Time', 'service-finder' ).'">'.$endtime.'</td>
 							<td data-title="'.esc_html__( 'Full Day', 'service-finder' ).'">'.$fullday.'</td>
@@ -4086,25 +4077,6 @@ $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bo
 						</thead>
 						<tbody>';
 			foreach($results as $result){
-				$totalrows = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->booked_services." WHERE `booking_id` = %d AND `service_id` = %d",$bookingid,$result->service_id));
-				
-				$totaldays = count($totalrows);
-				
-				if($totaldays > 1)
-				{
-				$startrow = $wpdb->get_row($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->booked_services." WHERE `booking_id` = %d AND `service_id` = %d order by id ASC limit 0,1",$bookingid,$result->service_id));
-				
-				$startdate = $startrow->date;
-				
-				$startrow = $wpdb->get_row($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->booked_services." WHERE `booking_id` = %d AND `service_id` = %d order by id DESC limit 0,1",$bookingid,$result->service_id));
-				
-				$enddate = $startrow->date;
-				$dates = $startdate.' - '.$enddate;
-				}else{
-				$startdate = $result->date;
-				$dates = $startdate;
-				}
-				
 				$starttime = ($result->without_padding_start_time != NULL) ? $result->without_padding_start_time : $result->start_time;
 				$endtime = ($result->without_padding_end_time != NULL) ? $result->without_padding_end_time : $result->end_time;
 				
@@ -4124,7 +4096,7 @@ $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bo
 				}
 				$html .= '<tr id="service-'.$result->id.'">
 							<td data-title="'.esc_html__( 'Service Name', 'service-finder' ).'">'.service_finder_get_service_name($result->service_id).'</td>
-							<td data-title="'.esc_html__( 'Date', 'service-finder' ).'">'.$dates.'</td>
+							<td data-title="'.esc_html__( 'Date', 'service-finder' ).'">'.service_finder_date_format($result->date).'</td>
 							<td data-title="'.esc_html__( 'Start Time', 'service-finder' ).'">'.$starttime.'</td>
 							<td data-title="'.esc_html__( 'End Time', 'service-finder' ).'">'.$endtime.'</td>
 							<td data-title="'.esc_html__( 'Full Day', 'service-finder' ).'">'.$fullday.'</td>
@@ -4487,7 +4459,7 @@ function service_finder_get_countries(){
     "MO" =>  'Macao',
     "MK" =>  'Macedonia, The Former Yugoslav Republic of',
     "MG" =>  'Madagascar',
-	"HU" =>  'Hungary',
+	"HU" =>  'Magyar',
     "MW" =>  'Malawi',
     "MY" =>  'Malaysia',
     "MV" =>  'Maldives',
@@ -4864,7 +4836,6 @@ $data = array(
 		'customer_id' => (!empty($args['customer_id'])) ? $args['customer_id'] : 0,
 		'target_id' => (!empty($args['target_id'])) ? $args['target_id'] : 0,
 		'topic' => (!empty($args['topic'])) ? $args['topic'] : '',
-		'title' => (!empty($args['title'])) ? $args['title'] : '',
 		'notice' => (!empty($args['notice'])) ? $args['notice'] : '',
 		'extra' => (!empty($args['extra'])) ? $args['extra'] : ''
 		);
@@ -5100,6 +5071,48 @@ if(!empty($row)){
 return $current_plan;
 }
 
+/*Get available purchase credit*/
+function service_finder_get_avl_purchase_credit($providerid){
+global $wpdb, $service_finder_options, $service_finder_Tables;
+
+$availablelimit = 0;
+$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->purchase_credit.' WHERE `provider_id` = "'.$providerid.'"');
+
+if(!empty($row)){
+$availablelimit = $row->available_limits;
+}
+return $availablelimit;
+}
+
+/*Get available purchase credit data*/
+function service_finder_get_purchase_credit_data($providerid){
+global $wpdb, $service_finder_options, $service_finder_Tables;
+
+$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->purchase_credit.' WHERE `provider_id` = "'.$providerid.'"');
+
+if(!empty($row)){
+return $row;
+}else{
+return '';
+}
+
+}
+
+/*Get purchase credit limits current plan*/
+function service_finder_get_purchase_credit_current_plan($providerid){
+global $wpdb, $service_finder_options, $service_finder_Tables;
+
+$current_plan = '';
+$planname = esc_html__('No Plans', 'service-finder');
+$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->purchase_credit.' WHERE `provider_id` = "'.$providerid.'"');
+
+if(!empty($row)){
+	$current_plan = $row->current_plan;
+}
+
+return $current_plan;
+}
+
 /**********************
 Draw Review Box
 **********************/
@@ -5203,8 +5216,11 @@ function service_finder_review_box($author,$totalreview){
 
 function service_finder_average_review_box($author,$totalreview){
 global $wpdb,$service_finder_Tables;
+$post_id = get_the_ID();
 
-	$categoryid = get_user_meta($author,'primary_category',true);
+	$row = $wpdb->get_row($wpdb->prepare('SELECT `user_id` FROM '.$wpdb->prefix.'usermeta WHERE `meta_value` = %d AND `meta_key` = "comment_post"',$post_id));
+	if(!empty($row)){
+	$categoryid = get_user_meta($row->user_id,'primary_category',true);
 	
 	$labels = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->rating_labels.' where category_id = %d',$categoryid));
 	$totallevel = count($labels);
@@ -5302,6 +5318,7 @@ global $wpdb,$service_finder_Tables;
 		echo '<input name="totallevel" value="'.$totallevel.'" type="hidden">';
 		echo '</div>';
 		}
+	}
 }
 
 /*Get average rating*/
@@ -5320,7 +5337,7 @@ global $wpdb,$service_finder_Tables,$service_finder_options;
 		$avg_rating4 = 0;
 		$avg_rating5 = 0;
 		
-		$results = $wpdb->get_results($wpdb->prepare('SELECT * FROM `'.$service_finder_Tables->custom_rating.'` where `provider_id` = %d AND `feedbackid_id` > 0',$providerid));
+		$results = $wpdb->get_results($wpdb->prepare('SELECT * FROM `'.$service_finder_Tables->custom_rating.'` where `provider_id ` = %d AND `feedbackid_id` > 0',$providerid));
 		$total_comments = count($results);
 		if(!empty($results)){
 			foreach($results as $row){
@@ -5828,34 +5845,21 @@ if(empty($chkcustomer)){
 add_action('wp_ajax_sendotp', 'service_finder_sendotp');
 add_action('wp_ajax_nopriv_sendotp', 'service_finder_sendotp');
 function service_finder_sendotp(){
-	global $wpdb,$service_finder_options;
+global $wpdb;
 		
 		$pass = rand(100000, 999999);
-		
-		if($service_finder_options['confirm-email-otp-to-provider'] != ""){
-			$message = $service_finder_options['confirm-email-otp-to-provider'];
-		}else{
-			$message = esc_html__( 'Generated OTP is:', 'service-finder' ).' '.$pass;
-		}
-		
-		$tokens = array('%OTP%');
+		if(service_finder_wpmailer($_POST['emailid'],esc_html__( 'One Time Password for confirm email id', 'service-finder' ),esc_html__( 'Generated OTP is:', 'service-finder' ).$pass)) {
 
-		$replacements = array($pass);
-
-		$msg_body = str_replace($tokens,$replacements,$message);
-
-		if($service_finder_options['confirm-email-otp-to-provider-subject'] != ""){
-			$msg_subject = $service_finder_options['confirm-email-otp-to-provider-subject'];
-		}else{
-			$msg_subject = esc_html__('One Time Password for confirm email id', 'service-finder');
-		}
+				echo esc_html($pass);
+				
+				
+			} else {
+					
+				echo esc_html($pass);
+			}
 		
-		if(service_finder_wpmailer($_POST['emailid'],$msg_subject,$msg_body)) {
-			echo esc_html($pass);
-		} else {
-			echo esc_html($pass);
-		}
-	exit;
+		
+exit;
 }
 
 /*Check display basic profile or not after trial package expire*/
@@ -6574,184 +6578,8 @@ global $service_finder_options, $current_user,  $service_finder_Tables, $wpdb;
 		$flag = 0;
 		require_once SERVICE_FINDER_BOOKING_LIB_DIR.'/google-api-php-client/src/Google/autoload.php';
 		
-		$gcal_creds = service_finder_get_gcal_cred();
-		$google_client_id = $gcal_creds['client_id'];
-		$google_client_secret = $gcal_creds['client_secret'];
-		$google_calendar_id = get_user_meta($provider_id,'google_calendar_id',true);
-		
-		$client = new Google_Client();
-		$client->setClientId($google_client_id);
-		$client->setClientSecret($google_client_secret);
-		$redirect_uri = add_query_arg( array('action' => 'googleoauth-callback'), home_url() );
-		$client->setRedirectUri($redirect_uri);
-		$client->setScopes('https://www.googleapis.com/auth/calendar');
-		
-		if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-			$client->setAccessToken($_SESSION['access_token']);
-			$flag = 1;
-		}elseif(service_finder_get_gcal_access_token($provider_id) != ""){
-			$client->setAccessToken(service_finder_get_gcal_access_token($provider_id));
-			$flag = 1;
-		}
-		
-		if($client->isAccessTokenExpired()) {
-			 try{
-			 
-			 if(isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-			  $newaccesstoken = json_decode($_SESSION['access_token']);
-			  $client->refreshToken($newaccesstoken->refresh_token);
-			
-			 }elseif(service_finder_get_gcal_access_token($provider_id) != ""){
-			  $newaccesstoken = json_decode(service_finder_get_gcal_access_token($provider_id));
-			  $client->refreshToken($newaccesstoken->refresh_token);
-			 }
-			 
-			 } catch (Exception $e) {
-				
-			 }
-	
-		 }
-		
-		if($flag == 1){
-			$bookingdata = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `id` = %d',$booking_id));
-			$customerInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->customers.' WHERE `id` = %d',$bookingdata->booking_customer_id));
-			$offset = 0;
-			
-			$bookingtitle = (!empty($service_finder_options['google-calendar-booking-title'])) ? $service_finder_options['google-calendar-booking-title'] : esc_html__('Service Finder Booking', 'service-finder');
-			
-			try{
-			
-			if($bookingdata->multi_date == 'yes')
-			{
-				$bookedservices = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->booked_services.' WHERE `booking_id` = %d',$booking_id));
-				
-				if(!empty($bookedservices))
-				{
-					foreach($bookedservices as $bookedservice)
-					{
-						$str_date = strtotime($bookedservice->date.' '.$bookedservice->start_time);
-						$dateTimeS = service_finder_date_format_RFC3339($str_date, $offset);
-						if($bookingdata->end_time != ""){
-						$str_date = strtotime($bookedservice->date.' '.$bookedservice->end_time);
-						}else{
-						$str_date = strtotime($bookedservice->date.' '.$bookedservice->start_time);
-						}
-						$dateTimeE = service_finder_date_format_RFC3339($str_date, $offset);
-						$address = $customerInfo->apt.' '.$customerInfo->address.' '.$customerInfo->city.' '.$customerInfo->country;
-						
-						if(get_option('timezone_string') != ""){
-						$timezone = get_option('timezone_string');
-						}
-						
-						$tokens = array('%CUSTOMERNAME%','%CUSTOMEREMAIL%');
-						
-						$replacements = array($customerInfo->name,$customerInfo->email);
-						
-						$bookingtitle = str_replace($tokens,$replacements,$bookingtitle);
-								
-						$event = new Google_Service_Calendar_Event(array(
-						  'summary' => $bookingtitle,
-						  'location' => $address,
-						  'description' => sprintf(esc_html__('Booking Made by %s', 'service-finder'),$customerInfo->name),
-						  'start' => array(
-							'dateTime' => $dateTimeS,
-							'timeZone' => $timezone,
-						  ),
-						  'end' => array(
-							'dateTime' => $dateTimeE,
-							'timeZone' => $timezone,
-						  ),
-						  'attendees' => array(
-							array('email' => $customerInfo->email)
-						  ),
-						));
-						
-						$calendarId = $google_calendar_id;
-						$cal = new Google_Service_Calendar($client);
-						$event = $cal->events->insert($calendarId, $event);
-						$bookdata = array(
-								'gcal_booking_url' => $event->htmlLink, 
-								'gcal_booking_id' => $event->id, 
-								);
-								
-						$where = array(
-								'id' => $bookedservice->id 
-								);		
-				
-						$wpdb->update($service_finder_Tables->booked_services,wp_unslash($bookdata),$where);
-					}
-				}
-			}else{
-			
-				$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
-				$dateTimeS = service_finder_date_format_RFC3339($str_date, $offset);
-				if($bookingdata->end_time != ""){
-				$str_date = strtotime($bookingdata->date.' '.$bookingdata->end_time);
-				}else{
-				$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
-				}
-				$dateTimeE = service_finder_date_format_RFC3339($str_date, $offset);
-				$address = $customerInfo->apt.' '.$customerInfo->address.' '.$customerInfo->city.' '.$customerInfo->country;
-				
-				if(get_option('timezone_string') != ""){
-				$timezone = get_option('timezone_string');
-				}
-				
-				$tokens = array('%CUSTOMERNAME%','%CUSTOMEREMAIL%');
-				
-				$replacements = array($customerInfo->name,$customerInfo->email);
-				
-				$bookingtitle = str_replace($tokens,$replacements,$bookingtitle);
-						
-				$event = new Google_Service_Calendar_Event(array(
-				  'summary' => $bookingtitle,
-				  'location' => $address,
-				  'description' => sprintf(esc_html__('Booking Made by %s', 'service-finder'),$customerInfo->name),
-				  'start' => array(
-					'dateTime' => $dateTimeS,
-					'timeZone' => $timezone,
-				  ),
-				  'end' => array(
-					'dateTime' => $dateTimeE,
-					'timeZone' => $timezone,
-				  ),
-				  'attendees' => array(
-					array('email' => $customerInfo->email)
-				  ),
-				));
-				
-				$calendarId = $google_calendar_id;
-				$cal = new Google_Service_Calendar($client);
-				$event = $cal->events->insert($calendarId, $event);
-				$bookdata = array(
-						'gcal_booking_url' => $event->htmlLink, 
-						'gcal_booking_id' => $event->id, 
-						);
-						
-				$where = array(
-						'id' => $booking_id 
-						);		
-		
-				$wpdb->update($service_finder_Tables->bookings,wp_unslash($bookdata),$where);
-			}
-			
-			} catch (Exception $e) {
-			echo '<pre>';print_r($e);
-			}
-			return true;
-		}
-}
-
-/*Update to google calendar*/
-function service_finder_updateto_google_calendar($booking_id,$provider_id){
-session_start();
-global $service_finder_options, $current_user,  $service_finder_Tables, $wpdb;
-		$flag = 0;
-		require_once SERVICE_FINDER_BOOKING_LIB_DIR.'/google-api-php-client/src/Google/autoload.php';
-		
-		$gcal_creds = service_finder_get_gcal_cred();
-		$google_client_id = $gcal_creds['client_id'];
-		$google_client_secret = $gcal_creds['client_secret'];
+		$google_client_id = get_user_meta($provider_id,'google_client_id',$google_client_id);
+		$google_client_secret = get_user_meta($provider_id,'google_client_secret',$google_client_secret);
 		$google_calendar_id = get_user_meta($provider_id,'google_calendar_id',$google_calendar_id);
 		
 		$client = new Google_Client();
@@ -6792,77 +6620,145 @@ global $service_finder_options, $current_user,  $service_finder_Tables, $wpdb;
 			$customerInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->customers.' WHERE `id` = %d',$bookingdata->booking_customer_id));
 			$offset = 0;
 			
-			try{
-			
-			if($bookingdata->multi_date == 'yes')
-			{
-				$bookedservices = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->booked_services.' WHERE `booking_id` = %d',$booking_id));
-				
-				if(!empty($bookedservices))
-				{
-					foreach($bookedservices as $bookedservice)
-					{
-						$str_date = strtotime($bookedservice->date.' '.$bookedservice->start_time);
-						$dateTimeS = service_finder_date_format_RFC3339($str_date, $offset);
-						if($bookingdata->end_time != ""){
-						$str_date = strtotime($bookedservice->date.' '.$bookedservice->end_time);
-						}else{
-						$str_date = strtotime($bookedservice->date.' '.$bookedservice->start_time);
-						}
-						$dateTimeE = service_finder_date_format_RFC3339($str_date, $offset);
-						
-						if(get_option('timezone_string') != ""){
-						$timezone = get_option('timezone_string');
-						}
-						
-						$calendarId = $google_calendar_id;
-						$cal = new Google_Service_Calendar($client);
-						$event = $cal->events->get($calendarId,$bookingdata->gcal_booking_id);
-						
-						$start = new Google_Service_Calendar_EventDateTime();
-						$start->setDateTime($dateTimeS);
-						$event->setStart($start);
-						
-						$end = new Google_Service_Calendar_EventDateTime();
-						$end->setDateTime($dateTimeE);
-						$event->setEnd($end);
-						
-						$updatedEvent = $cal->events->update($calendarId, $event->getId(), $event);
-			
-						$updatedEvent->getUpdated();
-					}
-				}
+			$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
+			$dateTimeS = service_finder_date_format_RFC3339($str_date, $offset);
+			if($bookingdata->end_time != ""){
+			$str_date = strtotime($bookingdata->date.' '.$bookingdata->end_time);
 			}else{
-			
-				$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
-				$dateTimeS = service_finder_date_format_RFC3339($str_date, $offset);
-				if($bookingdata->end_time != ""){
-				$str_date = strtotime($bookingdata->date.' '.$bookingdata->end_time);
-				}else{
-				$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
-				}
-				$dateTimeE = service_finder_date_format_RFC3339($str_date, $offset);
-				
-				if(get_option('timezone_string') != ""){
-				$timezone = get_option('timezone_string');
-				}
-				
-				$calendarId = $google_calendar_id;
-				$cal = new Google_Service_Calendar($client);
-				$event = $cal->events->get($calendarId,$bookingdata->gcal_booking_id);
-				
-				$start = new Google_Service_Calendar_EventDateTime();
-				$start->setDateTime($dateTimeS);
-				$event->setStart($start);
-				
-				$end = new Google_Service_Calendar_EventDateTime();
-				$end->setDateTime($dateTimeE);
-				$event->setEnd($end);
-				
-				$updatedEvent = $cal->events->update($calendarId, $event->getId(), $event);
-	
-				$updatedEvent->getUpdated();
+			$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
 			}
+			$dateTimeE = service_finder_date_format_RFC3339($str_date, $offset);
+			$address = $customerInfo->apt.' '.$customerInfo->address.' '.$customerInfo->city.' '.$customerInfo->country;
+			
+			if(get_option('timezone_string') != ""){
+			$timezone = get_option('timezone_string');
+			}
+			
+			$bookingtitle = (!empty($service_finder_options['google-calendar-booking-title'])) ? $service_finder_options['google-calendar-booking-title'] : esc_html__('Service Finder Booking', 'service-finder');
+			
+			$tokens = array('%CUSTOMERNAME%','%CUSTOMEREMAIL%');
+			
+			$replacements = array($customerInfo->name,$customerInfo->email);
+			
+			$bookingtitle = str_replace($tokens,$replacements,$bookingtitle);
+					
+			$event = new Google_Service_Calendar_Event(array(
+			  'summary' => $bookingtitle,
+			  'location' => $address,
+			  'description' => sprintf(esc_html__('Booking Made by %s', 'service-finder'),$customerInfo->name),
+			  'start' => array(
+				'dateTime' => $dateTimeS,
+				'timeZone' => $timezone,
+			  ),
+			  'end' => array(
+				'dateTime' => $dateTimeE,
+				'timeZone' => $timezone,
+			  ),
+			  'attendees' => array(
+				array('email' => $customerInfo->email)
+			  ),
+			));
+			
+			try{
+			$calendarId = $google_calendar_id;
+			$cal = new Google_Service_Calendar($client);
+			$event = $cal->events->insert($calendarId, $event);
+			$bookdata = array(
+					'gcal_booking_url' => $event->htmlLink, 
+					'gcal_booking_id' => $event->id, 
+					);
+					
+			$where = array(
+					'id' => $booking_id 
+					);		
+	
+			$wpdb->update($service_finder_Tables->bookings,wp_unslash($bookdata),$where);
+
+			} catch (Exception $e) {
+			//echo '<pre>';print_r($e);
+			}
+			return true;
+		}
+}
+
+/*Update to google calendar*/
+function service_finder_updateto_google_calendar($booking_id,$provider_id){
+session_start();
+global $service_finder_options, $current_user,  $service_finder_Tables, $wpdb;
+		$flag = 0;
+		require_once SERVICE_FINDER_BOOKING_LIB_DIR.'/google-api-php-client/src/Google/autoload.php';
+		
+		$google_client_id = get_user_meta($provider_id,'google_client_id',$google_client_id);
+		$google_client_secret = get_user_meta($provider_id,'google_client_secret',$google_client_secret);
+		$google_calendar_id = get_user_meta($provider_id,'google_calendar_id',$google_calendar_id);
+		
+		$client = new Google_Client();
+		$client->setClientId($google_client_id);
+		$client->setClientSecret($google_client_secret);
+		$redirect_uri = add_query_arg( array('action' => 'googleoauth-callback'), home_url() );
+		$client->setRedirectUri($redirect_uri);
+		$client->setScopes('https://www.googleapis.com/auth/calendar');
+		
+		if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+			$client->setAccessToken($_SESSION['access_token']);
+			$flag = 1;
+		}elseif(service_finder_get_gcal_access_token($provider_id) != ""){
+			$client->setAccessToken(service_finder_get_gcal_access_token($provider_id));
+			$flag = 1;
+		}
+		
+		if($client->isAccessTokenExpired()) {
+			 try{
+			 
+			 if(isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+			  $newaccesstoken = json_decode($_SESSION['access_token']);
+			  $client->refreshToken($newaccesstoken->refresh_token);
+			
+			 }elseif(service_finder_get_gcal_access_token($provider_id) != ""){
+			  $newaccesstoken = json_decode(service_finder_get_gcal_access_token($provider_id));
+			  $client->refreshToken($newaccesstoken->refresh_token);
+			 }
+			 
+			 } catch (Exception $e) {
+				
+			 }
+	
+		 }
+		
+		if($flag == 1){
+			$bookingdata = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `id` = %d',$booking_id));
+			$customerInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->customers.' WHERE `id` = %d',$bookingdata->booking_customer_id));
+			$offset = 0;
+			
+			$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
+			$dateTimeS = service_finder_date_format_RFC3339($str_date, $offset);
+			if($bookingdata->end_time != ""){
+			$str_date = strtotime($bookingdata->date.' '.$bookingdata->end_time);
+			}else{
+			$str_date = strtotime($bookingdata->date.' '.$bookingdata->start_time);
+			}
+			$dateTimeE = service_finder_date_format_RFC3339($str_date, $offset);
+			
+			if(get_option('timezone_string') != ""){
+			$timezone = get_option('timezone_string');
+			}
+					
+			try{
+			$calendarId = $google_calendar_id;
+			$cal = new Google_Service_Calendar($client);
+			$event = $cal->events->get($calendarId,$bookingdata->gcal_booking_id);
+			
+			$start = new Google_Service_Calendar_EventDateTime();
+			$start->setDateTime($dateTimeS);
+	        $event->setStart($start);
+			
+			$end = new Google_Service_Calendar_EventDateTime();
+			$end->setDateTime($dateTimeE);
+	        $event->setEnd($end);
+			
+			$updatedEvent = $cal->events->update($calendarId, $event->getId(), $event);
+
+			$updatedEvent->getUpdated();
 
 			} catch (Exception $e) {
 			//echo '<pre>';print_r($e);
@@ -6878,9 +6774,8 @@ global $service_finder_options, $current_user,  $service_finder_Tables, $wpdb;
 		$flag = 0;
 		require_once SERVICE_FINDER_BOOKING_LIB_DIR.'/google-api-php-client/src/Google/autoload.php';
 		
-		$gcal_creds = service_finder_get_gcal_cred();
-		$google_client_id = $gcal_creds['client_id'];
-		$google_client_secret = $gcal_creds['client_secret'];
+		$google_client_id = get_user_meta($provider_id,'google_client_id',$google_client_id);
+		$google_client_secret = get_user_meta($provider_id,'google_client_secret',$google_client_secret);
 		$google_calendar_id = get_user_meta($provider_id,'google_calendar_id',$google_calendar_id);
 		
 		$client = new Google_Client();
@@ -6917,50 +6812,22 @@ global $service_finder_options, $current_user,  $service_finder_Tables, $wpdb;
 		 }
 		
 		if($flag == 1){
-			$bookingdata = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `id` = %d',$booking_id));
+		$bookingdata = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `id` = %d',$booking_id));
 			try{
+			$calendarId = $google_calendar_id;
+			$cal = new Google_Service_Calendar($client);
+			$cal->events->delete($calendarId, $bookingdata->gcal_booking_id);
 			
-			if($bookingdata->multi_date == 'yes')
-			{
-				$bookedservices = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->booked_services.' WHERE `booking_id` = %d',$booking_id));
-				
-				if(!empty($bookedservices))
-				{
-					foreach($bookedservices as $bookedservice)
-					{
-						$calendarId = $google_calendar_id;
-						$cal = new Google_Service_Calendar($client);
-						$cal->events->delete($calendarId, $bookedservice->gcal_booking_id);
+			$data = array(
+						'gcal_booking_url' => '',
+						'gcal_booking_id' => ''
+						);
+	
+			$where = array(
+						'id' => $booking_id
+						);
 						
-						$data = array(
-									'gcal_booking_url' => '',
-									'gcal_booking_id' => ''
-									);
-				
-						$where = array(
-									'id' => $bookedservice->id
-									);
-									
-						$wpdb->update($service_finder_Tables->booked_services,wp_unslash($data),$where);
-					}
-				}
-			}else{
-			
-				$calendarId = $google_calendar_id;
-				$cal = new Google_Service_Calendar($client);
-				$cal->events->delete($calendarId, $bookingdata->gcal_booking_id);
-				
-				$data = array(
-							'gcal_booking_url' => '',
-							'gcal_booking_id' => ''
-							);
-		
-				$where = array(
-							'id' => $booking_id
-							);
-							
-				$wpdb->update($service_finder_Tables->bookings,wp_unslash($data),$where);
-			}
+			$wpdb->update($service_finder_Tables->bookings,wp_unslash($data),$where);
 			
 			} catch (Exception $e) {
 			//echo '<pre>';print_r($e);
@@ -6987,23 +6854,17 @@ if (isset($_GET['code']) && isset($_GET['action']) && $_GET['action'] == 'google
 	$providerid = isset($_SESSION['providerid']) ? esc_html($_SESSION['providerid']) : '';
 	$code = isset($_GET['code']) ? $_GET['code'] : '';
 	
-	$gcal_creds = service_finder_get_gcal_cred();
-	$client_id = $gcal_creds['client_id'];
-    $client_secret = $gcal_creds['client_secret'];
+	$client_id = get_user_meta($providerid,'google_client_id',true);
+	$client_secret = get_user_meta($providerid,'google_client_secret',true);
 	$redirect_uri = add_query_arg( array('action' => 'googleoauth-callback'), home_url() );
 	
 	$client = new Google_Client();
 	$client->setClientId($client_id);
 	$client->setClientSecret($client_secret);
 	$client->setRedirectUri($redirect_uri);
-	$client->setAccessType("offline");
-	$client->setApprovalPrompt('force');
 	$client->setScopes('https://www.googleapis.com/auth/calendar');	
 	try{	
     $client->authenticate($_GET['code']);
-	$options = unserialize(get_option( 'provider_settings'));
-	$options[$providerid]['google_calendar'] = 'on';
-	update_option( 'provider_settings', serialize($options) );
 	} catch (Exception $e) {
 	//echo '<pre>';print_r($e);
 	}
@@ -7013,9 +6874,7 @@ if (isset($_GET['code']) && isset($_GET['action']) && $_GET['action'] == 'google
 	
 	$account_url = service_finder_get_url_by_shortcode('[service_finder_my_account]');
 	
-	$redirect_uri = add_query_arg( array('gcal' => 'connected'), $account_url );
-	
-    header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+    header('Location: ' . filter_var($account_url, FILTER_SANITIZE_URL));
 	die;
 }
 
@@ -7557,56 +7416,7 @@ global $wpdb, $service_finder_Tables, $current_user;
 				'avgrating' => $avgrating,
 				);
 		$wpdb->insert($service_finder_Tables->custom_rating,wp_unslash($data));
-		
-		$avgrating = round($avgrating, 2);
-			
-		$wpdb->query($wpdb->prepare('UPDATE '.$service_finder_Tables->providers.' SET `rating` = "%f" WHERE `wp_user_id` = %d',$avgrating,$row->user_id));
-}
 
-/*Save Custom Comment Rating for simple rating*/
-function service_finder_save_comment_simple_rating($commentID){
-global $wpdb, $service_finder_Tables, $current_user;
-	if ( ! is_numeric( $commentID ) ) {
-		return;
-	}
-	
-	$pixrating = (!empty($_POST['pixrating'])) ? sanitize_text_field($_POST['pixrating']) : 0;
-	$pixrating_title = (!empty($_POST['pixrating_title'])) ? sanitize_text_field($_POST['pixrating_title']) : 0;
-	
-	update_comment_meta($commentID,'pixrating',$pixrating);
-	update_comment_meta($commentID,'pixrating_title',$pixrating_title);
-	
-	$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM `'.$wpdb->prefix.'comments` where comment_ID = %d',$commentID));
-	$comment_post_id = $row->comment_post_ID;
-	
-	$row = $wpdb->get_row($wpdb->prepare('SELECT `user_id` FROM '.$wpdb->prefix.'usermeta WHERE `meta_value` = %d AND `meta_key` = "comment_post"',$comment_post_id));	
-	
-	$avgrating = service_finder_getAverageRating($row->user_id);
-	
-	$avgrating = round($avgrating, 2);
-			
-	$wpdb->query($wpdb->prepare('UPDATE '.$service_finder_Tables->providers.' SET `rating` = "%f" WHERE `wp_user_id` = %d',$avgrating,$row->user_id));
-}
-
-/*update avg rating for provider when change comment status*/
-add_action('transition_comment_status', 'my_approve_comment_callback', 10, 3);
-function my_approve_comment_callback($new_status, $old_status, $comment) {
-    global $wpdb, $service_finder_Tables, $current_user;
-	
-	if($old_status != $new_status) {
-		$commentID = (!empty($_POST['id'])) ? sanitize_text_field($_POST['id']) : 0;
-		
-        $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM `'.$wpdb->prefix.'comments` where comment_ID = %d',$commentID));
-		$comment_post_id = $row->comment_post_ID;
-		
-		$row = $wpdb->get_row($wpdb->prepare('SELECT `user_id` FROM '.$wpdb->prefix.'usermeta WHERE `meta_value` = %d AND `meta_key` = "comment_post"',$comment_post_id));	
-		
-		$avgrating = service_finder_getAverageRating($row->user_id);
-		
-		$avgrating = round($avgrating, 2);
-				
-		$wpdb->query($wpdb->prepare('UPDATE '.$service_finder_Tables->providers.' SET `rating` = "%f" WHERE `wp_user_id` = %d',$avgrating,$row->user_id));
-    }
 }
 
 /*Save Custom Comment Rating*/
@@ -7761,9 +7571,8 @@ function send_mail_after_joblimit_connect_purchase( $userid ){
 			$noticedata = array(
 					'provider_id' => $userid,
 					'target_id' => $row->id, 
-					'topic' => 'Job Apply Connect',
-					'title' => esc_html__('Job Apply Connect', 'service-finder'),
-					'notice' => esc_html__('Your job apply connect plan upgraded.', 'service-finder')
+					'topic' => esc_html__('Purchase Credit', 'service-finder'),
+					'notice' => esc_html__('Your purchase credit plan upgraded.', 'service-finder')
 					);
 			service_finder_add_notices($noticedata);
 		
@@ -7771,6 +7580,58 @@ function send_mail_after_joblimit_connect_purchase( $userid ){
 		
 		service_finder_wpmailer($email,$msg_subject,$msg_body);
 	}
+
+function send_mail_after_purchase_credit( $userid ){
+		global $wpdb, $service_finder_options, $service_finder_Tables;
+		
+		$email = service_finder_getProviderEmail($userid);
+		
+		$providerreplacestring = (!empty($service_finder_options['provider-replace-string'])) ? $service_finder_options['provider-replace-string'] : esc_html__('Provider', 'service-finder');	
+		
+		$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->purchase_credit.' WHERE `provider_id` = "'.$userid.'"');
+		$payment_method = '';
+		$current_plan = '';
+		if(!empty($row)){
+		$payment_method = $row->payment_method;
+		$current_plan = $row->current_plan;
+		}
+		
+		$upgrade_plan = (!empty($service_finder_options['purchase-credit-package'.$current_plan.'-name'])) ? $service_finder_options['purchase-credit-package'.$current_plan.'-name'] : '';
+		
+		if(!empty($service_finder_options['purchase-credit-package-message'])){
+			$message = $service_finder_options['purchase-credit-package-message'];
+		}else{
+			$message = esc_html__('Dear ', 'service-finder').esc_html($providerreplacestring).',';
+			$message .= esc_html__('Congratulations! Your purchase credit package upgraded Successfully', 'service-finder');
+			$message .= esc_html__('Name: ', 'service-finder').'%USERNAME%';
+			$message .= esc_html__('Plan Name: ', 'service-finder').'%PLANNAME%';
+			$message .= esc_html__('Payment Method: ', 'service-finder').'%PAYMENTMETHOD%';
+		}
+		
+		if($service_finder_options['purchase-credit-package-subject'] != ""){
+			$msg_subject = $service_finder_options['purchase-credit-package-subject'];
+		}else{
+			$msg_subject = esc_html__('Purchase Credit Approval Notification', 'service-finder');
+		}
+		
+		$tokens = array('%USERNAME%','%PLANNAME%','%PAYMENTMETHOD%');
+		$replacements = array(service_finder_getProviderName($userid),$upgrade_plan,service_finder_translate_static_status_string($payment_method));
+		$msg_body = str_replace($tokens,$replacements,$message);
+		
+		if(function_exists('service_finder_add_notices')) {
+	
+			$noticedata = array(
+					'provider_id' => $userid,
+					'target_id' => $row->id, 
+					'topic' => esc_html__('Job Apply Connect', 'service-finder'),
+					'notice' => esc_html__('Your job apply connect plan upgraded.', 'service-finder')
+					);
+			service_finder_add_notices($noticedata);
+		
+		}
+		
+		service_finder_wpmailer($email,$msg_subject,$msg_body);
+	}	
 	
 function send_mail_after_jobpost_limit_connect_purchase( $userid ){
 		global $wpdb, $service_finder_options, $service_finder_Tables;
@@ -7814,8 +7675,7 @@ function send_mail_after_jobpost_limit_connect_purchase( $userid ){
 			$noticedata = array(
 					'customer_id' => $userid,
 					'target_id' => $row->id, 
-					'topic' => 'Job Post Connect',
-					'title' => esc_html__('Job Post Connect', 'service-finder'),
+					'topic' => esc_html__('Job Post Connect', 'service-finder'),
 					'notice' => esc_html__('Your job post connect plan upgraded.', 'service-finder')
 					);
 			service_finder_add_notices($noticedata);
@@ -7982,7 +7842,7 @@ function service_finder_get_admin_id(){
 function service_finder_check_empty_category($catid){
 	global $wpdb, $service_finder_Tables;
 	
-	$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->providers.' where `admin_moderation` = "approved" AND `account_blocked` != "yes" AND FIND_IN_SET("'.$catid.'", category_id)');
+	$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->providers.' where FIND_IN_SET("'.$catid.'", category_id)');
 	
 	if(empty($row)){
 		return true;
@@ -7992,7 +7852,7 @@ function service_finder_check_empty_category($catid){
 }
 
 /*Connect Stripe Account*/
-if (isset($_GET['code']) && isset($_GET['scope']) && !isset($_GET['loginSocial'])) { 
+/*if (isset($_GET['code']) && isset($_GET['scope'])) { 
 
 	$service_finder_options = get_option('service_finder_options');
 	$current_user = service_finder_plugin_global_vars('current_user');
@@ -8043,7 +7903,7 @@ if (isset($_GET['code']) && isset($_GET['scope']) && !isset($_GET['loginSocial']
 	wp_redirect($redirect_uri);
 	exit;
 	
-}
+}*/
 
 /*Disconnect Stripe Account*/
 if (isset($_GET['disconnect_stripe']) && isset($_GET['stripe_connect_id'])) { 
@@ -8431,8 +8291,7 @@ function service_finder_get_mp_payout_status( $bookingid, $order_id ){
 				$noticedata = array(
 						'provider_id' => $row->provider_id,
 						'target_id' => $row->id, 
-						'topic' => 'Booking Payment',
-						'title' => esc_html__('Booking Payment', 'service-finder'),
+						'topic' => esc_html__('Booking Payment', 'service-finder'),
 						'notice' => $notificationmsg
 						);
 				service_finder_add_notices($noticedata);
@@ -8879,7 +8738,10 @@ switch($transaction_type){
 			break;		
 	case 'job-post-limit':
 			$description = esc_html__('Cashback after purchase job post limits', 'service-finder');
-			break;				
+			break;
+	case 'purchase-credit':
+			$description = esc_html__('Cashback after purchase credits', 'service-finder');
+			break;						
 }
 }
 
@@ -9041,8 +8903,6 @@ switch($topic){
 		$url = add_query_arg( array('tabname' => 'bookings','bookingid' => esc_attr($target_id)), $url );
 		break;
 	case 'Service Complete':
-	case 'Service Incomplete':
-	case 'Booking Complete':
 	case 'Booking Completed': 	
 		$url = service_finder_get_my_account_url($current_user->ID);
 		if(service_finder_getUserRole($current_user->ID) == 'Provider'){
@@ -9055,6 +8915,10 @@ switch($topic){
 		$url = service_finder_get_my_account_url($current_user->ID);
 		$url = add_query_arg( array('tabname' => 'job-limits'), $url );
 		break;
+	case 'Purchase Credit': 	
+		$url = service_finder_get_my_account_url($current_user->ID);
+		$url = add_query_arg( array('tabname' => 'purchase-credit'), $url );
+		break;	
 	case 'Job Application': 	
 		$url = service_finder_get_url_by_shortcode('[job_dashboard');
 		break;	
@@ -9091,9 +8955,6 @@ switch($topic){
 	case 'Job Published': 	
 		$jobapplicantspage = service_finder_get_url_by_shortcode('[service_finder_job_applicants');
 		$url = add_query_arg( array('jobid' => $target_id ),$jobapplicantspage );
-		break;	
-	case 'Job Invitation': 	
-		$url = get_permalink($target_id);
 		break;	
 	case 'Identity Declined': 	
 		$url = 'javascript:;';
@@ -9303,22 +9164,17 @@ if(!empty($results)){
 	foreach($results as $row){
 		$services = $row->services;
 		$services = explode('%%',$services);
-		if(!empty($services)){
-			foreach($services as $servicesitem){
-			
-				if($row->multi_date == 'no'){
-					$serviceitemchunk = explode('-',$servicesitem);
-					if($serviceitemchunk[0] == $serviceid && $serviceitemchunk[3] == $couponcode){
-						$cnt++;
-					}
-				}else{
-					$serviceitemchunk = explode('||',$servicesitem);
-					if($serviceitemchunk[0] == $serviceid && $serviceitemchunk[6] == $couponcode){
-						$cnt++;
-					}	
-				}
+		if($row->multi_date == 'yes'){
+			$service = explode('-',$services);
+			if($service[0] == $serviceid && $service[3] == $couponcode){
+				$cnt++;
 			}
-		}	
+		}else{
+			$service = explode('||',$services);
+			if($services[0] == $serviceid && $services[6] == $couponcode){
+				$cnt++;
+			}	
+		}
 	}
 }
 
@@ -9439,7 +9295,6 @@ function service_finder_date_range($startdate, $enddate, $format = "Y-m-d"){
 
     $begin = new DateTime($startdate);
     $end = new DateTime($enddate);
-	$end = $end->modify( '+1 day' );
 
     $interval = new DateInterval('P1D');
     $dateRange = new DatePeriod($begin, $interval, $end);
@@ -9457,7 +9312,7 @@ function service_finder_get_disabled_dates($userid){
 
     $settings = service_finder_getProviderSettings($userid);
 
-	$future_bookings_availability = (!empty($settings['future_bookings_availability'])) ? $settings['future_bookings_availability'] : 365;
+	$future_bookings_availability = (!empty($settings['future_bookings_availability'])) ? $settings['future_bookings_availability'] : 0;
 	
 	$number_of_months = ($future_bookings_availability/30);
 	
@@ -10015,14 +9870,6 @@ if(!empty($serviceitems)){
 						
 						$dates = str_replace('##',',',$sdate);
 						
-						$datesarr = explode(',',$dates);
-						
-						$startdate = $datesarr[0];
-						
-						$enddate = end($datesarr);
-						
-						$dates = service_finder_date_format($startdate).' - '.service_finder_date_format($enddate);
-						
 						$html .= '<tr>
 							<td>'.service_finder_get_service_name($sid).'</td>
 							<td>'.$dates.'</td>
@@ -10105,8 +9952,7 @@ function service_finder_get_alllanguages(){
 	$lng['ae'] = esc_html__( 'Avestan', 'service-finder' );
 	$lng['af'] = esc_html__( 'Afrikaans', 'service-finder' );
 	$lng['am'] = esc_html__( 'Amharic', 'service-finder' );
-	$lng['arg'] = esc_html__( 'Argentina', 'service-finder' );
-	$lng['ar'] = esc_html__( 'Arabic', 'service-finder' );
+	$lng['ar'] = esc_html__( 'AfArabicar', 'service-finder' );
 	$lng['as'] = esc_html__( 'Assamese', 'service-finder' );
 	$lng['ay'] = esc_html__( 'Aymara', 'service-finder' );
 	$lng['az'] = esc_html__( 'Azerbaijani', 'service-finder' );
@@ -10277,25 +10123,23 @@ $subcaps = (!empty($service_finder_options['package'.$packageid.'-subcapabilitie
 
 	if(!empty($caps)){
 		foreach($caps as $key => $value){
-			$featuretitle = service_finder_get_data($service_finder_options,'shortcode-pricing-feature-'.$key,service_finder_get_capability_name_by_key($key));
 			if($value){
-			echo '<li><strong>'.strtoupper($featuretitle).'</strong> <i class="fa fa-check"></i></li>';
+			echo '<li><strong>'.strtoupper(service_finder_get_capability_name_by_key($key)).'</strong> <i class="fa fa-check"></i></li>';
 			if($key == 'multiple-categories'){
-			echo '<li><strong>'.$featuretitle.'</strong> '.service_finder_get_number_of_category($packageid).'</li>';
+			echo '<li><strong>'.esc_html__('Number of Categories','service-finder').'</strong> '.service_finder_get_number_of_category($packageid).'</li>';
 			}
 			}else{
-			echo '<li><strong>'.strtoupper($featuretitle).'</strong> <i class="fa fa-close"></i></li>';
+			echo '<li><strong>'.strtoupper(service_finder_get_capability_name_by_key($key)).'</strong> <i class="fa fa-close"></i></li>';
 			}
 		}
 	}
 	
 	if(!empty($subcaps)){
 		foreach($subcaps as $key => $value){
-			$featuretitle = service_finder_get_data($service_finder_options,'shortcode-pricing-feature-'.$key,service_finder_get_capability_name_by_key($key));
 			if($value){
-			echo '<li><strong>'.strtoupper($featuretitle).'</strong> <i class="fa fa-check"></i></li>';
+			echo '<li><strong>'.strtoupper(service_finder_get_capability_name_by_key($key)).'</strong> <i class="fa fa-check"></i></li>';
 			}else{
-			echo '<li><strong>'.strtoupper($featuretitle).'</strong> <i class="fa fa-close"></i></li>';
+			echo '<li><strong>'.strtoupper(service_finder_get_capability_name_by_key($key)).'</strong> <i class="fa fa-close"></i></li>';
 			}
 		}
 	}
@@ -10695,20 +10539,15 @@ function service_finder_get_data( $obj, $key, $default = '' )
 }
 
 /* Get job related providers */
-if ( ! function_exists('service_finder_get_job_related_providers') ) {
 function service_finder_get_job_related_providers($jobid,$args = array()){
 	global $wpdb, $service_finder_Tables, $service_finder_options;
 
 	$taxonomy = 'job_listing_category';
 	$terms = wp_get_post_terms( $jobid, $taxonomy );
 	
-	//$service_perform_at = service_finder_get_data($_POST,'service_perform_at');
 	$providertype = service_finder_get_data($_POST,'providertype');
 	$filterlocation = service_finder_get_data($_POST,'filterlocation');
 	$radius = service_finder_get_data($_POST,'radius');
-	$amenities = service_finder_get_data($_POST,'amenities');
-	
-	$service_perform_at = (!empty($_POST['service_perform_at'])) ? $_POST['service_perform_at'] : array();
 	
 	$provider_categotyid = array();
 	if(!empty($terms)){
@@ -10723,9 +10562,7 @@ function service_finder_get_job_related_providers($jobid,$args = array()){
 	
 	$totalcat = count($provider_categotyid);
 	
-	$sql = 'SELECT * FROM '.$service_finder_Tables->providers.' WHERE `admin_moderation` = "approved" AND `account_blocked` != "yes"';
-	
-	if($filterlocation != '' && (in_array('customer_location',$service_perform_at) || $radius > 0))
+	if($filterlocation != '' && $radius > 0)
 	{
 		$unit = service_finder_get_radius_unit();
 	
@@ -10739,26 +10576,11 @@ function service_finder_get_job_related_providers($jobid,$args = array()){
 		$res = service_finder_getLatLong($filterlocation);
 		$latitude = $res['lat'];
 		$longitude = $res['lng'];
-		if($latitude != '' && $longitude != '')
-		{
-		if(in_array('customer_location',$service_perform_at) && in_array('provider_location',$service_perform_at) && $radius > 0)
-		{
-		$sql = 'SELECT *,( '.$unitchanger.' * acos( cos( radians('.$latitude.') ) * cos( radians( providers.lat ) ) * cos( radians( providers.long ) - radians('.$longitude.')) + sin(radians('.$latitude.')) * sin( radians( providers.lat )))) AS distance FROM '.$service_finder_Tables->providers.' as providers WHERE `admin_moderation` = "approved" AND `account_blocked` != "yes" AND (( '.$unitchanger.' * acos( cos( radians('.$latitude.') ) * cos( radians( providers.lat ) ) * cos( radians( providers.long ) - radians('.$longitude.')) + sin(radians('.$latitude.')) * sin( radians( providers.lat )))) <= providers.radius) OR (( '.$unitchanger.' * acos( cos( radians('.$latitude.') ) * cos( radians( providers.lat ) ) * cos( radians( providers.long ) - radians('.$longitude.')) + sin(radians('.$latitude.')) * sin( radians( providers.lat )))) <= '.$radius.')';
-		}elseif(in_array('customer_location',$service_perform_at))
-		{
-		$sql = 'SELECT *,( '.$unitchanger.' * acos( cos( radians('.$latitude.') ) * cos( radians( providers.lat ) ) * cos( radians( providers.long ) - radians('.$longitude.')) + sin(radians('.$latitude.')) * sin( radians( providers.lat )))) AS distance FROM '.$service_finder_Tables->providers.' as providers WHERE `admin_moderation` = "approved" AND `account_blocked` != "yes" AND ( '.$unitchanger.' * acos( cos( radians('.$latitude.') ) * cos( radians( providers.lat ) ) * cos( radians( providers.long ) - radians('.$longitude.')) + sin(radians('.$latitude.')) * sin( radians( providers.lat )))) <= providers.radius';
-		}elseif(in_array('provider_location',$service_perform_at) && $radius > 0)
-		{
+		
 		$sql = 'SELECT *,( '.$unitchanger.' * acos( cos( radians('.$latitude.') ) * cos( radians( providers.lat ) ) * cos( radians( providers.long ) - radians('.$longitude.')) + sin(radians('.$latitude.')) * sin( radians( providers.lat )))) AS distance FROM '.$service_finder_Tables->providers.' as providers WHERE `admin_moderation` = "approved" AND `account_blocked` != "yes" AND ( '.$unitchanger.' * acos( cos( radians('.$latitude.') ) * cos( radians( providers.lat ) ) * cos( radians( providers.long ) - radians('.$longitude.')) + sin(radians('.$latitude.')) * sin( radians( providers.lat )))) <= '.$radius;
-		}
-		}
-	}
-	//print_r($service_perform_at);
-	if(!empty($service_perform_at))
+	}else
 	{
-		$service_perform_locations = implode('","',$service_perform_at);
-		//print_r('"'.$service_perform_locations.'"');
-		$sql .= ' AND (`service_perform_at` IN ("'.$service_perform_locations.'") OR `service_perform_at` = "both")';
+		$sql = 'SELECT * FROM '.$service_finder_Tables->providers.' WHERE `admin_moderation` = "approved" AND `account_blocked` != "yes"';
 	}
 	
 	if(!empty($provider_categotyid) && $job_applications != ''){
@@ -10807,10 +10629,6 @@ function service_finder_get_job_related_providers($jobid,$args = array()){
 		}
 	}
 	
-	if($amenities != ''){
-		$sql .= ' AND FIND_IN_SET("'.$amenities.'", amenities) ';
-	}
-	
 	$results = $wpdb->get_results($sql);
 	
 	if(get_post_meta($jobid,'_filled',true))
@@ -10839,11 +10657,10 @@ function service_finder_get_job_related_providers($jobid,$args = array()){
 		$sql .= ' ORDER BY FIELD(wp_user_id,'.$orderedproviders.'), featured DESC,full_name ASC';
 		}
 	}	
-	//echo $sql;
+	
 	$results = $wpdb->get_results($sql);
 	
 	return $results;
-}
 }
 
 /* Get quote info */
@@ -11087,35 +10904,20 @@ function service_finder_customer_replace_string(){
 
 /*Filter Job applicants*/
 add_action('wp_ajax_job_filter_applicants', 'service_finder_job_filter_applicants');
-if ( ! function_exists('service_finder_job_filter_applicants') ) {
 function service_finder_job_filter_applicants(){
 	global $wpdb,$current_user,$service_finder_Tables,$service_finder_options;
 
 	$jobid = service_finder_get_data($_POST,'jobid');
-	$quotereceived = service_finder_get_data($_POST,'quotereceived');
 	
 	$providers = service_finder_get_job_related_providers($jobid,$_POST);
 	$jobauthor = get_post_field( 'post_author', $jobid );
-	
+
 	ob_start();
+	
 	$providerflag = 0;
 	
-	$totalproviders = count($providers);
 	if(!empty($providers))
 	{
-		?>
-        <div class="sf-chkallinv-outer">
-            <div class="sf-chkallinv-left">
-                <label for="allinvitationrow" style="text-transform:none;"><?php echo service_finder_get_data($service_finder_options,'job-send-invitation-selected-lession-provider-text'); ?></label>
-            </div>
-            <div class="sf-chkallinv-right">
-                <button id="sendallinvitations" class="btn btn-primary" data-jobid="<?php echo esc_attr($jobid); ?>">
-                  <?php echo esc_html__('Send', 'service-finder') ?>
-                </button>
-            </div>
-        </div>
-        <?php
-		$i = 1;
 		foreach($providers as $provider)
 		{
 			$providerid = $provider->wp_user_id;
@@ -11123,8 +10925,6 @@ function service_finder_job_filter_applicants(){
 			$profileimage = service_finder_get_avatar_by_userid($providerid,'service_finder-provider-medium');
 			$providerinfo = service_finder_get_provier_info($providerid);
 			$categories = $providerinfo->category_id;
-			
-			$distance = service_finder_get_data($provider,'distance');
 			
 			$providerrating = service_finder_get_data($_POST,'providerrating');
 			$quotereceived = service_finder_get_data($_POST,'quotereceived');
@@ -11202,7 +11002,7 @@ function service_finder_job_filter_applicants(){
 				continue;
 			}
 			?>
-			<div class="sf-serach-result-wrap moreproviderbox" <?php echo ($i >= 10) ? 'style="display:none"' : ''; ?>>
+			<div class="sf-serach-result-wrap">
 				<div class="sf-serach-result-left">
 					<?php if(service_finder_is_featured($providerid)){ ?>
 					 <div class="sf-featuerd-label"><span><?php echo esc_html__( 'Featured', 'service-finder' ); ?></span></div>
@@ -11225,77 +11025,16 @@ function service_finder_job_filter_applicants(){
 							$jobexpire = get_post_meta($jobid,'_job_expires',true);
 							
 							if(strtotime(date('Y-m-d')) > strtotime( $jobexpire )){
-								echo '<a href="javascript:;" class="btn btn-primary">'.esc_html__( 'Job Expired', 'service-finder' ).' <i class="fa fa-times"></i></a>';
+								$hireme = '<a href="javascript:;" class="btn btn-primary">'.esc_html__( 'Job Expired', 'service-finder' ).' <i class="fa fa-times"></i></a>';
 							}else{
 								if(service_finder_has_applied_for_job($jobid,$providerid))
 								{
-									$walletamount = service_finder_get_wallet_amount($current_user->ID);
-									$walletsystem = service_finder_check_wallet_system();
-									
-									$settings = service_finder_getProviderSettings($providerid);
-									
-									if(service_finder_getUserRole($current_user->ID) == 'Provider' || service_finder_getUserRole($current_user->ID) == 'administrator'){
-									$skipoption = true;
-									}else{
-									$skipoption = false;
-									}
-									
-									$paymentoptions = '';
-									$payflag = 0;
-									$stripepublickey = '';
-				
-									if(service_finder_get_payment_goes_to() == 'provider')
-									{
-										ob_start();
-										$stripepublickey = $settings['stripepublickey'];
-										if(!empty($settings['paymentoption']))
-										{
-											foreach($settings['paymentoption'] as $paymentoption)
-											{
-											$payflag = 1;
-											?>
-											<div class="radio sf-radio-checkbox">
-											  <input type="radio" value="<?php echo esc_attr($paymentoption); ?>" name="bookingpayment_mode" id="paymentvia<?php echo esc_attr($paymentoption); ?>" >
-											  <label for="paymentvia<?php echo esc_attr($paymentoption); ?>"><?php echo '<img src="'.SERVICE_FINDER_BOOKING_IMAGE_URL.'/payment/'.$paymentoption.'.jpg" title="'.esc_attr(ucfirst($paymentoption)).'" alt="'.esc_attr(ucfirst($paymentoption)).'">'; ?></label>
-											</div>
-											<?php
-											}
-										}elseif(!service_finder_check_wallet_system()){
-											$payflag = 0;
-											echo '<p>';
-											echo esc_html__('There is no payment method available.','service-finder');
-											echo '</p>';
-										}
-										
-										if(service_finder_check_wallet_system())
-										{
-											$payflag = 1;
-										}
-										
-										echo service_finder_add_wallet_option('bookingpayment_mode','paymentvia');
-										echo service_finder_add_skip_option('bookingpayment_mode','paymentvia');
-										
-										$paymentoptions = ob_get_clean();
-									}
-									
 									$params = array(
 										'jobid' 	=> $jobid,
-										'skipoption' 	=> $skipoption,
 										'providerid' 	=> $providerid,
 										'jobtitle' 	=> get_the_title($jobid),
 										'jobprice' 	=> get_post_meta( $jobid, '_job_cost', true ),
-										'jobhours' 	=> get_post_meta( $jobid, '_job_hours', true ),
-										'walletamount' 	=> $walletamount,
-										'walletamountwithcurrency' 	=> service_finder_money_format($walletamount),
-										'walletsystem' 	=> $walletsystem,
-										'adminfeetype' 	=> service_finder_get_data($service_finder_options,'admin-fee-type'),
-										'adminfeefixed' 	=> service_finder_get_data($service_finder_options,'admin-fee-fixed'),
-										'adminfeepercentage' 	=> service_finder_get_data($service_finder_options,'admin-fee-percentage'),
-										'pay_booking_amount_to' 	=> service_finder_get_payment_goes_to(),
-										'paymentoptions' 	=> $paymentoptions,
-										'paymentoptionsavl' 	=> $payflag,
-										'stripepublickey' 	=> $stripepublickey,
-										'is_booking_free_paid' 	=> service_finder_is_booking_free_paid($providerid),
+										'jobhours' 	=> get_post_meta( $jobid, '_job_hours', true )
 									);
 									echo '<a href="javascript:;" class="btn btn-primary bookthisprovider" data-params="'.esc_attr(wp_json_encode( $params )).'">'.esc_html__( 'Book Now', 'service-finder' ).'</a>';
 								}
@@ -11306,13 +11045,9 @@ function service_finder_job_filter_applicants(){
                         <?php 
 						if(get_user_meta($providerid,'primary_category',true) != '')
 						{
-							echo '<span class="sf-profilecat-label">'.service_finder_getCategoryName(get_user_meta($providerid,'primary_category',true)).'</span>';
+							echo '<span class="sf-profilecat-label"><a href="'.esc_url(service_finder_getCategoryLink(get_user_meta($providerid,'primary_category',true))).'">'.service_finder_getCategoryName(get_user_meta($providerid,'primary_category',true)).'</a></span>';
 						}
 						?>
-                        <div class="checkbox sf-radio-checkbox" data-toggle="tooltip" title="<?php echo esc_html__('Send Invitation', 'service-finder') ?>">
-                             <input type="checkbox" id="invitationrow-<?php echo esc_attr($providerid); ?>" class="invitationrow" value="<?php echo esc_attr($providerid); ?>">
-                             <label for="invitationrow-<?php echo esc_attr($providerid); ?>" style="text-transform:none"><?php echo esc_html__( 'Add to multi-invite', 'service-finder' ); ?></label>
-                        </div>
 					</div>
 				</div>
 				<div class="sf-serach-result-right">
@@ -11320,54 +11055,9 @@ function service_finder_job_filter_applicants(){
 					<div class="sf-serach-result-head">
 						<h3 class="sf-serach-result-title"><?php echo service_finder_getCompanyName($providerid); ?></h3>
                         <span class="sf-serach-result-name"><i class="fa fa-user"></i> <?php echo service_finder_getProviderFullName($providerid); ?></span>
-						 
-						 <?php if($distance != '' || $distance == 0){ 
-						 $radiussearchunit = (isset($service_finder_options['radius-search-unit'])) ? esc_attr($service_finder_options['radius-search-unit']) : 'mi';
-						 ?>
-						 <div class="sf-serach-result-address staging-distance"><i class="fa fa-road"></i> <?php echo round($distance,2).' '.$radiussearchunit; ?> </div>
-						 <?php } ?> 
-						 
-						 <?php 
-						 if($service_finder_options['show-postal-address']){ 
-						 if(($provider->service_perform_at == 'provider_location' || $provider->service_perform_at == 'both') && service_finder_getAddress($providerid) != "")
-						 {
-						 $providerlat = get_user_meta($providerid,'providerlat',true); 
-						 $providerlng = get_user_meta($providerid,'providerlng',true); 
-						 $locationzoomlevel = get_user_meta($providerid,'locationzoomlevel',true); 
-						 ?>
+						 <?php if(service_finder_getAddress($providerid) != "" && $service_finder_options['show-postal-address']){ ?>
 						 <div class="sf-serach-result-address"><i class="fa fa-map-marker"></i> <?php echo service_finder_getAddress($providerid); ?> </div>
-						 <button class="btn btn-primary btn-sm margin-b-10" style="margin-bottom:10px;" data-tool="tooltip" id="viewjoblocation" data-locationzoomlevel="<?php echo esc_attr($locationzoomlevel); ?>" data-providerlat="<?php echo esc_attr($providerlat); ?>" data-providerlng="<?php echo esc_attr($providerlng); ?>" type="button">
-						  <i class="fa fa-map-o"></i> <?php echo esc_html__('View Map','servide-finder'); ?>
-						  </button>
-						 <?php 
-						 }elseif($provider->service_perform_at != 'provider_location' && service_finder_getshortAddress($providerid) != "")
-						 {
-						 ?>
-						 <div class="sf-serach-result-address"><i class="fa fa-map-marker"></i> <?php echo service_finder_getshortAddress($providerid); ?> </div>
-						 <?php
-						 }
-	                     if($provider->service_perform_at == 'provider_location' || $provider->service_perform_at == 'customer_location' || $provider->service_perform_at == 'both')
-						 {
-						 echo '<h4>'.esc_html__( 'Available Locations', 'service-finder') .'</h4>';
-						 if($provider->service_perform_at == 'provider_location')
-						 {
-						 ?>
-                         <div class="sf-serach-result-address"><i class="fa fa-map-pin"></i> <?php echo esc_html__( 'Provider Location', 'service-finder' ); ?> </div>
-						 <?php
-						 }elseif($provider->service_perform_at == 'customer_location')
-						 {
-						 ?>
-						 <div class="sf-serach-result-address"><i class="fa fa-car"></i> <?php echo esc_html__( 'Your Location', 'service-finder' ); ?> </div>
-						 <?php
-						 }elseif($provider->service_perform_at == 'both')
-						 {
-						 ?>
-						 <div class="sf-serach-result-address"><i class="fa fa-map-pin"></i> <?php echo esc_html__( 'Provider Location', 'service-finder' ); ?> </div>
-                         <div class="sf-serach-result-address"><i class="fa fa-car"></i> <?php echo esc_html__( 'Your Location', 'service-finder' ); ?> </div>
-						 <?php
-						 }
-						 }
-						 } ?> 	
+						 <?php } ?> 	
 						 <div class="sf-serach-result-lable-wrarp">
 							<?php
 							if(service_finder_has_sent_invitation($jobid,$providerid))
@@ -11377,7 +11067,7 @@ function service_finder_job_filter_applicants(){
 							{
 								if(!service_finder_has_applied_for_job($jobid,$providerid))
 								{
-								echo '<span id="jobinvitation-'.$jobid.'-'.$providerid.'"><a class="sf-serach-lable-invitation" href="javascript:;" data-action="invite" data-redirect="no" data-jobid="'.esc_attr($jobid).'" data-providerid="'.esc_attr($providerid).'" data-toggle="modal" data-target="#invite-job">'.sprintf(esc_html__('Invite for %s', 'service-finder'),service_finder_get_data($service_finder_options,'job-text')).'</a><span>';
+								echo '<span id="jobinvitation-'.$jobid.'-'.$providerid.'"><a class="sf-serach-lable-invitation" href="javascript:;" data-action="invite" data-redirect="no" data-jobid="'.esc_attr($jobid).'" data-providerid="'.esc_attr($providerid).'" data-toggle="modal" data-target="#invite-job">'.esc_html__('Invite for Job', 'service-finder').'</a><span>';
 								}
 							}
 							?>
@@ -11413,7 +11103,22 @@ function service_finder_job_filter_applicants(){
 							}
 							?>
 						 </div>
-						
+						 <?php
+						 if($categories != '')
+						 {
+							$displaycat = array();
+							$categories = explode(',',$categories);
+							foreach($categories as $categoryid)
+							{
+								$displaycat[] = '<a href="'.esc_url(service_finder_getCategoryLink($categoryid)).'">'.service_finder_getCategoryName($categoryid).'</a>';
+							}
+							?>
+							<div class="sf-serach-categoriList">
+								<?php echo implode(',',$displaycat); ?>
+							 </div>
+							<?php
+						 }
+						 ?>
 					 </div>
 					 
 					 <div class="sf-serach-result-body">
@@ -11452,51 +11157,19 @@ function service_finder_job_filter_applicants(){
 			</div>
 			<?php
 			$providerflag = 1;
-		$i++;
-		}
-		
-		if($totalproviders > 10)
-		{
-		?>
-		<div id="loadmorejobproviders">
-			<a href="javascript:;"><?php esc_html_e( 'Load More','makeover' ); ?> <i class="fa fa-refresh"></i></a>
-		</div>
-		<?php
 		}
 	}
 	
 	if($providerflag == 0)
 	{
-		if($quotereceived == 'yes')
-		{
-			if(service_finder_get_data($service_finder_options,'job-no-result-html-view-applicants') != '')
-			{
-			echo '<div class="sf-noresult-outer">';
-			echo service_finder_get_data($service_finder_options,'job-no-result-html-view-applicants');
-			echo '</div>';
-			}else{
-			echo '<div class="sf-noresult-outer">';
-			echo esc_html__('No Results Found.', 'service-finder');
-			echo '</div>';
-			}
-		}else{
-			if(service_finder_get_data($service_finder_options,'job-no-result-html-send-invitations') != '')
-			{
-			echo '<div class="sf-noresult-outer">';
-			echo service_finder_get_data($service_finder_options,'job-no-result-html-send-invitations');
-			echo '</div>';
-			}else{
-			echo '<div class="sf-noresult-outer">';
-			echo esc_html__('No Results Found.', 'service-finder');
-			echo '</div>';
-			}
-		}
+		echo '<div class="sf-no-results">';
+		echo esc_html__('No Results Found', 'service-finder');
+		echo '</div>';
 	}
 	
 	$response = ob_get_clean();
 	wp_send_json_success($response);
 	exit;
-}
 }
 
 /*Get raius unit*/
@@ -11603,7 +11276,7 @@ function service_finder_no_access_layout($string1 = '',$string2 = ''){
 }	
 
 /*Provider listing boxes*/
-function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',$issearch = false,$providersavailability = array(),$distance = ''){
+function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',$issearch = false){
 	global $wpdb,$current_user,$service_finder_options,$service_finder_Tables;
 	$providerinfo = service_finder_get_provier_info($providerid);
 	$profileurl = service_finder_get_author_url($providerid);
@@ -11620,15 +11293,13 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
         <?php } ?>
         <div class="sf-feaProgrid-pic" style="background-image:url(<?php echo esc_url($profilepicurl); ?>);">
             <div class="sf-feaProgrid-info">
-            <?php echo service_finder_availability_label($providerid,$providersavailability); ?>
-			<?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>
+            <?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>
             <h4 class="sf-feaProgrid-title"><?php echo service_finder_getProviderFullName($providerid); ?></h4>
             <?php if(service_finder_get_data($service_finder_options,'show-address-info') && service_finder_check_address_info_access()){ ?>	
             <?php if(service_finder_getAddress($providerid) != "" && service_finder_get_data($service_finder_options,'show-postal-address')){ ?>
             <div class="sf-feaProgrid-address"><?php echo service_finder_getAddress($providerid); ?></div>
             <?php } ?>
             <?php } ?>
-            <?php echo service_finder_getDistance($distance); ?>
         </div>
             <div class="sf-overlay-box"></div>
             <?php if(service_finder_is_varified_user($providerid)){ ?>
@@ -11639,16 +11310,9 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
         </div>
         
         <div class="sf-feaProgrid-iconwrap">
-            <?php
-			if(service_finder_get_data($service_finder_options,'my-services-menu')){
-			?>
             <span class="sf-feaProgrid-icon sfp-yellow sf-services-slider-btn" data-providerid="<?php echo esc_attr($providerid); ?>"><span class="sf-feaPro-tooltip"><?php echo esc_html__('Display Services','service-finder'); ?></span><i class="sl-icon-settings"></i></span>
-            <?php } ?>
-            <?php
-			if(service_finder_get_data($service_finder_options,'review-system')){
-			?>
+            
             <span class="sf-feaProgrid-icon sfp-perple"><span class="sf-feaPro-tooltip"><?php echo sprintf(_n( '%d Comment', '%d Comments', service_finder_get_total_reviews($providerid), 'service-finder' ),service_finder_get_total_reviews($providerid)); ?></span><i class="sl-icon-speech"></i></span>
-            <?php } ?>
             
 			<?php
             $requestquote = service_finder_get_data($service_finder_options,'requestquote-replace-string');
@@ -11688,15 +11352,13 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
         <?php } ?>
         <div class="sf-feaProgrid-pic" style="background-image:url(<?php echo esc_url($profilepicurl); ?>);">
             <div class="sf-feaProgrid-info">
-            <?php echo service_finder_availability_label($providerid,$providersavailability); ?>
-			<?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>
+            <?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>
             <h4 class="sf-feaProgrid-title"><?php echo service_finder_getProviderFullName($providerid); ?></h4>
             <?php if(service_finder_get_data($service_finder_options,'show-address-info') && service_finder_check_address_info_access()){ ?>	
             <?php if(service_finder_getAddress($providerid) != "" && service_finder_get_data($service_finder_options,'show-postal-address')){ ?>
             <div class="sf-feaProgrid-address"><?php echo service_finder_getAddress($providerid); ?></div>
             <?php } ?>
             <?php } ?>
-            <?php echo service_finder_getDistance($distance); ?>
         </div>
             <div class="sf-overlay-box"></div>
             <a href="<?php echo esc_url($profileurl); ?>" class="sf-profile-link"></a>
@@ -11708,16 +11370,8 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
         </div>
         
         <div class="sf-feaProgrid-iconwrap">
-            <?php
-			if(service_finder_get_data($service_finder_options,'my-services-menu')){
-			?>
             <span class="sf-feaProgrid-icon sfp-yellow sf-services-slider-btn" data-providerid="<?php echo esc_attr($providerid); ?>"><span class="sf-feaPro-tooltip"><?php echo esc_html__('Display Services','service-finder'); ?></span><i class="sl-icon-settings"></i></span>
-            <?php } ?>
-            <?php
-			if(service_finder_get_data($service_finder_options,'review-system')){
-			?>
             <span class="sf-feaProgrid-icon sfp-perple"><span class="sf-feaPro-tooltip"><?php echo sprintf(_n( '%d Comment', '%d Comments', service_finder_get_total_reviews($providerid), 'service-finder' ),service_finder_get_total_reviews($providerid)); ?></span><i class="sl-icon-speech"></i></span>
-            <?php } ?>
             
 			<?php
             $requestquote = service_finder_get_data($service_finder_options,'requestquote-replace-string');
@@ -11756,15 +11410,13 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
         <?php } ?>
         <div class="sf-feaProgrid-pic" style="background-image:url(<?php echo esc_url($profilepicurl); ?>);">
             <div class="sf-feaProgrid-info">
-            <?php echo service_finder_availability_label($providerid,$providersavailability); ?>
-			<?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>
+            <?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>
             <h4 class="sf-feaProgrid-title"><?php echo service_finder_getProviderFullName($providerid); ?></h4>
             <?php if(service_finder_get_data($service_finder_options,'show-address-info') && service_finder_check_address_info_access()){ ?>	
             <?php if(service_finder_getAddress($providerid) != "" && service_finder_get_data($service_finder_options,'show-postal-address')){ ?>
             <div class="sf-feaProgrid-address"><?php echo service_finder_getAddress($providerid); ?></div>
             <?php } ?>
             <?php } ?>
-            <?php echo service_finder_getDistance($distance); ?>
         </div>
             <div class="sf-overlay-box"></div>
             <a href="<?php echo esc_url($profileurl); ?>" class="sf-profile-link"></a>
@@ -11776,16 +11428,8 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
         </div>
         
         <div class="sf-feaProgrid-iconwrap">
-            <?php
-			if(service_finder_get_data($service_finder_options,'my-services-menu')){
-			?>
             <span class="sf-feaProgrid-icon sfp-yellow sf-services-slider-btn" data-providerid="<?php echo esc_attr($providerid); ?>"><span class="sf-feaPro-tooltip"><?php echo esc_html__('Display Services','service-finder'); ?></span><i class="sl-icon-settings"></i></span>
-            <?php } ?>
-            <?php
-			if(service_finder_get_data($service_finder_options,'review-system')){
-			?>
             <span class="sf-feaProgrid-icon sfp-perple"><span class="sf-feaPro-tooltip"><?php echo sprintf(_n( '%d Comment', '%d Comments', service_finder_get_total_reviews($providerid), 'service-finder' ),service_finder_get_total_reviews($providerid)); ?></span><i class="sl-icon-speech"></i></span>
-            <?php } ?>
             <?php
             $requestquote = service_finder_get_data($service_finder_options,'requestquote-replace-string');
 	
@@ -11815,51 +11459,25 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
 	{
 	$profilepicurl = service_finder_get_avatar_by_userid($providerid,'service_finder-featured-provider');
 	?>
-    <?php
-	$iconbox = 1;
-	if($service_finder_options['review-system']){
-		$iconbox++;
-	}
-	if($service_finder_options['request-quote'] && service_finder_request_quote_for_loggedin_user()){
-		$iconbox++;
-	}
-	if($service_finder_options['add-to-fav']){
-		$iconbox++;
-	}
-	?>
     <?php if($service_finder_options['search-template'] == 'style-2' && $issearch == true){ ?>
     <div class="col-md-12 equal-col" id="proid-<?php echo esc_attr($providerid) ?>">
       <div class="sf-feaProvideer-wrap clearfix">
       	<?php if(service_finder_is_featured($providerid)){ ?>
         <div class="sf-feaProvideer-label"><?php echo esc_html__('Featured','service-finder'); ?></div>
         <?php } ?>
-        <div class="sf-feaProvideer-pic">
-        <img src="<?php echo esc_url($profilepicurl); ?>" alt="">
-        <?php if(service_finder_is_varified_user($providerid)){ ?>
-        <span class="sf-featured-approve">
-            <i class="fa fa-check"></i><span><?php esc_html_e('Verified Provider', 'service-finder'); ?></span>
-        </span>
-        <?php } ?>
-        </div>
+        <div class="sf-feaProvideer-pic"><img src="<?php echo esc_url($profilepicurl); ?>" alt=""></div>
         <div class="sf-feaProvideer-info">
-          <?php echo service_finder_availability_label($providerid,$providersavailability); ?>
-		  <?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>  
+          <?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>  
           <h4 class="sf-feaProvideer-title"><?php echo service_finder_getProviderFullName($providerid); ?></h4>
           <?php
           if(service_finder_get_data($service_finder_options,'show-address-info') && $service_finder_options['show-postal-address']){
           echo '<div class="sf-feaProvideer-address">'.service_finder_getshortAddress($providerid).'</div>';
           }
           ?>
-          <?php echo service_finder_getDistance($distance); ?>
-          <?php echo service_finder_display_category_label($providerid); ?>
           <div class="sf-feaProvideer-text"><?php echo service_finder_getExcerpts(nl2br(stripcslashes($providerinfo->bio)),0,130); ?></div>
         </div>
-        <div class="sf-feaProvideer-iconwrap sf-iconbox-cnt-<?php echo esc_attr($iconbox); ?>">
-            <?php
-			if(service_finder_get_data($service_finder_options,'my-services-menu')){
-			?>
+        <div class="sf-feaProvideer-iconwrap">
             <span class="sf-feaProvideer-icon sfp-yellow sf-services-slider-btn" data-providerid="<?php echo esc_attr($providerid); ?>"><span class="sf-feaPro-tooltip"><?php echo esc_html__('Display Services','service-finder'); ?></span><i class="sl-icon-settings"></i></span>
-            <?php } ?>
 			<?php
             if($service_finder_options['review-system']){
             $reviewcount = show_review_at_search_result($providerid);
@@ -11887,7 +11505,6 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
             ?>
         </div>
         <a href="<?php echo esc_url($profileurl); ?>" class="sf-profile-link"></a>
-        
       </div>
     </div>
 	<?php
@@ -11898,34 +11515,19 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
       	<?php if(service_finder_is_featured($providerid)){ ?>
         <div class="sf-feaProvideer-label"><?php echo esc_html__('Featured','service-finder'); ?></div>
         <?php } ?>
-        <div class="sf-feaProvideer-pic">
-        <img src="<?php echo esc_url($profilepicurl); ?>" alt="">
-        <?php if(service_finder_is_varified_user($providerid)){ ?>
-        <span class="sf-featured-approve">
-            <i class="fa fa-check"></i><span><?php esc_html_e('Verified Provider', 'service-finder'); ?></span>
-        </span>
-        <?php } ?>
-        </div>
+        <div class="sf-feaProvideer-pic"><img src="<?php echo esc_url($profilepicurl); ?>" alt=""></div>
         <div class="sf-feaProvideer-info">
-          <?php echo service_finder_availability_label($providerid,$providersavailability); ?>
-		  <?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>  
+          <?php echo service_finder_displayRating(service_finder_getAverageRating($providerid)); ?>  
           <h4 class="sf-feaProvideer-title"><?php echo service_finder_getProviderFullName($providerid); ?></h4>
           <?php
           if(service_finder_get_data($service_finder_options,'show-address-info') && $service_finder_options['show-postal-address']){
           echo '<div class="sf-feaProvideer-address">'.service_finder_getshortAddress($providerid).'</div>';
           }
           ?>
-          <?php echo service_finder_getDistance($distance); ?>
-          <?php echo service_finder_display_category_label($providerid); ?>
           <div class="sf-feaProvideer-text"><?php echo service_finder_getExcerpts(nl2br(stripcslashes($providerinfo->bio)),0,130); ?></div>
         </div>
-        
-        <div class="sf-feaProvideer-iconwrap sf-iconbox-cnt-<?php echo esc_attr($iconbox); ?>">
-            <?php
-			if(service_finder_get_data($service_finder_options,'my-services-menu')){
-			?>
+        <div class="sf-feaProvideer-iconwrap">
             <span class="sf-feaProvideer-icon sfp-yellow sf-services-slider-btn" data-providerid="<?php echo esc_attr($providerid); ?>"><span class="sf-feaPro-tooltip"><?php echo esc_html__('Display Services','service-finder'); ?></span><i class="sl-icon-settings"></i></span>
-            <?php } ?>
 			<?php
             if($service_finder_options['review-system']){
             $reviewcount = show_review_at_search_result($providerid);
@@ -11935,7 +11537,7 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
             $requestquote = (!empty($service_finder_options['requestquote-replace-string'])) ? esc_attr($service_finder_options['requestquote-replace-string']) : esc_html__( 'Request a Quote', 'service-finder' );
     
             if($service_finder_options['request-quote'] && service_finder_request_quote_for_loggedin_user()){
-            echo '<span class="sf-feaProvideer-icon sfp-green" data-providerid="'.$providerid.'" data-tool="tooltip" data-toggle="modal" data-target="#quotes-Modal"><span class="sf-feaPro-tooltip">'.$requestquote.'</span><i class="sl-icon-doc"></i></span>';
+            echo '<span class="sf-feaProvideer-icon sfp-green" data-providerid="'.$providerid.'" data-tool="tooltip" data-toggle="modal" data-target="#quotes-Modal"><span class="sf-feaPro-tooltip">'.esc_html__('Request Quote','service-finder').'</span><i class="sl-icon-doc"></i></span>';
             }
 			
 			if($service_finder_options['add-to-fav']){
@@ -11953,7 +11555,6 @@ function service_finder_display_provider_boxes($providerid = 0,$layouttype = '',
             ?>
         </div>
         <a href="<?php echo esc_url($profileurl); ?>" class="sf-profile-link"></a>
-        
       </div>
     </div>
 	<?php
@@ -12058,7 +11659,7 @@ function service_finder_total_city_providers($cityname = ''){
 	return $total;
 }
 
-/*Get available connected account balance*/
+/*Get available balance*/
 function service_finder_get_stripe_connect_avl_balance($providerid){
 global $service_finder_options;
 
@@ -12066,7 +11667,7 @@ global $service_finder_options;
 	
 	$avlbalance = 0;
 		
-	$acct_id = service_finder_get_stripe_connect_id($providerid);
+	$acct_id = get_user_meta($providerid,'stripe_connect_custom_account_id',true);
 	
 	$stripetype = (!empty($service_finder_options['stripe-type'])) ? esc_html($service_finder_options['stripe-type']) : '';
 	if($stripetype == 'live'){
@@ -12088,41 +11689,6 @@ global $service_finder_options;
 			"stripe_account" => $acct_id
 		  )
 		);
-		
-		if(!empty($balance))
-		{
-			$avlbalance = $balance->available[0]['amount'];
-			$avlbalance = floatval($avlbalance)/100;
-		}
-		
-		return $avlbalance;
-	
-	} catch (Exception $e) {
-	
-		return $avlbalance;
-	}
-}
-
-/*Get available balance*/
-function service_finder_get_stripe_avl_balance(){
-global $service_finder_options;
-
-    require_once(SERVICE_FINDER_PAYMENT_GATEWAY_DIR.'/stripe/init.php');
-	
-	$avlbalance = 0;
-		
-	$stripetype = (!empty($service_finder_options['stripe-type'])) ? esc_html($service_finder_options['stripe-type']) : '';
-	if($stripetype == 'live'){
-		$secret_key = (!empty($service_finder_options['stripe-live-secret-key'])) ? esc_html($service_finder_options['stripe-live-secret-key']) : '';
-	}else{
-		$secret_key = (!empty($service_finder_options['stripe-test-secret-key'])) ? esc_html($service_finder_options['stripe-test-secret-key']) : '';
-	}
-	
-	\Stripe\Stripe::setApiKey($secret_key);
-	
-	try {
-	
-		$balance = \Stripe\Balance::retrieve();
 		
 		if(!empty($balance))
 		{
@@ -12176,28 +11742,6 @@ function service_finder_check_new_client(){
 	}
 }
 
-/*Check is database updated or not*/
-function service_finder_is_updated_database(){
-	global $wpdb, $service_finder_Tables, $service_finder_options;
-	$flag = 0;
-	
-	$results = $wpdb->get_results("show columns from ".$service_finder_Tables->providers);
-	
-	foreach($results as $result){
-		if($result->Field == 'radius'){
-			$flag = 1;
-			break;
-		}
-	}	
-	
-	if($flag == 1)
-	{
-		return true;
-	}else{
-		return false;
-	}
-}
-
 /*Display category label*/
 function service_finder_display_category_label($providerid){
 	
@@ -12211,7 +11755,7 @@ function service_finder_display_category_label($providerid){
 	}
 }
 
-/* Upload imported image url to attchemnt for provider profilepic*/
+/* Upload imported image url to attchemnt*/
 function service_finder_upload_import_image($user_id = 0,$url = '')
 {
 	global $wpdb,$service_finder_Tables;
@@ -12270,298 +11814,138 @@ function service_finder_upload_import_image($user_id = 0,$url = '')
 	}
 }
 
-/* Upload imported image url to attchemnt for category image*/
-function service_finder_import_category_image($catid = 0,$url = '')
+add_action('wp_ajax_load_jobcategory_data', 'service_finder_fn_load_category_data');
+add_action('wp_ajax_nopriv_load_jobcategory_data', 'service_finder_fn_load_category_data');
+function service_finder_fn_load_category_data()
 {
-	global $wpdb,$service_finder_Tables;
-	require_once( ABSPATH . 'wp-admin/includes/image.php' );
-	require_once( ABSPATH . 'wp-admin/includes/file.php' );
-	
-	$timeout_seconds = 5;
-	
-	$temp_file = download_url( $url, $timeout_seconds );
-	
-	if ( !is_wp_error( $temp_file ) ) {
-	
-		$file = array(
-			'name'     => basename($url),
-			'type'     => 'image/png',
-			'tmp_name' => $temp_file,
-			'error'    => 0,
-			'size'     => filesize($temp_file),
-		);
-	
-		$overrides = array(
-			'test_form' => false,
-			'test_size' => true,
-		);
+extract($_POST);
 
-		$results = wp_handle_sideload( $file, $overrides );
-
-		if ( ! is_wp_error( $results ) ) {
-			
-			$attachment = array(
-				'guid'           => $results['url'],
-				'post_mime_type' => $results['type'],
-				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $results['url'] ) ),
-				'post_content'   => '',
-				'post_status'    => 'inherit',
-			);
-			
-			$id = wp_insert_attachment( $attachment, $results['file'] );
-			
-			if ( ! is_wp_error( $id ) )
-			{
-				wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $results['file'] ) );
-				
-				update_option( "providers-category_image_".$catid, $results['url'] );
-				update_term_meta( $catid, 'imageid', $id );
-				
-			}
-		}
-	}
-}
-
-/*Get icon for attachment file*/
-function service_finder_get_icon_for_attachment($post_id) {
-	  $base = SERVICE_FINDER_BOOKING_IMAGE_URL . "/file_icons/";
-	  $type = get_post_mime_type($post_id);
-	  switch ($type) {
-		case 'image/jpeg':
-		case 'image/png':
-		case 'image/jpg':
-		case 'image/gif':
-		  $src = wp_get_attachment_image_src( $post_id, 'thumbnail' ); 
-		  $arr = array(
-							'src' => $src[0],
-							'filename' => 'attachmentid',
-							);
-		  return $arr;
-		  break;
-		case 'application/pdf':
-		  $arr = array(
-							'src' => $base . "pdf.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break;
-		case 'application/msword':
-		  $arr = array(
-							'src' => $base . "doc.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break;
-		case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-		  $arr = array(
-							'src' => $base . "doc.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break;
-		case 'application/vnd.ms-excel':
-		  $arr = array(
-							'src' => $base . "xls.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break; 
-		case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-		  $arr = array(
-							'src' => $base . "xls.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break; 
-		case 'application/vnd.ms-powerpoint':
-		  $arr = array(
-							'src' => $base . "ppt.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break;
-		case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-		  $arr = array(
-							'src' => $base . "ppt.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break;        
-		default:
-			//return $type;
-		  $arr = array(
-							'src' => $base . "file.png",
-							'filename' => 'fileattachmentid',
-							);
-		  return $arr;
-		  break;
-  }
-}
-
-/*Send bulk job invitations*/
-add_action('wp_ajax_send_bulk_invitations', 'service_finder_send_bulk_invitations');
-function service_finder_send_bulk_invitations(){
-	global $wpdb,$service_finder_options,$service_finder_Tables;
-
-	$data_ids = service_finder_get_data($_POST,'data_ids');
-	$invitedjob = service_finder_get_data($_POST,'jobid');
-	
-	$data_id_array = explode(",", $data_ids); 
-	if(!empty($data_id_array)) {
-		foreach($data_id_array as $provider_id) {
-			$job = get_post($invitedjob);
-			
-			$data = array(
-				'created' => date('Y-m-d H:i:s'),
-				'customer_id' => get_post_field( 'post_author', $invitedjob ),
-				'provider_id' => $provider_id,
-				'jobid' => $invitedjob,
-			);
-			
-			$wpdb->insert($service_finder_Tables->job_invitations,wp_unslash($data));
-			
-			if($service_finder_options['invitejob-to-provider-subject'] != ""){
-				$msg_subject = $service_finder_options['invitejob-to-provider-subject'];
-			}else{
-				$msg_subject = esc_html__('Job Invitation');
-			}
-			
-			$provider = get_user_by('ID',$provider_id);
-			
-			if(!empty($service_finder_options['invitejob-to-provider'])){
-				$message = $service_finder_options['invitejob-to-provider'];
-			}else{
-				$message = 'Congratulations, You have been invited for following job. Please go to job link and apply for the job.
-			
-				Job Title: %JOBTITLE%
-				
-				Job Link: %JOBLINK%';
-			}
-			
-			$tokens = array('%JOBTITLE%','%JOBLINK%');
-			$replacements = array($job->post_title,'<a href="'.esc_url(get_permalink($invitedjob)).'">'.get_permalink($invitedjob).'</a>');
-			$msg_body = str_replace($tokens,$replacements,$message);
-			
-			if(class_exists('aonesms'))
-			{
-			if(service_finder_get_data($service_finder_options,'is-active-provider-job-invite-sms') == true)
-			{
-			$smsbody = service_finder_get_data($service_finder_options,'template-provider-job-invite-sms');
-			if($smsbody != '')
-			{
-			$providerInfo = service_finder_get_provier_info($provider_id);
-			
-			$smsreplacements = array($job->post_title,'<a href="'.esc_url(get_permalink($invitedjob)).'">'.get_permalink($invitedjob).'</a>');
-			
-			$smsbody = str_replace($tokens,$smsreplacements,$smsbody);
-			
-			aonesms_send_sms_notifications($providerInfo->mobile,$smsbody);
-			}
-			}
-			}
-			
-			if(function_exists('service_finder_add_notices')) {
+$args = array(
+	'child'	=>	true,
+	'search' =>	$string,
+);
+$categories = service_finder_fn_get_categories( 'job_listing_category', $args );
+$catlist = array();
+if( !empty($categories) )
+{
+	foreach( $categories  as $category )
+	{
+		$term_id = (!empty($category->term_id)) ? $category->term_id : '';
+		$term_name = (!empty($category->name)) ? $category->name : '';
 		
-				$noticedata = array(
-						'provider_id' => $provider_id,
-						'target_id' => $invitedjob, 
-						'topic' => 'Job Invitation',
-						'title' => esc_html__('Job Invitation', 'service-finder'),
-						'notice' => sprintf( esc_html__('You have been invited for job. Job title is %s', 'service-finder'), get_the_title( $invitedjob ) ),
-						);
-				service_finder_add_notices($noticedata);
-				
-			}
-			
-			service_finder_wpmailer($provider->user_email,$msg_subject,$msg_body);
-		}
-	}
-	
-	$response = esc_html__('Invitations sent successfully.', 'service-finder');
-	wp_send_json_success($response);
-	exit;
-}
-
-/*Get stripe connect account id*/
-function service_finder_get_stripe_connect_id($providerid = 0) {
-
-	if(get_user_meta($providerid,'stripe_connect_custom_account_id',true) != '')
-	{
-		$acct_id = get_user_meta($providerid,'stripe_connect_custom_account_id',true);
-	}elseif(get_user_meta($providerid,'stripe_connect_id',true) != '')
-	{
-		$acct_id = get_user_meta($providerid,'stripe_connect_id',true);
-	}else{
-		$acct_id = '';
-	}
-	
-	return $acct_id;
-}
-
-/*Get google calendar credintials*/
-function service_finder_get_gcal_cred(){
-	global $service_finder_options;
-	
-	$client_id = (isset($service_finder_options['google-calendar-client-id'])) ? esc_attr($service_finder_options['google-calendar-client-id']) : '';
-	$client_secret = (isset($service_finder_options['google-calendar-client-secret'])) ? esc_attr($service_finder_options['google-calendar-client-secret']) : '';
-	
-	return array(
-			'client_id' => $client_id,
-			'client_secret' => $client_secret		
+		
+		//$catlist[$term_id]['label'] = '<span data-type="parent" data-catid="'.esc_attr($term_id).'">'.esc_html($term_name).'</span>';
+		$catlist[$term_id]['label'] = $term_name;
+		$catlist[$term_id]['value'] = $term_name;
+		
+		$args = array(
+			'child'					=>	true,
+			'parent_category_id'	=>	$term_id,
+			'search' =>	$string
 		);
-}
-
-/*Check booking is free or paid*/
-function service_finder_is_booking_free_paid($providerid = 0){
-	global $service_finder_options;
-	
-	$paid_booking = service_finder_get_data($service_finder_options,'paid-booking');
-	$free_booking = service_finder_get_data($service_finder_options,'free-booking');
-	
-	if($paid_booking && $free_booking){
-		if($providerid > 0)
+		
+		$childcategories = service_finder_fn_get_categories( 'job_listing_category', $args );
+		
+		if( !empty($childcategories) )
 		{
-			$settings = service_finder_getProviderSettings($providerid);
-			return $settings['booking_option'];
-		}else{
-			return 'free';		
+			foreach( $childcategories  as $childcategory )
+			{
+				$term_id = (!empty($childcategory->term_id)) ? $childcategory->term_id : '';
+				$term_name = (!empty($childcategory->name)) ? $childcategory->name : '';
+				
+				
+				
+				//$catlist[$term_id]['label'] = '<span data-type="child" data-catid="'.esc_attr($term_id).'">'.esc_html($term_name).'</span>';
+				$catlist[$term_id]['label'] = $term_name;
+				$catlist[$term_id]['value'] = $term_name;
+			}
 		}
-		
-	}elseif($paid_booking && !$free_booking){
-	
-		return 'paid';
-	
-	}elseif(!$paid_booking && $free_booking){
-	
-		return 'free';
-	
-	}else{
-	
-		return 'free';
-	
 	}
 }
+$response = array(
+	'catlist'   => $catlist,
+);
+wp_send_json_success($response);
+exit;
+}
 
-/*Get default lat long based on default city and country*/
-function service_finder_get_default_latlong(){
+/////// Get Service Category //////////
+function service_finder_fn_get_categories( $texonomy = '', $args = array() ) 
+{
+	if($texonomy != '')
+	{
+		$child = (!empty($args['child'])) ? esc_attr($args['child']) : false;
 		
-	global $service_finder_options;
-	
-	$defaultcountry = (isset($service_finder_options['default-country'])) ? esc_html($service_finder_options['default-country']) : '';
-	$defaultcity = (isset($service_finder_options['default-city'])) ? esc_html($service_finder_options['default-city']) : '';
-	
-	if($defaultcountry != '' || $defaultcity != ''){
-	$address = $defaultcity.' '.$defaultcountry;
-	$address = str_replace(" ","+",$address);
-	$res = service_finder_getLatLong($address);
-	$defaultlat = $res['lat'];
-	$defaultlng = $res['lng'];
-	}else{
-	$defaultlat = '28.6430536';
-	$defaultlng = '77.2223442';
+		if( $child == true )
+		{
+			$parent = (!empty($args['parent_category_id'])) ? esc_attr($args['parent_category_id']) : '';
+		}else
+		{
+			$parent = 0;
+		}
+		
+		
+		if(!empty($args['search']))
+		{
+			$args = array(
+				'orderby'           => 'name',
+				'name__like'        => (!empty($args['search'])) ? esc_attr($args['search']) : '',
+				'order'             => 'ASC',
+				'number'            => (!empty($args['limit'])) ? $args['limit'] : '',
+				'parent'            => $parent,
+				'hide_empty'        => (!empty($args['hide_empty'])) ? esc_attr($args['hide_empty']) : false,
+			);		
+		}else{
+			$args = array(
+				'orderby'           => 'name',
+				'order'             => 'ASC',
+				'number'            => (!empty($args['limit'])) ? $args['limit'] : '',
+				'parent'            => $parent,
+				'hide_empty'        => (!empty($args['hide_empty'])) ? esc_attr($args['hide_empty']) : false,
+			);		
+		}
 	}
+	return $categories = get_terms( $texonomy,$args );
+}
+
+/*Set default booking settings*/
+function service_finder_set_default_featured_settings($userid = 0){
+	global $wpdb, $service_finder_Tables,$service_finder_options;
 	
-	$defaults = array('defaultlat' => $defaultlat,'defaultlng' => $defaultlng);
+	$featuredamount = (!empty($service_finder_options['provider-featured-amount'])) ? esc_html($service_finder_options['provider-featured-amount']) : 0;
+	$featuredperiod = (!empty($service_finder_options['provider-featured-period'])) ? esc_html($service_finder_options['provider-featured-period']) : 30;
 	
-	return $defaults;
-}	
+	$chkreq = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->feature.' WHERE `provider_id` = "'.$userid.'"');
+			
+	if(!empty($chkreq)){
+		$where = array(
+			'provider_id' => esc_attr($userid),
+			);
+	
+		$wpdb->delete($service_finder_Tables->feature,$where);
+	}
+
+	$data = array(
+			'provider_id' => esc_attr($userid),
+			'days' => service_finder_get_featured_period(),
+			'status' => 'Payment Pending',
+			'amount' => service_finder_get_featured_amount(),
+			);
+
+	$wpdb->insert($service_finder_Tables->feature,wp_unslash($data));
+}
+
+function service_finder_get_featured_amount(){
+global $wpdb, $service_finder_Tables,$service_finder_options;
+
+$featuredamount = (!empty($service_finder_options['provider-featured-amount'])) ? esc_html($service_finder_options['provider-featured-amount']) : 0;
+return $featuredamount;
+}
+
+function service_finder_get_featured_period(){
+global $wpdb, $service_finder_Tables,$service_finder_options;
+
+$featuredperiod = (!empty($service_finder_options['provider-featured-period'])) ? esc_html($service_finder_options['provider-featured-period']) : 30;
+
+return $featuredperiod;
+}

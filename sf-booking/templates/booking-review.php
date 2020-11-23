@@ -22,16 +22,11 @@ $totalreview = count($allreviews);
 ?>
   <div class="clear" id="comment-list">
 	<div class="comments-area" id="comments">
-      	<?php
-        if($totalreview > 0)
-		{
-		?>
-        <div class="sf-provider-rating-box">
+      	<div class="sf-provider-rating-box">
 		  <?php
           service_finder_review_box($author,$totalreview);
           ?>
           </div>
-          <?php } ?>
           <h2 class="comments-title"> 
 		  <?php 
 		  if($totalreview > 1){

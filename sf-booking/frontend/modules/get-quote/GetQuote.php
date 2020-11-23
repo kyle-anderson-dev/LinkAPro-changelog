@@ -555,13 +555,12 @@ class SERVICE_FINDER_GetQuote{
 				$noticedata = array(
 						'customer_id' => $row->customer_id,
 						'target_id' => $quoteid, 
-						'topic' => 'Quote Response',
-						'title' => esc_html__('Quote Response', 'service-finder'),
+						'topic' => esc_html__('Quote Response', 'service-finder'),
 						'notice' => sprintf(esc_html__('You have received reply of your quoatation id: #%d.', 'service-finder'),$quoteid),
 						);
 				service_finder_add_notices($noticedata);
 				
-				$this->service_finder_send_quotation_reply_mail($quoteid,$row->email,$quote_price,$quote_reply,$userid);
+				$this->service_finder_send_quotation_reply_mail($quoteid,$row->email,$quote_price,$quote_reply);
 			}else{
 				$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->quoteto_related_providers.' WHERE `quote_id` = %d AND `related_provider_id` = %d',$quoteid,$userid));
 				
@@ -583,13 +582,12 @@ class SERVICE_FINDER_GetQuote{
 					$noticedata = array(
 							'customer_id' => $quoterow->customer_id,
 							'target_id' => $quoteid, 
-							'topic' => 'Quote Response',
-							'title' => esc_html__('Quote Response', 'service-finder'),
+							'topic' => esc_html__('Quote Response', 'service-finder'),
 							'notice' => sprintf(esc_html__('You have received reply of your quoatation id: #%d.', 'service-finder'),$quoteid),
 							);
 					service_finder_add_notices($noticedata);
 					
-					$this->service_finder_send_quotation_reply_mail($quoteid,$quoterow->email,$quote_price,$quote_reply,$userid);
+					$this->service_finder_send_quotation_reply_mail($quoteid,$quoterow->email,$quote_price,$quote_reply);
 				}
 			}
 			
@@ -601,26 +599,25 @@ class SERVICE_FINDER_GetQuote{
 	}
 	
 	/*Send quotations reply mail*/
-	public function service_finder_send_quotation_reply_mail($quoteid = '',$email,$quote_price = '',$quote_reply = '',$userid =  0){
+	public function service_finder_send_quotation_reply_mail($quoteid = '',$email,$quote_price = '',$quote_reply = ''){
 	global $wpdb, $service_finder_options;
 	
 	if($service_finder_options['quotation-reply-message'] != ""){
 		$message = $service_finder_options['quotation-reply-message'];
 	}else{
 		$message = 'You have received reply of your quoatation.<br/>
-		Provider Name: %PROVIDERNAME%
 		Quote ID: %QUOTEID%
 		Quote Price: %QUOTEPRICE%
 		Reply: %REPLY%';
 	}
 	
 	
-	$tokens = array('%PROVIDERNAME%','%QUOTEID%','%REPLY%','%QUOTEPRICE%');
-	$replacements = array(service_finder_get_providername_with_link($userid),'#'.$quoteid,$quote_reply,service_finder_money_format($quote_price));
+	$tokens = array('%QUOTEID%','%REPLY%','%QUOTEPRICE%');
+	$replacements = array('#'.$quoteid,$quote_reply,service_finder_money_format($quote_price));
 	$msg_body = str_replace($tokens,$replacements,$message);
 	
-	if($service_finder_options['quotation-reply-message-subject'] != ""){
-		$msg_subject = $service_finder_options['quotation-reply-message-subject'];
+	if($service_finder_options['quotation-reply-subject'] != ""){
+		$msg_subject = $service_finder_options['quotation-reply-subject'];
 	}else{
 		$msg_subject = 'Quote Response';
 	}
@@ -763,8 +760,7 @@ Description: %DESCRIPTION%
 					$noticedata = array(
 							'provider_id' => $provider_id,
 							'target_id' => $quoteid, 
-							'topic' => 'Get Quotation',
-							'title' => esc_html__('Get Quotation', 'service-finder'),
+							'topic' => esc_html__('Get Quotation', 'service-finder'),
 							'notice' => sprintf(esc_html__('New quotation has arrived from %s', 'service-finder'),$customer_name)
 							);
 					service_finder_add_notices($noticedata);
@@ -779,8 +775,7 @@ Description: %DESCRIPTION%
 							$noticedata = array(
 									'provider_id' => $relatedprovider,
 									'target_id' => $quoteid, 
-									'topic' => 'Get Quotation',
-									'title' => esc_html__('Get Quotation', 'service-finder'),
+									'topic' => esc_html__('Get Quotation', 'service-finder'),
 									'notice' => sprintf(esc_html__('New quotation has arrived from %s', 'service-finder'),$customer_name)
 									);
 							service_finder_add_notices($noticedata);
@@ -833,8 +828,7 @@ Description: %DESCRIPTION%
 					$noticedata = array(
 							'provider_id' => $provider_id,
 							'target_id' => $quoteid, 
-							'topic' => 'Get Quotation',
-							'title' => esc_html__('Get Quotation', 'service-finder'),
+							'topic' => esc_html__('Get Quotation', 'service-finder'),
 							'notice' => sprintf(esc_html__('New quotation has arrived from %s', 'service-finder'),$customer_name)
 							);
 					service_finder_add_notices($noticedata);
@@ -849,8 +843,7 @@ Description: %DESCRIPTION%
 							$noticedata = array(
 									'provider_id' => $relatedprovider,
 									'target_id' => $quoteid, 
-									'topic' => 'Get Quotation',
-									'title' => esc_html__('Get Quotation', 'service-finder'),
+									'topic' => esc_html__('Get Quotation', 'service-finder'),
 									'notice' => sprintf(esc_html__('New quotation has arrived from %s', 'service-finder'),$customer_name)
 									);
 							service_finder_add_notices($noticedata);

@@ -227,9 +227,6 @@
 			jQuery('.loading-area').hide();
 			filter_breaktime(user_id,weekday,data);
 			//load_end_breaktime(user_id,weekday);
-		},
-		error:function (data, textStatus) {
-			jQuery('.loading-area').hide();
 		}
 		
 		});

@@ -235,11 +235,6 @@ ob_start();
 		
 								$catimage =  service_finder_getCategoryImage($category->term_id,'service_finder-category-home');
 								
-								if($catimage == '')
-								{
-								
-								}
-								
 								?>
                                 <div class="item">
                                     <div class="sf-categoriesBox <?php echo ($catimage != "") ? '' : 'sf-cate-no-img'; ?>">

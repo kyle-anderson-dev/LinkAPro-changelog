@@ -42,6 +42,16 @@ function service_finder_base_shortcodes() {
 			return $html;
 	}
 	add_shortcode( 'service_finder_forgot_password', 'service_finder_fn_forgot_password' );
+	
+	/* confirm email function */
+	function service_finder_fn_confirm_email($atts, $content = null)
+	{
+			$html = '';
+			require SERVICE_FINDER_BOOKING_TEMPLATES_DIR . '/confirm-email.php';
+			
+			return $html;
+	}
+	add_shortcode( 'service_finder_confirm_email', 'service_finder_fn_confirm_email' );
 
 	/* Search Form */
 	function service_finder_search_form($atts, $content = null)
@@ -59,6 +69,28 @@ function service_finder_base_shortcodes() {
 			return $html;
 	}
 	add_shortcode( 'service_finder_search_form', 'service_finder_search_form' );
+	
+	/* Job Search Form */
+	function service_finder_job_search_form($atts, $content = null)
+	{
+			ob_start();
+			require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/search/templates/job-search-form.php';
+			$html = ob_get_clean();
+			
+			return $html;
+	}
+	add_shortcode( 'service_finder_job_search_form', 'service_finder_job_search_form' );
+	
+	/* Job Search QA Form */
+	function service_finder_job_qa_form($atts, $content = null)
+	{
+			ob_start();
+			require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/search/templates/job-qa-form.php';
+			$html = ob_get_clean();
+			
+			return $html;
+	}
+	add_shortcode( 'service_finder_job_qa_form', 'service_finder_job_qa_form' );
 	
 	/* My Account Page */
 	function service_finder_MyAccount($atts, $content = null)
@@ -185,9 +217,8 @@ function service_finder_base_shortcodes() {
 	$defaultlat = (!empty($default['lat'])) ? $default['lat'] : '';
 	$defaultlng = (!empty($default['lng'])) ? $default['lng'] : '';
 	}else{
-	$defaultlatlng = service_finder_get_default_latlong();
-	$defaultlat = $defaultlatlng['defaultlat'];
-	$defaultlng = $defaultlatlng['defaultlat'];
+	$defaultlat = '28.6430536';
+	$defaultlng = '77.2223442';
 	}
 	
 	$defaults = array('general_latitude'=>$defaultlat,'general_longitude'=>$defaultlng,'path'=>'','idx_status'=>'0','page_custom_zoom'=>'12','markers'=>'','generated_pins'=>'0');
@@ -296,9 +327,7 @@ if(!empty($res)){
 	
 	$url = service_finder_get_notification_link($row->topic,$row->target_id);
 	
-	$noticetitle = (!empty($row->title)) ? $row->title : $row->topic;
-	
-	$html .= '<li class="'.$class.'"><a href="'.esc_url($url).'">'.$noticetitle.': '.$row->notice.'</a></li>';
+	$html .= '<li class="'.$class.'"><a href="'.esc_url($url).'">'.$row->topic.': '.$row->notice.'</a></li>';
 	}
 	$html .= '</ul>';
 }
@@ -351,9 +380,7 @@ if(!empty($res)){
 	
 	$url = service_finder_get_notification_link($row->topic,$row->target_id);
 	
-	$noticetitle = (!empty($row->title)) ? $row->title : $row->topic;
-	
-	$html .= '<li class="'.$class.'"><a href="'.esc_url($url).'">'.$noticetitle.': '.$row->notice.'</a></li>';
+	$html .= '<li class="'.$class.'"><a href="'.esc_url($url).'">'.$row->topic.': '.$row->notice.'</a></li>';
 	}
 	$html .= '</ul>';
 }
@@ -373,24 +400,23 @@ function service_finder_notification_notopbar( ) {
 global $wpdb, $service_finder_Tables, $current_user;
 
 if(is_user_logged_in()){
-$html  = '';
+$html  = '<div class="extra-cell">';
 if(service_finder_getUserRole($current_user->ID) == 'Provider'){
 $res = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->notifications.' WHERE `provider_id` = %d AND `read` = "no" ORDER BY id DESC',$current_user->ID));
 $count = count($res);
-$html .= '<div class="extra-cell"><a href="javascript:;" data-delay="1000" data-hover="dropdown" data-toggle="dropdown" data-usertype="Provider" data-userid="'.$current_user->ID.'" class="dropdown-toggle btn btn-border btn-sm" aria-expanded="false"><i class="fa fa-bell"></i> <span>'.esc_attr($count).'</span></a></div>';
+$html .= '<a href="javascript:;" data-delay="1000" data-hover="dropdown" data-toggle="dropdown" data-usertype="Provider" data-userid="'.$current_user->ID.'" class="dropdown-toggle btn btn-border btn-sm" aria-expanded="false"><i class="fa fa-bell"></i> <span>'.esc_attr($count).'</span></a>';
 if($count == 0){
 $res = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->notifications.' WHERE `provider_id` = %d ORDER BY id DESC LIMIT 5',$current_user->ID));
 }
 }elseif(service_finder_getUserRole($current_user->ID) == 'Customer'){
 $res = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->notifications.' WHERE `customer_id` = %d AND `read` = "no" ORDER BY id DESC',$current_user->ID));
 $count = count($res);
-$html .= '<div class="extra-cell"><a href="javascript:;" data-delay="1000" data-hover="dropdown" data-toggle="dropdown" data-usertype="Customer" data-userid="'.$current_user->ID.'" class="dropdown-toggle btn btn-border btn-sm" aria-expanded="false"><i class="fa fa-bell"></i> <span>'.esc_attr($count).'</span></a></div>';
+$html .= '<a href="javascript:;" data-delay="1000" data-hover="dropdown" data-toggle="dropdown" data-usertype="Customer" data-userid="'.$current_user->ID.'" class="dropdown-toggle btn btn-border btn-sm" aria-expanded="false"><i class="fa fa-bell"></i> <span>'.esc_attr($count).'</span></a>';
 if($count == 0){
 $res = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->notifications.' WHERE `customer_id` = %d ORDER BY id DESC LIMIT 5',$current_user->ID));
 }
 }
 if(!empty($res)){
-	$html .= '<div class="extra-cell">';
 	$html .= '<ul class="dropdown-menu arrow-up sf-notifications">';
 	foreach($res as $row){
 	if($row->read == 'yes'){
@@ -400,13 +426,11 @@ if(!empty($res)){
 	}
 	$url = service_finder_get_notification_link($row->topic,$row->target_id);
 	
-	$noticetitle = (!empty($row->title)) ? $row->title : $row->topic;
-	
-	$html .= '<li class="'.$class.'"><a href="'.esc_url($url).'">'.$noticetitle.': '.$row->notice.'</a></li>';
+	$html .= '<li class="'.$class.'"><a href="'.esc_url($url).'">'.$row->topic.': '.$row->notice.'</a></li>';
 	}
 	$html .= '</ul>';
-	$html .= '</div>';
 }
+$html .= '</div>';
 }else{
 $html = '';
 }
@@ -779,4 +803,45 @@ $coverimageimagewidth = 1200;
 
 <?php
 return ob_get_clean();
+}
+
+/*Notification Bar*/
+if ( !function_exists( 'service_finder_fn_myaccount_credit_amount' ) ){
+function service_finder_fn_myaccount_credit_amount( ) {
+global $wpdb, $service_finder_Tables, $current_user;
+$html = '';
+if(is_user_logged_in()){
+if(service_finder_getUserRole($current_user->ID) == 'Provider'){
+$html .= '<li class="header-widget">';
+$currentamount = service_finder_get_wallet_amount($current_user->ID);
+$html .= service_finder_money_format($currentamount); 
+$html .= '</li>';
+
+}
+}
+
+return $html;
+}
+add_shortcode( 'service_finder_myaccount_credit_amount', 'service_finder_fn_myaccount_credit_amount' );
+} 
+
+/*Notification Bar*/
+if ( !function_exists( 'service_finder_fn_credit_amount' ) ){
+function service_finder_fn_credit_amount( ) {
+global $wpdb, $service_finder_Tables, $current_user;
+$html = '';
+if(is_user_logged_in()){
+if(service_finder_getUserRole($current_user->ID) == 'Provider'){
+$html  .= '<ul class="wallet-topbx list-inline">';
+$html .= '<li class="header-widget">';
+$currentamount = service_finder_get_wallet_amount($current_user->ID);
+$html .= service_finder_money_format($currentamount); 
+$html .= '</li>';
+$html  .= '</ul>';
+}
+}
+
+return $html;
+}
+add_shortcode( 'service_finder_credit_amount', 'service_finder_fn_credit_amount' );
 }

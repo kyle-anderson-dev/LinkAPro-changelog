@@ -108,24 +108,54 @@ class SERVICE_FINDER_Availability{
 
 
 
-			$currentpageurl = service_finder_get_url_by_shortcode('[service_finder_my_account]');
-			if(service_finder_getUserRole($currUser->ID) == 'administrator'){
-			$currentpageurl = add_query_arg( array('manageaccountby' => 'admin','manageproviderid' => $user_id,'tabname' => 'availability'), $currentpageurl );
+			if ( ! $timeslotid ) {
+
+				$adminemail = get_option( 'admin_email' );
+
+				$allowedhtml = array(
+
+					'a' => array(
+
+						'href' => array(),
+
+						'title' => array()
+
+					),
+
+				);
+
+				$error = array(
+
+						'status' => 'error',
+
+						'err_message' => sprintf( wp_kses(esc_html__('Couldn&#8217;t add timeslot... please contact the <a href="mailto:%s">Administrator</a> !', 'service-finder'),$allowedhtml), $adminemail )
+
+						);
+
+				echo json_encode($error);
+
 			}else{
-			$currentpageurl = add_query_arg( array('tabname' => 'availability'), $currentpageurl );
+			
+				$currentpageurl = service_finder_get_url_by_shortcode('[service_finder_my_account]');
+				if(service_finder_getUserRole($currUser->ID) == 'administrator'){
+				$currentpageurl = add_query_arg( array('manageaccountby' => 'admin','manageproviderid' => $user_id,'tabname' => 'availability'), $currentpageurl );
+				}else{
+				$currentpageurl = add_query_arg( array('tabname' => 'availability'), $currentpageurl );
+				}
+
+				$success = array(
+
+						'status' => 'success',
+						
+						'redirect_url' => $currentpageurl,
+
+						'suc_message' => esc_html__('Time slots added successfully.', 'service-finder'),
+
+						);
+
+				echo json_encode($success);
+
 			}
-
-			$success = array(
-
-					'status' => 'success',
-					
-					'redirect_url' => $currentpageurl,
-
-					'suc_message' => esc_html__('Time slots added successfully.', 'service-finder'),
-
-					);
-
-			echo json_encode($success);
 
 		
 

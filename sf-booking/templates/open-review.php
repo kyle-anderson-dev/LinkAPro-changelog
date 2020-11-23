@@ -63,16 +63,13 @@ if ( comments_open() || get_comments_number() ) {
 		}
 	}
 	?>
-      	<?php
+      	<div class="sf-provider-rating-box">
+		  <?php
           $totalreview = get_comments_number( get_the_id() );
-		  if($totalreview > 0)
-		  {
-		  echo '<div class="sf-provider-rating-box">';
           service_finder_review_box($author,$totalreview);
-		  echo '</div>';
-		  }
           ?>
-          <!-- comment list END -->
+          </div>
+		<!-- comment list END -->
 		<?php comments_template(); ?>
 		<!-- comment list END -->
 	</div>

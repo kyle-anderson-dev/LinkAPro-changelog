@@ -77,8 +77,7 @@ $string_array = array(
 	'select_payment' => esc_html__( 'Please select payment method', 'service-finder' ),
 	'set_key' => esc_html__( 'Please set secret and publish key for stripe', 'service-finder' ),
 	'pub_key' => esc_html__( 'You did not set a valid publishable key', 'service-finder' ),
-	'change_complete_status' => esc_html__( 'Are you sure you want to change the status to complete?', 'service-finder' ),
-	'change_incomplete_status' => esc_html__( 'Are you sure you want to change the status to incomplete?', 'service-finder' ),
+	'change_complete_status' => esc_html__( 'Are you sure you want to change the status to completed?', 'service-finder' ),
 	'member' => esc_html__( 'Member name is required', 'service-finder' ),
 	'anyone' => esc_html__( 'Any One', 'service-finder' ),
 	'assign_member' => esc_html__( 'Assign Member', 'service-finder' ),
@@ -117,7 +116,7 @@ $string_array = array(
 	'timeslot' => esc_html__( 'Please select timeslot', 'service-finder' ),
 	'member_select' => esc_html__( 'Please select member', 'service-finder' ),
 	'my_fav' => esc_html__( 'My Favorite', 'service-finder' ),
-	'booking_suc' => esc_html__( 'Congratulations! Your booking has been made successfully', 'service-finder' ),
+	'booking_suc' => esc_html__( 'Congratuations! Your booking made successfully.', 'service-finder' ),
 	'postcode_not_avl' => esc_html__( 'Postal Code is not available', 'service-finder' ),
 	'submit_now' => esc_html__( 'Submit Now', 'service-finder' ),
 	'next_text' => esc_html__( 'Next', 'service-finder' ),
@@ -148,9 +147,9 @@ $string_array = array(
 	'disbalebusiness' => esc_html__( 'Disable Claim Business', 'service-finder' ),
 	'applied' => esc_html__( 'Applied', 'service-finder' ),
 	'group_req' => esc_html__( 'Please insert group name', 'service-finder' ),
-	'video_req' => esc_html__( 'Please insert video url', 'service-finder' ),
-	'google_client_id_req' => esc_html__( 'Please insert Google Client ID', 'service-finder' ),
-	'google_client_secret_req' => esc_html__( 'Please insert Google Client Secret', 'service-finder' ),
+	'video_req' => esc_html__( 'Please inset video url', 'service-finder' ),
+	'google_client_id_req' => esc_html__( 'Please inset Google Client ID', 'service-finder' ),
+	'google_client_secret_req' => esc_html__( 'Please inset Google Client Secret', 'service-finder' ),
 	'perpersion' => esc_html__( 'Item', 'service-finder' ),
 	'perhour' => esc_html__( 'Hour', 'service-finder' ),
 	'perpersion_short' => esc_html__( 'Item', 'service-finder' ),
@@ -183,8 +182,7 @@ $string_array = array(
 	'complete_booking_and_pay' => esc_html__( 'If you press ok then funds will be released by admin to provider.', 'service-finder' ),
 	'file_message' => esc_html__( 'Please choose a file', 'service-finder' ),
 	'csv' => esc_html__( 'File must be a CSV', 'service-finder' ),
-	'import_success' => esc_html__( 'Providers Imported Successfully', 'service-finder' ),
-	'import_categories_success' => esc_html__( 'Categories Imported Successfully', 'service-finder' ),
+	'import_success' => esc_html__( 'Providers Import Successfully', 'service-finder' ),
 	'days' => esc_html__( 'Days', 'service-finder' ),
 	'hours' => esc_html__( 'Hours', 'service-finder' ),
 	'minutes' => esc_html__( 'Minutes', 'service-finder' ),
@@ -238,7 +236,6 @@ $string_array = array(
 	'invitation_sent' => esc_html__( 'Invitation Sent', 'service-finder' ),
 );
 
-wp_localize_script( 'bootstrap-select', 'param', $string_array );
 wp_localize_script( 'service_finder-js-form-validation', 'param', $string_array );
 wp_localize_script( 'service_finder-js-registration', 'param', $string_array );
 wp_localize_script( 'service_finder-js-form-submit', 'param', $string_array );

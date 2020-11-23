@@ -336,28 +336,24 @@ if(is_user_logged_in()){
               <h2 class="sf-company-name"><?php echo service_finder_getCompanyName($providerInfo->wp_user_id) ?></h2>
               <span class="tagline"><?php echo esc_html($providerInfo->tagline); ?></span>
               <div class="sf-provider-cat sf-p-c-v2">
-            <strong><?php esc_html_e('Categories', 'service-finder'); ?> : </strong>
+            <strong><?php esc_html_e('Categories', 'service-finder'); ?>: </strong>
             <?php
-			$primarycatid = get_user_meta($providerInfo->wp_user_id,'primary_category',true);
-			$categories = $providerInfo->category_id;
-			if($categories != '')
-			{
-			$cats = explode(',',$categories);
-			$displaycat = array();
-			if(!empty($cats)){
-				foreach($cats as $catid){
-					if($primarycatid == $catid){
-					$displaycat[] = '<a class="sf-pre-cat" href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>';	
-					}else{
-					$displaycat[] = '<a href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>';	
-					}
-					
-				}
-			} 
-			echo implode(', ',$displaycat);		
-			}
+					$primarycatid = get_user_meta($providerInfo->wp_user_id,'primary_category',true);
+					$categories = $providerInfo->category_id;
+					$cats = explode(',',$categories);
+					$displaycat = '';
+					if(!empty($cats)){
+						foreach($cats as $catid){
+							if($primarycatid == $catid){
+							$displaycat .= '<strong><a href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a></strong>,';	
+							}else{
+							$displaycat .= '<a href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>,';	
+							}
+							
+						}
+					} 
+				echo rtrim($displaycat,',');		
 			?>
-			
         </div>
               <?php 
 			  if($providerInfo->bio != ""){
@@ -667,19 +663,9 @@ if(is_user_logged_in()){
                 <?php
 				$fileicon = new SERVICE_FINDER_ImageSpace();
 				foreach($results as $row){
-					if($row->attachment_id != '' && $row->attachment_id > 0)
-					{
 					$arr  = $fileicon->get_icon_for_attachment($row->attachment_id);
 				
 					$src = (!empty($arr['src'])) ? $arr['src'] : '';
-					
-					if($src == ''){
-					$arr  = service_finder_get_icon_for_attachment($row->attachment_id);
-					$src  = $arr['src'];
-					}
-					}else{
-					$src  = '';
-					}
 					?>
 						<li>
                             <?php if(!empty($src) && $row->attachment_id > 0){ ?>
@@ -1521,7 +1507,6 @@ $availablepaymentmethod .= service_finder_add_wallet_option('invoicepayment_mode
 	  }
 	  ?>
         <?php } ?>
-      <?php if($service_finder_options['review-system'] || service_finder_get_data($service_finder_options,'question-answer-section')){ ?>
       <h4>
           <?php echo (!empty($service_finder_options['label-review-qa'])) ? esc_html($service_finder_options['label-review-qa']) : esc_html__('Review & Q&A', 'service-finder'); ?>
         </h4>
@@ -1572,9 +1557,7 @@ $availablepaymentmethod .= service_finder_add_wallet_option('invoicepayment_mode
             </div>
           </div>
         </div>  
-        <?php } ?>
       </div>
-      
       <!-- Left part END -->
       <!-- Right part start -->
       <div class="col-md-4">
@@ -1840,24 +1823,15 @@ $bgopacity = (!empty($service_finder_options['inner-banner-opacity'])) ? $servic
           <div class="sf-provider-cat">
             <strong><?php esc_html_e('Categories', 'service-finder'); ?>: </strong>
             <?php
-			$primarycatid = get_user_meta($providerInfo->wp_user_id,'primary_category',true);
-			$categories = $providerInfo->category_id;
-			if($categories != '')
-			{
-			$cats = explode(',',$categories);
-			$displaycat = array();
-			if(!empty($cats)){
-				foreach($cats as $catid){
-					if($primarycatid == $catid){
-					$displaycat[] = '<a class="sf-pre-cat" href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>';	
-					}else{
-					$displaycat[] = '<a href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>';	
-					}
-					
-				}
-			} 
-			echo implode(', ',$displaycat);		
-			}
+					$categories = $providerInfo->category_id;
+					$cats = explode(',',$categories);
+					$displaycat = '';
+					if(!empty($cats)){
+						foreach($cats as $catid){
+							$displaycat .= '<a href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>,';	
+						}
+					} 
+				echo rtrim($displaycat,',');		
 			?>
         </div>
           <div class="shared-bx">
@@ -2208,22 +2182,22 @@ $fadeclass = ($totaltabs == 1) ? 'in' : '';
             </a></li>
           <?php } ?>  
           <?php if(service_finder_certificate_exist($author)){ ?>
-          <li class="<?php echo (service_finder_experience_exist($author) == false) ? 'active' : '';  ?>"><a data-toggle="tab" href="#profilebox2">
+          <li class="<?php echo sanitize_html_class($activeclass);  ?>"><a data-toggle="tab" href="#profilebox2">
             <?php esc_html_e('Certificates & Awards', 'service-finder'); ?>
             </a></li>
           <?php } ?>    
           <?php if(service_finder_qualification_exist($author)){ ?>  
-          <li class="<?php echo (service_finder_experience_exist($author) == false && service_finder_certificate_exist($author) == false) ? 'active' : '';  ?>"><a data-toggle="tab" href="#profilebox3">
+          <li class="<?php echo sanitize_html_class($activeclass);  ?>"><a data-toggle="tab" href="#profilebox3">
             <?php esc_html_e('Qualification', 'service-finder'); ?>
             </a></li>
           <?php } ?>    
           <?php if(service_finder_amenities_exist($author)){ ?>  
-          <li class="<?php echo (service_finder_experience_exist($author) == false && service_finder_certificate_exist($author) == false && service_finder_qualification_exist($author) == false) ? 'active' : '';  ?>"><a data-toggle="tab" href="#profilebox4">
+          <li class="<?php echo sanitize_html_class($activeclass);  ?>"><a data-toggle="tab" href="#profilebox4">
             <?php esc_html_e('Amenities and Features', 'service-finder'); ?>
             </a></li>
           <?php } ?>    
           <?php if(service_finder_languages_exist($author)){ ?>  
-          <li class="<?php echo (service_finder_experience_exist($author) == false && service_finder_certificate_exist($author) == false && service_finder_qualification_exist($author) == false && service_finder_languages_exist($author) == false) ? 'active' : '';  ?>"><a data-toggle="tab" href="#profilebox5">
+          <li class="<?php echo sanitize_html_class($activeclass);  ?>"><a data-toggle="tab" href="#profilebox5">
             <?php esc_html_e('Languages', 'service-finder'); ?>
             </a></li> 
           <?php } ?>         
@@ -2269,23 +2243,14 @@ $fadeclass = ($totaltabs == 1) ? 'in' : '';
           </div>
           <?php } ?>
           <?php if(service_finder_certificate_exist($author)){ ?>
-          <div id="profilebox2" class="tab-pane fade <?php echo (service_finder_experience_exist($author) == false) ? 'in active' : '';  ?>">
+          <div id="profilebox2" class="tab-pane fade <?php echo sanitize_html_class($fadeclass).' '.sanitize_html_class($activeclass); ?>">
             <ul class="sf-certificates-list">
 			<?php
 			$results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->certificates. " WHERE `provider_id` = %d ORDER BY ID ASC",$author));
 			if(!empty($results)){
             foreach($results as $row){
-			if($row->attachment_id != '' && $row->attachment_id > 0)
-			{
 			$src  = wp_get_attachment_image_src( $row->attachment_id, 'thumbnail' );
 			$src = (!empty($src[0])) ? $src[0] : '';
-			if($src == ''){
-			$arr  = service_finder_get_icon_for_attachment($row->attachment_id);
-			$src  = $arr['src'];
-			}
-			}else{
-			$src  = '';
-			}
 			?>
 				<li>
 					<?php if(!empty($src) && $row->attachment_id > 0){ ?>
@@ -2309,7 +2274,7 @@ $fadeclass = ($totaltabs == 1) ? 'in' : '';
           </div>
           <?php } ?>
           <?php if(service_finder_qualification_exist($author)){ ?>
-          <div id="profilebox3" class="tab-pane fade <?php echo (service_finder_experience_exist($author) == false && service_finder_certificate_exist($author) == false) ? 'in active' : '';  ?>">
+          <div id="profilebox3" class="tab-pane fade <?php echo sanitize_html_class($fadeclass).' '.sanitize_html_class($activeclass); ?>">
             <div class="sf-qualification-acord" id="qualification-acord">
             <?php
 			$results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$service_finder_Tables->qualification. " WHERE `provider_id` = %d ORDER BY ID ASC",$author));
@@ -2344,7 +2309,7 @@ $fadeclass = ($totaltabs == 1) ? 'in' : '';
           </div>
           <?php } ?>
           <?php if(service_finder_amenities_exist($author)){ ?>
-          <div id="profilebox4" class="tab-pane fade <?php echo (service_finder_experience_exist($author) == false && service_finder_certificate_exist($author) == false && service_finder_qualification_exist($author) == false) ? 'in active' : '';  ?>">
+          <div id="profilebox4" class="tab-pane fade <?php echo sanitize_html_class($fadeclass).' '.sanitize_html_class($activeclass); ?>">
             <ul class="sf-features-list clearfix">
 			<?php
 			$amenities = service_finder_get_amenities($author);
@@ -2368,7 +2333,7 @@ $fadeclass = ($totaltabs == 1) ? 'in' : '';
           </div>
           <?php } ?>
           <?php if(service_finder_languages_exist($author)){ ?>
-          <div id="profilebox5" class="tab-pane fade <?php echo (service_finder_experience_exist($author) == false && service_finder_certificate_exist($author) == false && service_finder_qualification_exist($author) == false && service_finder_languages_exist($author) == false) ? 'in active' : '';  ?>">
+          <div id="profilebox5" class="tab-pane fade <?php echo sanitize_html_class($fadeclass).' '.sanitize_html_class($activeclass); ?>">
             <ul class="sf-languages-list clearfix">
 			<?php
 			$languages = service_finder_get_languages($author);
@@ -2497,7 +2462,7 @@ $fadeclass = ($totaltabs == 1) ? 'in' : '';
   <!-- our services row -->
   <?php
   $attachmentIDs = service_finder_getDocuments($providerInfo->wp_user_id);
-  $services = service_finder_getAllServices($author);
+  $services = service_finder_getServices($author);
   if((!empty($services) && service_finder_get_data($service_finder_options,'my-services-menu')) || !empty($attachmentIDs)){
   ?>
   <section id="sf-provider-services" class="section-full bg-grey services-row pro-bg-in">
@@ -3179,7 +3144,6 @@ $availablepaymentmethod .= service_finder_add_wallet_option('invoicepayment_mode
       
   <?php } ?>
   
-  <?php if($service_finder_options['review-system'] || service_finder_get_data($service_finder_options,'question-answer-section') || service_finder_article_exist($author)){ ?>
   <section id="sf-provider-extended" class="section-full bg-white services-row pro-bg-in review-section">
     <div class="container">
       <div class="tabbable">
@@ -3228,7 +3192,6 @@ $availablepaymentmethod .= service_finder_add_wallet_option('invoicepayment_mode
       </div>
     </div>
   </section>
-  <?php } ?>
   <!-- Request a Quotes -->
   <?php if($service_finder_options['request-quote'] && service_finder_request_quote_for_loggedin_user()){ ?>
   <?php 

@@ -203,14 +203,14 @@ class SF_Woopayments
 						'quoteid' => (!empty($postdata['quoteid'])) ? sanitize_text_field($postdata['quoteid']) : '',
 						'provider' => (!empty($postdata['provider'])) ? sanitize_text_field($postdata['provider']) : '',
 						'memberid' => (!empty($postdata['memberid'])) ? sanitize_text_field($postdata['memberid']) : '',
-						'servicearr' => (!empty($postdata['servicearr'])) ? $postdata['servicearr'] : '',
+						'servicearr' => (!empty($postdata['servicearr'])) ? sanitize_text_field($postdata['servicearr']) : '',
 						'totalcost' => (!empty($postdata['totalcost'])) ? sanitize_text_field($postdata['totalcost']) : 0,
 						'totaldiscount' => (!empty($postdata['totaldiscount'])) ? sanitize_text_field($postdata['totaldiscount']) : 0,
 						'couponcode' => (!empty($postdata['couponcode'])) ? sanitize_text_field($postdata['couponcode']) : '',
 						'adminfee' => $adminfee,
 						'zipcode' => (!empty($postdata['zipcode'])) ? sanitize_text_field($postdata['zipcode']) : '',
 						'region' => (!empty($postdata['region'])) ? sanitize_text_field($postdata['region']) : '',
-						'shortdesc' => (!empty($postdata['shortdesc'])) ? sanitize_text_field($postdata['shortdesc']) : '',
+						'description' => (!empty($postdata['shortdesc'])) ? sanitize_text_field($postdata['shortdesc']) : '',
 						'wp_user_id' => $wp_user_id,
 						'name' => $fullname, 
 						'firstname' => (!empty($postdata['firstname'])) ? sanitize_text_field($postdata['firstname']) : '',
@@ -225,11 +225,9 @@ class SF_Woopayments
 						'country' => (!empty($postdata['country'])) ? sanitize_text_field($postdata['country']) : '',
 						'zipcode' => (!empty($postdata['zipcode'])) ? sanitize_text_field($postdata['zipcode']) : '',
 						'region' => (!empty($postdata['region'])) ? sanitize_text_field($postdata['region']) : '',
-						'shortdesc' => (!empty($postdata['shortdesc'])) ? sanitize_text_field($postdata['shortdesc']) : '',
+						'description' => (!empty($postdata['shortdesc'])) ? sanitize_text_field($postdata['shortdesc']) : '',
 						'userfname' => get_user_meta($wp_user_id,'first_name',true ),
-						'userlname' => get_user_meta($wp_user_id,'last_name',true ),
-						'service_perform_at' => (!empty($postdata['service_perform_at'])) ? sanitize_text_field($postdata['service_perform_at']) : '',
-						'location' => (!empty($postdata['location'])) ? sanitize_text_field($postdata['location']) : ''
+						'userlname' => get_user_meta($wp_user_id,'last_name',true )
 					);			
 		
 		WC()->cart->empty_cart(); 
@@ -827,8 +825,7 @@ class SF_Woopayments
 					$noticedata = array(
 							'provider_id' => $provider_id,
 							'target_id' => $invoiceid, 
-							'topic' => 'Invoice Cancelled',
-							'title' => esc_html__('Invoice Cancelled', 'service-finder'),
+							'topic' => esc_html__('Invoice Cancelled', 'service-finder'),
 							'notice' => sprintf( esc_html__('Payment failed via wire transfer.', 'service-finder'), $customer_email ),
 							);
 					service_finder_add_notices($noticedata);
@@ -1035,8 +1032,7 @@ class SF_Woopayments
 			$noticedata = array(
 					'provider_id' => $userid,
 					'target_id' => $row->id, 
-					'topic' => 'Job Post Connect',
-					'title' => esc_html__('Job Post Connect', 'service-finder'),
+					'topic' => esc_html__('Job Post Connect', 'service-finder'),
 					'notice' => esc_html__('Request for job post connect plan upgrade cancelled.', 'service-finder')
 					);
 			service_finder_add_notices($noticedata);
@@ -1091,8 +1087,7 @@ class SF_Woopayments
 			$noticedata = array(
 					'customer_id' => $userid,
 					'target_id' => $row->id, 
-					'topic' => 'Job Post Connect',
-					'title' => esc_html__('Job Post Connect', 'service-finder'),
+					'topic' => esc_html__('Job Post Connect', 'service-finder'),
 					'notice' => esc_html__('Request for job post connect plan upgrade cancelled.', 'service-finder')
 					);
 			service_finder_add_notices($noticedata);
@@ -1118,7 +1113,7 @@ class SF_Woopayments
 		}
 		
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
-			if($order_status == 'on-hold'){
+			if($order_status == 'on-hold' || $order_status == 'processing'){
 				$data = array(
 							'account_blocked' => 'yes',
 						);
@@ -1129,7 +1124,7 @@ class SF_Woopayments
 				$wpdb->update($service_finder_Tables->providers,wp_unslash($data),$where);
 				
 				
-			}elseif($order_status == 'completed' || $order_status == 'processing'){
+			}elseif($order_status == 'completed'){
 				$data = array(
 							'account_blocked' => '',
 						);
@@ -1153,7 +1148,7 @@ class SF_Woopayments
 			}
 		}else{
 		
-			if(($order_status == 'completed' || $order_status == 'processing') && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
+			if($order_status == 'completed' && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
 				
 				$data = array(
 							'account_blocked' => '',
@@ -1184,12 +1179,7 @@ class SF_Woopayments
 		update_user_meta( $userId, 'provider_activation_time', array( 'role' => $wooextradata['role'], 'time' => time()) );
 		
 		update_user_meta($userId, 'order_id', $order_id);
-		if($wooextradata['expire_limit'] > 0){
-			update_user_meta($userId, 'expire_limit', $wooextradata['expire_limit']);
-		}else{
-			delete_user_meta($userId, 'expire_limit');
-		}
-		
+		update_user_meta($userId, 'expire_limit', $wooextradata['expire_limit']);
 		update_user_meta( $userId, 'provider_role', $wooextradata['role'] );
 		update_user_meta($userId, 'profile_amt',$wooextradata['rolePrice']);
 		update_user_meta( $userId, 'pay_type', 'single' );
@@ -1226,7 +1216,7 @@ class SF_Woopayments
 		$order_status = $order->get_status();
 		
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
-			if($order_status == 'on-hold'){
+			if($order_status == 'on-hold' || $order_status == 'processing'){
 			
 			$wiredupgrade = array();
 			$user = new WP_User( $userId );
@@ -1289,7 +1279,7 @@ class SF_Woopayments
 			service_finder_sendWiredUpgradeMailToProvider($userdata->user_login,$userdata->user_email,$args,$invoiceid);
 			service_finder_sendProviderWiredUpgradeEmail($args,$invoiceid);		
 			
-			}elseif($order_status == 'completed' || $order_status == 'processing'){
+			}elseif($order_status == 'completed'){
 			
 			$user = new WP_User( $userId );
 			$user->set_role('Provider');
@@ -1297,11 +1287,7 @@ class SF_Woopayments
 			update_user_meta( $userId, 'provider_activation_time', array( 'role' => $wooextradata['role'], 'time' => time()) );
 			
 			update_user_meta($userId, 'order_id', $order_id);
-			if($wooextradata['expire_limit'] > 0){
-				update_user_meta($userId, 'expire_limit', $wooextradata['expire_limit']);
-			}else{
-				delete_user_meta($userId, 'expire_limit');
-			}
+			update_user_meta($userId, 'expire_limit', $wooextradata['expire_limit']);
 			update_user_meta( $userId, 'provider_role', $wooextradata['role'] );
 			update_user_meta($userId, 'profile_amt',$wooextradata['rolePrice']);
 			update_user_meta( $userId, 'pay_type', 'single' );
@@ -1329,8 +1315,8 @@ class SF_Woopayments
 					'payment_type' => $paymode
 					);
 					
-			service_finder_sendProviderUpgradeEmail($args);
-			service_finder_sendUpgradeMailToUser($username,$useremail,$args);
+			service_finder_sendProviderEmail($args);
+			service_finder_sendRegMailToUser($username,$useremail);
 			
 			}
 			$wooextradata['processed'] = true;	
@@ -1346,7 +1332,7 @@ class SF_Woopayments
 			if(!empty($row)){
 			$requeststatus = get_user_meta($row->user_id,'upgrade_request_status',true);
 			
-			if($requeststatus == 'pending' && ($order_status == 'completed' || $order_status == 'processing') && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
+			if($requeststatus == 'pending' && $order_status == 'completed' && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
 			
 			$userId = $row->user_id;
 			$requestdata = get_user_meta($userId,'upgrade_request',true);
@@ -1359,8 +1345,6 @@ class SF_Woopayments
 			
 			if($requestdata['expire_limit'] > 0){
 				update_user_meta($userId, 'expire_limit', $requestdata['expire_limit']);
-			}else{
-				delete_user_meta($userId, 'expire_limit');
 			}
 			
 			if($requestdata['trial_package'] == 'yes'){
@@ -1407,7 +1391,7 @@ class SF_Woopayments
 		$order_status = $order->get_status();
 		
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
-			if($order_status == 'on-hold'){
+			if($order_status == 'on-hold' || $order_status == 'processing'){
 			$date = date('Y-m-d H:i:s');
 			$data = array(
 					'payment_mode' => 'woocommerce',
@@ -1420,7 +1404,7 @@ class SF_Woopayments
 					'id' => esc_attr($wooextradata['feature_id'])
 			);
 			$res = $wpdb->update($service_finder_Tables->feature,wp_unslash($data),$where);
-		}elseif($order_status == 'completed' || $order_status == 'processing'){
+		}elseif($order_status == 'completed'){
 			$date = date('Y-m-d H:i:s');
 			$data = array(
 					'payment_mode' => 'woocommerce',
@@ -1434,17 +1418,6 @@ class SF_Woopayments
 					'id' => esc_attr($wooextradata['feature_id'])
 			);
 			$res = $wpdb->update($service_finder_Tables->feature,wp_unslash($data),$where);
-			
-			$getfeature = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->feature.' WHERE `id` = %d',$wooextradata['feature_id']));
-	
-			$data = array(
-					'featured' => 1,
-					);
-			
-			$where = array(
-					'wp_user_id' => $getfeature->provider_id,
-					);
-			$wpdb->update($service_finder_Tables->providers,wp_unslash($data),$where);
 		}
 		 	$wooextradata['processed'] = true;	
 			wc_update_order_item_meta( $item_id, 'wooextradata', $wooextradata );
@@ -1455,7 +1428,7 @@ class SF_Woopayments
 			}
 		}else{
 			$existingrequest = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->feature.' WHERE `payment_mode` = "woocommerce" AND `status` = "on-hold" AND `txnid` = %d',$order_id));
-			if(!empty($existingrequest) && ($order_status == 'completed' || $order_status == 'processing') && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
+			if(!empty($existingrequest) && $order_status == 'completed' && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
 				$date = date('Y-m-d H:i:s');
 				$data = array(
 						'status' => 'Paid',
@@ -1466,17 +1439,6 @@ class SF_Woopayments
 						'id' => esc_attr($existingrequest->id)
 				);
 				$res = $wpdb->update($service_finder_Tables->feature,wp_unslash($data),$where);
-				
-				$getfeature = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->feature.' WHERE `id` = %d',$existingrequest->id));
-	
-				$data = array(
-						'featured' => 1,
-						);
-				
-				$where = array(
-						'wp_user_id' => $getfeature->provider_id,
-						);
-				$wpdb->update($service_finder_Tables->providers,wp_unslash($data),$where);
 
 				$wooextradata['completed'] = true;	
 			    wc_update_order_item_meta( $item_id, 'wooextradata', $wooextradata );
@@ -1493,7 +1455,7 @@ class SF_Woopayments
 		$order_status = $order->get_status();
 		
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
-			if($order_status == 'on-hold'){
+			if($order_status == 'on-hold' || $order_status == 'processing'){
 			
 			$args = array(
 				'user_id' => base64_decode($wooextradata['user_id']),
@@ -1514,7 +1476,7 @@ class SF_Woopayments
 			}
 			
 			
-		}elseif($order_status == 'completed' || $order_status == 'processing'){
+		}elseif($order_status == 'completed'){
 			service_finder_add_wallet_amount(base64_decode($wooextradata['user_id']),$wooextradata['amount']);
 			
 			$args = array(
@@ -1544,7 +1506,7 @@ class SF_Woopayments
 			}
 		}else{
 			
-			if(($order_status == 'completed' || $order_status == 'processing') && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
+			if($order_status == 'completed' && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
 				service_finder_add_wallet_amount(base64_decode($wooextradata['user_id']),$wooextradata['amount']);
 				
 				$args = array(
@@ -1581,7 +1543,7 @@ class SF_Woopayments
 		
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
 		
-			if($order_status == 'on-hold'){
+			if($order_status == 'on-hold' || $order_status == 'processing'){
 			$wired = array();
 			
 			$paydate = date('Y-m-d h:i:s');
@@ -1624,7 +1586,7 @@ class SF_Woopayments
 					);
 			$wpdb->insert($service_finder_Tables->transaction,wp_unslash($txndata));
 			
-		}elseif($order_status == 'completed' || $order_status == 'processing'){
+		}elseif($order_status == 'completed'){
 			$data = array(
 					'paid_limits' => $wooextradata['paidlimit'],
 					'available_limits' => $wooextradata['available_limits'],
@@ -1664,7 +1626,7 @@ class SF_Woopayments
 			if(!empty($row)){
 			$requeststatus = get_user_meta($row->provider_id,'job_connect_request_status',true);
 			
-			if($requeststatus == 'pending' && ($order_status == 'completed' || $order_status == 'processing')){
+			if($requeststatus == 'pending' && $order_status == 'completed'){
 			$userId = $row->provider_id;
 			$requestdata = get_user_meta($userId,'job_connect_request',true);
 			
@@ -1717,7 +1679,7 @@ class SF_Woopayments
 		$payment_method = $order->get_payment_method();
 		$order_status = $order->get_status();
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
-			if($order_status == 'on-hold'){
+			if($order_status == 'on-hold' || $order_status == 'processing'){
 			$wired = array();
 			
 			$paydate = date('Y-m-d h:i:s');
@@ -1760,7 +1722,7 @@ class SF_Woopayments
 					);
 			$wpdb->insert($service_finder_Tables->transaction,wp_unslash($txndata));
 			
-		}elseif($order_status == 'completed' || $order_status == 'processing'){
+		}elseif($order_status == 'completed'){
 			$data = array(
 					'paid_limits' => $wooextradata['paidlimit'],
 					'available_limits' => $wooextradata['available_limits'],
@@ -1798,7 +1760,7 @@ class SF_Woopayments
 			if(!empty($row)){
 			$requeststatus = get_user_meta($row->provider_id,'job_connect_request_status',true);
 			
-			if($requeststatus == 'pending' && ($order_status == 'completed' || $order_status == 'processing')){
+			if($requeststatus == 'pending' && $order_status == 'completed'){
 			$userId = $row->provider_id;
 			$requestdata = get_user_meta($userId,'job_connect_request',true);
 			
@@ -1884,8 +1846,7 @@ class SF_Woopayments
 			$noticedata = array(
 					'provider_id' => $userid,
 					'target_id' => $row->id, 
-					'topic' => 'Job Post Connect',
-					'title' => esc_html__('Job Post Connect', 'service-finder'),
+					'topic' => esc_html__('Job Post Connect', 'service-finder'),
 					'notice' => esc_html__('Your job post connect plan upgraded.', 'service-finder')
 					);
 			service_finder_add_notices($noticedata);
@@ -1937,8 +1898,7 @@ class SF_Woopayments
 			$noticedata = array(
 					'customer_id' => $userid,
 					'target_id' => $row->id, 
-					'topic' => 'Job Post Connect',
-					'title' => esc_html__('Job Post Connect', 'service-finder'),
+					'topic' => esc_html__('Job Post Connect', 'service-finder'),
 					'notice' => esc_html__('Your job post connect plan upgraded.', 'service-finder')
 					);
 			service_finder_add_notices($noticedata);
@@ -1957,7 +1917,7 @@ class SF_Woopayments
 		$order_status = $order->get_status();
 		
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
-			if($order_status == 'on-hold'){
+			if($order_status == 'on-hold' || $order_status == 'processing'){
 		
 			$wiredclaimed = array();
 			
@@ -2005,7 +1965,7 @@ class SF_Woopayments
 			update_user_meta($userId, 'claimed_request_status','pending');
 			update_user_meta($userId, 'claimed_order_id', $order_id);
 		
-		}elseif($order_status == 'completed' || $order_status == 'processing'){
+		}elseif($order_status == 'completed'){
 		
 		// set role
 		$user = new WP_User( $userId );
@@ -2014,11 +1974,7 @@ class SF_Woopayments
 		update_user_meta( $userId, 'provider_activation_time', array( 'role' => $wooextradata['role'], 'time' => time()) );
 		
 		update_user_meta($userId, 'order_id', $order_id);
-		if($wooextradata['expire_limit'] > 0){
-			update_user_meta($userId, 'expire_limit', $wooextradata['expire_limit']);
-		}else{
-			delete_user_meta($userId, 'expire_limit');
-		}
+		update_user_meta($userId, 'expire_limit', $wooextradata['expire_limit']);
 		update_user_meta( $userId, 'provider_role', $wooextradata['role'] );
 		update_user_meta($userId, 'profile_amt',$wooextradata['rolePrice']);
 		update_user_meta( $userId, 'pay_type', 'single' );
@@ -2074,7 +2030,7 @@ class SF_Woopayments
 			if(!empty($row)){
 			$requeststatus = get_user_meta($row->user_id,'claimed_request_status',true);
 			
-			if($requeststatus == 'pending' && ($order_status == 'completed' || $order_status == 'processing') && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
+			if($requeststatus == 'pending' && $order_status == 'completed' && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
 			$userId = $row->user_id;
 			$requestdata = get_user_meta($userId,'claimed_request',true);
 			
@@ -2083,11 +2039,7 @@ class SF_Woopayments
 			
 			update_user_meta( $userId, 'provider_activation_time', array( 'role' => $requestdata['role'], 'time' => time()) );
 			
-			if($requestdata['expire_limit'] > 0){
-				update_user_meta($userId, 'expire_limit', $requestdata['expire_limit']);
-			}else{
-				delete_user_meta($userId, 'expire_limit');
-			}
+			update_user_meta($userId, 'expire_limit', $requestdata['expire_limit']);
 			update_user_meta( $userId, 'provider_role', $requestdata['role'] );
 			update_user_meta($userId, 'profile_amt',$requestdata['rolePrice']);
 			update_user_meta( $userId, 'pay_type', 'single' );
@@ -2146,7 +2098,7 @@ class SF_Woopayments
 		$order_status = $order->get_status();
 		
 		if ( $wooextradata && ! isset ( $wooextradata['processed'] ) ) {
-		if($order_status == 'on-hold'){
+		if($order_status == 'on-hold' || $order_status == 'processing'){
 			$data = array(
 			'payment_mode' => 'woocommerce',
 			'payment_type' => $payment_method,
@@ -2160,7 +2112,7 @@ class SF_Woopayments
 			
 			$wpdb->update($service_finder_Tables->invoice,wp_unslash($data),$where);
 			
-		}elseif($order_status == 'completed' || $order_status == 'processing'){
+		}elseif($order_status == 'completed'){
 			$data = array(
 			'payment_mode' => 'woocommerce',
 			'payment_type' => $payment_method,
@@ -2179,8 +2131,7 @@ class SF_Woopayments
 				$noticedata = array(
 						'provider_id' => $wooextradata['provider'],
 						'target_id' => $wooextradata['invoiceid'], 
-						'topic' => 'Invoice Paid',
-						'title' => esc_html__('Invoice Paid', 'service-finder'),
+						'topic' => esc_html__('Invoice Paid', 'service-finder'),
 						'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $wooextradata['email'] ),
 						);
 				service_finder_add_notices($noticedata);
@@ -2202,7 +2153,7 @@ class SF_Woopayments
 		
 		$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->invoice.' WHERE `status` = "on-hold" AND `txnid` = %d',$order_id));
 		if(!empty($row)){
-		if(($order_status == 'completed' || $order_status == 'processing') && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
+		if($order_status == 'completed' && $wooextradata && ! isset ( $wooextradata['completed'] ) && ! isset ( $wooextradata['cancelled'] )){
 			$invoiceid = $row->id;
 			$provider_id = $row->provider_id;
 			$customer_email = $row->customer_email;
@@ -2225,8 +2176,7 @@ class SF_Woopayments
 				$noticedata = array(
 						'provider_id' => $provider_id,
 						'target_id' => $invoiceid, 
-						'topic' => 'Invoice Paid',
-						'title' => esc_html__('Invoice Paid', 'service-finder'),
+						'topic' => esc_html__('Invoice Paid', 'service-finder'),
 						'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $customer_email ),
 						);
 				service_finder_add_notices($noticedata);
@@ -2297,10 +2247,8 @@ class SF_Woopayments
 					if(!empty($serviceitems))
 					{
 						foreach($serviceitems as $serviceitem){
-						
-							$singleserviceitems = explode('-',$serviceitem);
-							if(!empty($singleserviceitems[0])){
-							$serviceid = $singleserviceitems[0];
+							if(!empty($serviceitem[0])){
+							$serviceid = $serviceitem[0];
 							$servicenames[] = service_finder_getServiceName($serviceid);
 							}
 						}
@@ -2523,7 +2471,7 @@ class SF_Woopayments
 							);
 							break;	
 					case 'wallet':
-							$userInfo = service_finder_getUserInfo(base64_decode($wc_item['wooextradata']['user_id']));
+							$userInfo = service_finder_getUserInfo($wc_item['wooextradata']['user_id']);
 							$this->checkout_info = array(
 								'billing_first_name' => $userInfo['fname'],
 								'billing_last_name'  => $userInfo['lname'],
@@ -2584,38 +2532,22 @@ class SF_Woopayments
 					$pageid = (!empty($service_finder_options['woo-invoice-redirect'])) ? $service_finder_options['woo-invoice-redirect'] : '';
 					break;
 			case 'wallet':
+					$accounturl = service_finder_get_url_by_shortcode('[service_finder_my_account]');
+					
 					if(service_finder_getUserRole($current_user->ID) == 'Customer'){
-					$pageid = (!empty($service_finder_options['woo-customer-wallet-redirect'])) ? $service_finder_options['woo-customer-wallet-redirect'] : '';
-					
-					if($pageid == '')
-					{
-					$accounturl = service_finder_get_url_by_shortcode('[service_finder_my_account]');
-					
-					$url = add_query_arg( array('action' => 'wallet','woocheckout' => 'success'), $accounturl );
-					wp_redirect( esc_url($url) );
-					exit;
-					}
-					
+					$url = add_query_arg( array('action' => 'wallet'), $accounturl );
 					}else{
-					$pageid = (!empty($service_finder_options['woo-provider-wallet-redirect'])) ? $service_finder_options['woo-provider-wallet-redirect'] : '';
-					
-					/*if($pageid == '')
-					{
-					$accounturl = service_finder_get_url_by_shortcode('[service_finder_my_account]');
-					
-					$url = add_query_arg( array('woocheckout' => 'success'), $accounturl );
+					$url = $accounturl;
+					}
 					wp_redirect( esc_url($url) );
 					exit;
-					}*/
-					}
 					break;		
 			default:
 					$pageid = 'no';
 			}
 			
 			if($pageid != 'no'){
-			$url = add_query_arg( array('woocheckout' => 'success'), get_permalink($pageid) );
-			wp_redirect($url);
+			wp_redirect( get_permalink($pageid) );
 			exit;
 			}
 			

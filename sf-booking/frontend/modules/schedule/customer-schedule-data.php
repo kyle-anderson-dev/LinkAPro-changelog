@@ -95,7 +95,7 @@ if(!empty($bookedservices)){
 		
 		$bookingdata .= '<p>'.$showtime.'</p>';
 		
-		if($bookedservice->status == 'completed'){
+		if($bookedservice->status == 'complete'){
 		$status = service_finder_translate_static_status_string($bookedservice->status);
 		$class = 'sf-complete';
 		}elseif($bookedservice->status == 'pending'){

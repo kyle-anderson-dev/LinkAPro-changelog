@@ -157,8 +157,7 @@ class SERVICE_FINDER_sedateQuotations extends SERVICE_FINDER_sedateManager{
 		$noticedata = array(
 				'provider_id' => $provider_id,
 				'target_id' => $qid, 
-				'topic' => 'Get Quotation',
-				'title' => esc_html__('Get Quotation', 'service-finder'),
+				'topic' => esc_html__('Get Quotation', 'service-finder'),
 				'notice' => sprintf(esc_html__('New quotation has arrived from %s', 'service-finder'),$customerinfo->name)
 				);
 		service_finder_add_notices($noticedata);
@@ -173,8 +172,7 @@ class SERVICE_FINDER_sedateQuotations extends SERVICE_FINDER_sedateManager{
 				$noticedata = array(
 						'provider_id' => $relatedprovider,
 						'target_id' => $quoteid, 
-						'topic' => 'Get Quotation',
-						'title' => esc_html__('Get Quotation', 'service-finder'),
+						'topic' => esc_html__('Get Quotation', 'service-finder'),
 						'notice' => sprintf(esc_html__('New quotation has arrived from %s', 'service-finder'),$customerinfo->name)
 						);
 				service_finder_add_notices($noticedata);

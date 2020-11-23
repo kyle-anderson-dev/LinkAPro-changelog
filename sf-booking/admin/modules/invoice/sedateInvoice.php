@@ -97,7 +97,7 @@ class SERVICE_FINDER_sedateInvoice extends SERVICE_FINDER_sedateManager{
             
 			$stripeconnecttype = (!empty($service_finder_options['stripe-connect-type'])) ? esc_html($service_finder_options['stripe-connect-type']) : '';
 			
-			if(get_user_meta($providerid,'stripe_connect_custom_account_id',true) != ''){
+			if($stripeconnecttype == 'custom'){
 			
 			$stripe_connect_id = get_user_meta($providerid,'stripe_connect_custom_account_id',true);
 			
@@ -157,8 +157,7 @@ class SERVICE_FINDER_sedateInvoice extends SERVICE_FINDER_sedateManager{
 				$noticedata = array(
 						'provider_id' => $row->provider_id,
 						'target_id' => $row->id, 
-						'topic' => 'Booking Payment',
-						'title' => esc_html__('Booking Payment', 'service-finder'),
+						'topic' => esc_html__('Booking Payment', 'service-finder'),
 						'notice' => sprintf(esc_html__('Site administrator release payout. It will take some time to reflect in your account. Invoice Ref id is #%d', 'service-finder'),$invoiceid)
 						);
 				service_finder_add_notices($noticedata);
@@ -243,8 +242,7 @@ class SERVICE_FINDER_sedateInvoice extends SERVICE_FINDER_sedateManager{
 				$noticedata = array(
 						'provider_id' => $row->provider_id,
 						'target_id' => $row->id, 
-						'topic' => 'Booking Invoice Payment',
-						'title' => esc_html__('Booking Invoice Payment', 'service-finder'),
+						'topic' => esc_html__('Booking Invoice Payment', 'service-finder'),
 						'notice' => esc_html__('Site administrator paid you for your service via bank transfer', 'service-finder')
 						);
 				service_finder_add_notices($noticedata);
@@ -444,7 +442,14 @@ class SERVICE_FINDER_sedateInvoice extends SERVICE_FINDER_sedateManager{
 				
 				$stripeconnecttype = (!empty($service_finder_options['stripe-connect-type'])) ? esc_html($service_finder_options['stripe-connect-type']) : '';
 			
-				$acct_id = service_finder_get_stripe_connect_id($result->provider_id);
+				if($stripeconnecttype == 'custom'){
+				
+				$acct_id = get_user_meta($result->wp_user_id,'stripe_connect_custom_account_id',true);
+				}else{
+				
+				$acct_id = get_user_meta($result->wp_user_id,'stripe_connect_id',true);
+				
+				}
 				
 				if($acct_id != '')
 				{
@@ -544,8 +549,7 @@ class SERVICE_FINDER_sedateInvoice extends SERVICE_FINDER_sedateManager{
 		$noticedata = array(
 				'provider_id' => $provider_id,
 				'target_id' => $invoiceid, 
-				'topic' => 'Invoice Paid',
-				'title' => esc_html__('Invoice Paid', 'service-finder'),
+				'topic' => esc_html__('Invoice Paid', 'service-finder'),
 				'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $customer_email ),
 				);
 		service_finder_add_notices($noticedata);

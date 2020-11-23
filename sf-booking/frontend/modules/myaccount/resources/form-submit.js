@@ -241,7 +241,7 @@
 						if(providerlat != "" && providerlng != ""){
 						initMap(parseFloat(providerlat),parseFloat(providerlng)	,zooml);
 						}else{
-						initMap(parseFloat(defaultlat),parseFloat(defaultlng),2);
+						initMap(28.6430536,77.2223442,2);	
 						}
 						
 					}
@@ -356,8 +356,6 @@
 									callback: {
 										message: param.allowed_country,
 										callback: function(value, validator, $field) {
-											if(signupautosuggestion == true)
-											{
 											if(countrycount > 1){
 												if(countryflag == 1){
 												return false;
@@ -366,9 +364,6 @@
 												}
 											}else{
 												return true;	
-											}
-											}else{
-												return true;
 											}
 										}
 									}
@@ -433,14 +428,7 @@
 			jQuery('.user-update').bootstrapValidator('revalidateField', 'country');
 			
 		
-			if(jQuery('.user-update select[name="country"] option:selected').val()==""){
-				countryflag = 1;
-				jQuery('.user-update select[name="country"]').parent('div').addClass('has-error').removeClass('has-success'); jQuery('form.user-update').find('button[type="submit"]').prop('disabled', false);
-				return false;
-			}else{
-				countryflag = 0;
-				jQuery('.user-update select[name="country"]').parent('div').removeClass('has-error').addClass('has-success'); jQuery('form.user-update').find('button[type="submit"]').prop('disabled', false);
-			}
+			if(jQuery('.user-update select[name="country"] option:selected').val()==""){countryflag = 1;jQuery('.user-update select[name="country"]').parent('div').addClass('has-error').removeClass('has-success'); jQuery('form.user-update').find('button[type="submit"]').prop('disabled', false);}else{countryflag = 0;jQuery('.user-update select[name="country"]').parent('div').removeClass('has-error').addClass('has-success'); jQuery('form.user-update').find('button[type="submit"]').prop('disabled', false);}
 			
 	    })
 		.on('error.field.bv', function(e, data) {
@@ -609,8 +597,7 @@
 										if(data['status'] == 'success'){
 											jQuery( "<div class='alert alert-success'>"+data['suc_message']+"</div>" ).insertBefore( "form.user-update" );	
 											jQuery( "#connectbtn" ).html(data['connectlink']);	
-											jQuery( "#gcallist" ).remove();
-											window.location = window.location.href.split("?")[0];
+											jQuery( "#gcallist" ).remove();	
 										}else if(data['status'] == 'error'){
 											jQuery( "<div class='alert alert-danger'>"+data['err_message']+"</div>" ).insertBefore( "form.user-update" );
 										}

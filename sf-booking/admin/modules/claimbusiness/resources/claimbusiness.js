@@ -75,7 +75,7 @@ jQuery('body').on('click', '.app_claimbusiness_request', function(){
 			{ "data": "message" },
 			{ "data": "paymentstatus" },
 			{ "data": "cliamstatus" },
-			{ "data": "actions" }
+			{ "data": "action" }
 		],
 		"columnDefs": [
 			{
@@ -119,7 +119,7 @@ jQuery('body').on('click', '.app_claimbusiness_request', function(){
 				"orderable": true,
 			},
 			{
-				"targets": [ 9 ],
+				"targets": [ 8 ],
 				"searchable": true,
 				"orderable": false,
 			}

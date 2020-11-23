@@ -770,7 +770,7 @@ final class WP_Job_Manager_Email_Notifications {
 		}
 
 		$args['headers'] = is_array( $args['headers'] ) ? $args['headers'] : [];
-		$send_to         = $args['to'];
+		$send_to = $args['to'];
 		if ( ! is_array( $send_to ) ) {
 			$send_to = array_filter( array_map( 'sanitize_email', preg_split( '/[,|;]\s?/', $send_to ) ) );
 		}
@@ -790,13 +790,9 @@ final class WP_Job_Manager_Email_Notifications {
 			 */
 			$args = apply_filters( "job_manager_email_{$email_notification_key}_args", $args, $email );
 
-			$headers = $args['headers'];
+			$headers    = $args['headers'];
 			if ( ! empty( $args['from'] ) ) {
 				$headers[] = 'From: ' . $args['from'];
-			}
-
-			if ( ! empty( $args['cc'] ) ) {
-				$headers[] = 'CC: ' . $args['cc'];
 			}
 
 			if ( ! self::send_as_plain_text( $email_notification_key, $args ) ) {
@@ -813,6 +809,7 @@ final class WP_Job_Manager_Email_Notifications {
 			 * @param array                 $args                   Email arguments for generating email.
 			 * @param string                $content                Email content.
 			 * @param array                 $headers                Email headers.
+			 * @param
 			 */
 			if ( ! apply_filters( 'job_manager_email_do_send_notification', true, $email, $args, $content, $headers ) ) {
 				continue;

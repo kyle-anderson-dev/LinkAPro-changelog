@@ -648,7 +648,7 @@
 
 	jQuery('body').on('click', 'a.fp_bx', function(){
 
-		jQuery('.loginform_dx_outer').addClass('hidden');
+		jQuery('.loginform_dx').addClass('hidden');
 
 		jQuery('.forgotpasswordform_dx').removeClass('hidden');
 
@@ -658,7 +658,7 @@
 
 	jQuery('body').on('click', 'a.lg_bx', function(){
 
-		jQuery('.loginform_dx_outer').removeClass('hidden');
+		jQuery('.loginform_dx').removeClass('hidden');
 
 		jQuery('.forgotpasswordform_dx').addClass('hidden');
 
@@ -2477,24 +2477,6 @@
 					}
 
 				},
-				
-				fillsignupotp_customer: {
-					validators: {
-						notEmpty: {
-								message: param.req
-							},
-						callback: {
-								message: param.edit_text,
-								callback: function(value, validator, $field) {
-									if(service_finder_getCookie('signupotppasscustomer') == value && service_finder_getCookie('signupotppasscustomer') != ""){
-									return true;
-									}else{
-									return false;	
-									}
-								}
-							}
-					}
-				},
 
 				customertermsncondition_bx: {
 
@@ -2589,168 +2571,6 @@
             data.bv.disableSubmitButtons(false); // disable submit buttons on valid
 
         })
-		
-		.on('click', '.signupotp_bx_customer', function() {
-
-				jQuery(".alert-danger").remove();
-
-				var emailid = jQuery('#signup_customer_user_email_bx').val();
-
-				if(emailid == ''){
-
-					jQuery( '<div class="alert alert-danger">'+param.email_req+'</div>' ).insertAfter( ".signupotp-section-bx-customer .input-group" );
-
-					return false;
-
-				}
-
-				
-
-				var data = {
-
-						  "action": "sendotp",
-
-						  "emailid": emailid,
-
-						};
-
-				
-
-				var formdata = jQuery.param(data);
-
-				
-
-				jQuery.ajax({
-
-
-
-						type: 'POST',
-
-
-
-						url: ajaxurl,
-
-						
-
-						beforeSend: function() {
-
-							jQuery('.loading-area').show();
-
-						},
-
-						
-
-						data: formdata,
-
-
-
-						success:function (data, textStatus) {
-
-							service_finder_clearconsole();
-
-							jQuery('.loading-area').hide();
-
-							jQuery( '<div class="alert alert-success padding-5 signupotpsuccess">'+param.otp_mail+'</div>' ).insertAfter( ".signupotp-section-bx-customer .input-group" );
-
-							service_finder_setCookie('signupotppasscustomer', data); 
-
-							
-
-							service_finder_setCookie('signupvaildcustomeremail',emailid);
-
-							jQuery(".signupotp_bx_customer").remove();
-
-							
-
-											jQuery('.customer_registration_page')
-
-											.bootstrapValidator('addField', 'fillsignupotp_customer', {
-
-												validators: {
-
-															notEmpty: {
-
-																message: param.otp_pass
-
-															},
-
-															callback: {
-
-																message: param.right,
-
-																callback: function(value, validator, $field) {
-
-																	if(service_finder_getCookie('signupotppasscustomer') == value){
-
-																	jQuery(".signupotpsuccess").remove();	
-
-																	return true;
-
-																	}else{
-
-																	jQuery(".signupotpsuccess").remove();	
-
-																	return false;	
-
-																	}
-
-																}
-
-															}
-
-														}
-
-											})
-
-											.bootstrapValidator('addField', 'signup_user_email', {
-
-												validators: {
-
-															emailAddress: {
-
-																message: param.signup_user_email
-
-															},
-
-															callback: {
-
-																message: param.reconfirm_email,
-
-																callback: function(value, validator, $field) {
-
-																	if(service_finder_getCookie('signupvaildcustomeremail') == value){
-
-																	return true;
-
-																	}else{
-
-																	jQuery(".signupotp_bx_customer").remove();
-
-																	jQuery(".signupotpsuccess").remove();	
-
-																	jQuery( '<a href="javascript:;" class="signupotp_bx">'+param.gen_otp+'</a>' ).insertAfter( ".signupotp-section-bx-customer .input-group" );
-
-																	
-
-																	return false;	
-
-																	}
-
-																}
-
-															}
-
-														}
-
-											});
-
-						}
-
-
-
-					});					  
-
-		})
 
         .on('success.form.bv', function(form) {
 

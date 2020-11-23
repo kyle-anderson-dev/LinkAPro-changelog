@@ -31,14 +31,7 @@ class SERVICE_FINDER_providerImport extends SERVICE_FINDER_sedateManager{
 						call_user_func( array( $_this, 'service_finder_keep_session_alive' ) );
                     }
 						
-                ); 
-	   add_action(
-                    'wp_ajax_import_categories',
-					function () use ( $_this ) {
-						call_user_func( array( $_this, 'service_finder_import_categories' ) );
-                    }
-						
-                );        
+                );         
         
 	}
 	
@@ -50,137 +43,8 @@ class SERVICE_FINDER_providerImport extends SERVICE_FINDER_sedateManager{
 		
 		/*Action for wp ajax call*/
 		$this->service_finder_registerWpActions();
-	}
+	 }
     
-	public function service_finder_import_categories(){
-		
-		$row_data = array();
-		if(isset( $_FILES['categorycsv'] ) && !empty($_FILES['categorycsv']))
-		{
-			$update_existing_category = (isset($_POST['update_existing_category'])) ? esc_html($_POST['update_existing_category']) : '';
-			
-			if($_FILES['categorycsv']['size'] > 0)
-			{
-				 $file_data = fopen($_FILES['categorycsv']['tmp_name'], 'r');
-				 $column = fgetcsv($file_data);
-				 while($row = fgetcsv($file_data))
-				 {
-				  if($row[0] != '')
-				  $row_data[] = array(
-				   'catname'  => $row[0],
-				   'parentcat'  => $row[1],
-				   'description'  => $row[2],
-				   'image'  => $row[3]
-				  );
-				 }
-				 $this->update_category_data($row_data,$update_existing_category);
-			}
-		}
-		
-		$success = array(
-				'status' => 'success',
-				'files' => $row_data,
-				);
-		wp_send_json_success($success);
-	}
-	
-	public function update_category_data($rowdata = array(),$update_existing_category = 'no'){
-		global $wpdb;
-		$taxonomy = 'providers-category';
-		if(!empty($rowdata)){
-			foreach($rowdata as $data){
-				
-				$catname = (!empty($data['catname'])) ? esc_attr($data['catname']) : '';
-				$parentcat = (!empty($data['parentcat'])) ? esc_attr($data['parentcat']) : '';
-				$description = (!empty($data['description'])) ? esc_attr($data['description']) : '';
-				$image = (!empty($data['image'])) ? esc_attr($data['image']) : '';
-				
-				if($update_existing_category == 'yes')
-				{
-				if($parentcat == ''){
-					$catinfo = get_term_by('name', $catname, $taxonomy);
-					if(!empty($catinfo))
-					{
-						$catid = $catinfo->term_id;
-						$args = array(
-							'description' => $description,
-							'parent'      => 0,
-						);
-						$term = wp_update_term( $catid, $taxonomy, $args );
-					}else{
-						$args = array(
-							'description' => $description,
-							'parent'      => 0,
-						);
-						$term = wp_insert_term( $catname, $taxonomy, $args );
-					}
-				}else{
-					$parentcategory = get_term_by('name', $parentcat, $taxonomy);
-					if(!empty($parentcategory))
-					{
-						$parentcatid = $parentcategory->term_id;
-						$catinfo = get_term_by('name', $catname, $taxonomy);
-						if(!empty($catinfo))
-						{
-							$catid = $catinfo->term_id;
-							$args = array(
-								'description' => $description,
-								'parent'      => $parentcatid,
-							);
-							$term = wp_update_term( $catid, $taxonomy, $args );
-						}else{
-							$args = array(
-								'description' => $description,
-								'parent'      => $parentcatid,
-							);
-							$term = wp_insert_term( $catname, $taxonomy, $args );
-						}
-						
-					}
-				}
-				if(!is_wp_error( $term )){
-					$termid = (!empty($term['term_id'])) ? $term['term_id'] : 0;
-					if($termid > 0){
-						if($image != '')
-						{
-							service_finder_import_category_image($termid,$image);
-						}
-					}
-				}
-				}else{
-				if($parentcat == ''){
-					$args = array(
-						'description' => $description,
-						'parent'      => 0,
-					);
-					$term = wp_insert_term( $catname, $taxonomy, $args );
-				}else{
-					$parentcategory = get_term_by('name', $parentcat, $taxonomy);
-					if(!empty($parentcategory))
-					{
-					$parentcatid = $parentcategory->term_id;
-					$args = array(
-						'description' => $description,
-						'parent'      => $parentcatid,
-					);
-					$term = wp_insert_term( $catname, $taxonomy, $args );
-					}
-				}
-				if(!is_wp_error( $term )){
-					$termid = (!empty($term['term_id'])) ? $term['term_id'] : 0;
-					if($termid > 0){
-						if($image != '')
-						{
-							service_finder_import_category_image($termid,$image);
-						}
-					}
-				}
-				}
-			}
-		}
-
-	}
-	
     public function service_finder_import_providers(){
     
 		global $service_finder_Tables, $wpdb;

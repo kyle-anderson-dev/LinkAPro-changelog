@@ -54,34 +54,33 @@ if(!empty($args)){
     $pageurl = menu_page_url( 'bookings', false );
 	?>
     <select name="bydate" id="bydate" class="sf-select-box form-control sf-form-control" data-pageurl="<?php echo esc_attr($pageurl); ?>">
-    <?php
-    $filters = array(
-				'today' => esc_html__( 'Today', 'service-finder' ),
-				'yesterday' => esc_html__( 'Yesterday', 'service-finder' ),
-				'tomorrow' => esc_html__( 'Tomorrow', 'service-finder' ),
-				'last_7' => esc_html__( 'Last 7 Days', 'service-finder' ),
-				'last_30' => esc_html__( 'Last 30 Days', 'service-finder' ),
-				'next_7' => esc_html__( 'Next 7 Days', 'service-finder' ),
-				'this_month' => esc_html__( 'This Month', 'service-finder' ),
-				'next_month' => esc_html__( 'Next Month', 'service-finder' ),
-	);
-	?>
-      <option value=""><?php esc_html_e( 'All Days', 'service-finder' ); ?></option>
-      <?php
-      if(!empty($filters))
-	  {
-	  	foreach($filters as $key => $filter)
-		{
-			if($filterbookings == $key)
-			{
-				$select = 'selected="selected"';
-			}else{
-				$select = '';
-			}
-			echo '<option '.$select.' value="'.$key.'">'.$filter.'</option>';
-		}
-	  }
-	  ?>
+      <option value="">
+      <?php esc_html_e( 'All Days', 'service-finder' ); ?>
+      </option>
+      <option value="today">
+      <?php esc_html_e( 'Today', 'service-finder' ); ?>
+      </option>
+      <option value="yesterday">
+      <?php esc_html_e( 'Yesterday', 'service-finder' ); ?>
+      </option>
+      <option value="tomorrow">
+      <?php esc_html_e( 'Tomorrow', 'service-finder' ); ?>
+      </option>
+      <option value="last_7">
+      <?php esc_html_e( 'Last 7 Days', 'service-finder' ); ?>
+      </option>
+      <option value="last_30">
+      <?php esc_html_e( 'Last 30 Days', 'service-finder' ); ?>
+      </option>
+      <option value="next_7">
+      <?php esc_html_e( 'Next 7 Days', 'service-finder' ); ?>
+      </option>
+      <option value="this_month">
+      <?php esc_html_e( 'This Month', 'service-finder' ); ?>
+      </option>
+      <option value="next_month">
+      <?php esc_html_e( 'Next Month', 'service-finder' ); ?>
+      </option>
     </select>
     </div>
     </div>

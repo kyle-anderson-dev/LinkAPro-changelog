@@ -16,6 +16,7 @@ $bgattachment = (isset($service_finder_options['how-works-background-attachment'
 $bgcolor = (!empty($service_finder_options['how-works-bg-color'])) ? $service_finder_options['how-works-bg-color'] : '';
 $bgopacity = (!empty($service_finder_options['how-works-bg-opacity'])) ? $service_finder_options['how-works-bg-opacity'] : '';
 $bgopacity = ($bgopacity > 0) ? $bgopacity : ''; 
+$bgopacity = ($bgopacity > 0) ? $bgopacity : ''; 
 $curveleftcolor = (!empty($service_finder_options['how-works-left-curve-color'])) ? $service_finder_options['how-works-left-curve-color'] : '';
 $curverightcolor = (!empty($service_finder_options['how-works-right-curve-color'])) ? $service_finder_options['how-works-right-curve-color'] : '';
 

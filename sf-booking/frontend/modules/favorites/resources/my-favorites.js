@@ -19,25 +19,7 @@
 		  "orderable": false,
 		  "searchable": false
 		   
-		},
-		{
-		  "targets": 1,
-		  "orderable": true,
-		  "searchable": false
-		   
-		},
-		{
-		  "targets": 2,
-		  "orderable": false,
-		  "searchable": false
-		   
-		},
-		{
-		  "targets": 3,
-		  "orderable": false,
-		  "searchable": false
-		   
-		}],
+		} ],
 	"processing": true,
 	"language": {
 					"processing": "<div></div><div></div><div></div><div></div><div></div>",

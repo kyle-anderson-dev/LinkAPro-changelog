@@ -34,21 +34,30 @@ if($twocheckouttype == 'live'){
 
 $signupautosuggestion = (!empty($service_finder_options['signup-auto-suggestion'])) ? esc_html($service_finder_options['signup-auto-suggestion']) : '';
 $show_signup_otp = (!empty($service_finder_options['show-signup-otp'])) ? esc_html($service_finder_options['show-signup-otp']) : '';
-$show_customer_signup_otp = (!empty($service_finder_options['show-customer-signup-otp'])) ? esc_html($service_finder_options['show-customer-signup-otp']) : '';
 
 $countryarr = (!empty($service_finder_options['allowed-country'])) ? $service_finder_options['allowed-country'] : array();
+$totalcountry = count($countryarr);
 
-if(is_array($countryarr))
+if(!is_user_logged_in() && (is_home() || is_front_page()))
 {
-	$totalcountry = count($countryarr);
+	$loginpopup = 1;
 }else{
-	if($countryarr != '')
-	{
-		$totalcountry = 1;
-	}else{
-		$totalcountry = 0;
-	}
+	$loginpopup = 0;
 }
+
+wp_add_inline_script( 'bootstrap', 'jQuery(document).ready(function($) {
+var loginpopup = "'.$loginpopup.'";
+
+if(loginpopup == 1){
+       jQuery("#login-Modal").modal({
+
+            backdrop: "static",
+
+            keyboard: false
+
+        });
+}
+})', 'after' );
 
 wp_add_inline_script( 'service_finder-js-form-validation', '/*Declare global variable*/
 var twocheckoutaccountid = "'.$twocheckoutaccountid.'";
@@ -173,7 +182,7 @@ $socialloginclass = 'sf-other-login-one';
             <li class="active"><a data-toggle="tab" href="#tab2">
               <?php echo esc_html($providerreplacestring); ?>
               </a></li>
-            <li class="customer-signup-tab"><a data-toggle="tab" href="#tab1">
+            <li><a data-toggle="tab" href="#tab1">
               <?php echo esc_html($customerreplacestring); ?>
               </a></li>
           </ul>
@@ -263,7 +272,7 @@ $socialloginclass = 'sf-other-login-one';
 							}
 						  }
 					  }else{
-					 	 $countryarr = (!empty($service_finder_options['allowed-country'])) ? $service_finder_options['allowed-country'] : array();
+					 	 $countryarr = (!empty($service_finder_options['allowed-country'])) ? $service_finder_options['allowed-country'] : '';
 						 $totalcountry = count($countryarr);
 						 if($countryarr){
 						 	foreach($countryarr as $key){
@@ -720,7 +729,7 @@ $socialloginclass = 'sf-other-login-one';
               </div>
             </div>
             <!-- Customer form Template-->
-            <div id="tab1" class="tab-pane fade customer-signup-tab-content">
+            <div id="tab1" class="tab-pane fade">
               <form class="customer_registration" method="post">
                 <div class="customer-bx clearfix row">
                   <div class="col-md-6">
@@ -740,23 +749,9 @@ $socialloginclass = 'sf-other-login-one';
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
-                      <input name="signup_user_email" id="signup_customer_user_email" type="text" class="form-control" placeholder="<?php esc_html_e('Email', 'service-finder'); ?>">
+                      <input name="signup_user_email" type="text" class="form-control" placeholder="<?php esc_html_e('Email', 'service-finder'); ?>">
                     </div>
                   </div>
-					<?php if($show_customer_signup_otp){ ?>
-                    <div class="col-md-12">
-                      <div class="form-group signupotp-section-customer">
-                        <label>
-                        <?php esc_html_e('One Time Password', 'service-finder'); ?>
-                        </label>
-                        <div class="input-group"> <i class="input-group-addon fa fa-lock"></i>
-                          <input id="fillsignupotp-customer" name="fillsignupotp_customer" type="text" class="form-control" value="">
-                        </div>
-                        <a href="javascript:;" class="signupotp-customer">
-                        <?php esc_html_e('Generate One time Password to Confirm Email', 'service-finder'); ?>
-                        </a> </div>
-                    </div>
-                    <?php } ?>                  
                   <div class="col-md-6">
                     <div class="form-group">
                       <input name="signup_password" type="password" class="form-control" placeholder="<?php esc_html_e('Password', 'service-finder'); ?>">

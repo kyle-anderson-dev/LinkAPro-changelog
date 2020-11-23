@@ -21,8 +21,7 @@ switch ( $job->post_status ) :
 	case 'publish' :
 		echo '<div class="job-manager-message">' . wp_kses_post(
 			sprintf(
-				// translators: %1$s is the job listing post type name, %2$s is the job listing URL.
-				__( '%1$s listed successfully. To view your listing <a href="%2$s">click here</a>.', 'wp-job-manager' ),
+				__( '%s listed successfully. To view your listing <a href="%s">click here</a>.', 'wp-job-manager' ),
 				esc_html( $wp_post_types['job_listing']->labels->singular_name ),
 				get_permalink( $job->ID )
 			)
@@ -31,7 +30,6 @@ switch ( $job->post_status ) :
 	case 'pending' :
 		echo '<div class="job-manager-message">' . wp_kses_post(
 			sprintf(
-				// translators: Placeholder %s is the job listing post type name.
 				esc_html__( '%s submitted successfully. Your listing will be visible once approved.', 'wp-job-manager' ),
 				esc_html( $wp_post_types['job_listing']->labels->singular_name )
 			)

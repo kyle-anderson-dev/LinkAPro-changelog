@@ -144,9 +144,8 @@ if($searchprice || $searchradius){
 					
 					$catimage =  service_finder_getCategoryImage($term_child_id,'service_finder-category-small');
 					if($catimage != ""){
-					$imgtag = "<img class='childcat-img' width='50' height='auto' src=". esc_url($catimage).">";
 					?>
-					<option <?php echo esc_attr($childselect); ?> value="<?php echo esc_attr($term_child_id); ?>" data-content="<?php echo esc_attr($imgtag); ?><span class='childcat'><?php echo esc_attr($term_child_name); ?></span>"><?php echo esc_html($term_child_name); ?></option>
+					<option <?php echo esc_attr($childselect); ?> value="<?php echo esc_attr($term_child_id); ?>" data-content="<img class='childcat-img' width='50' height='auto' src='<?php echo esc_url($catimage); ?>'><span class='childcat'><?php echo esc_attr($term_child_name); ?></span>"><?php echo esc_html($term_child_name); ?></option>
 					<?php
 					}else{
 					?>
@@ -224,9 +223,8 @@ if($searchprice || $searchradius){
 								
 								$catimage =  service_finder_getCategoryImage($term_child_id,'service_finder-category-small');
 								if($catimage != ""){
-								$imgtag = "<img class='childcat-img' width='50' height='auto' src=". esc_url($catimage).">";
 								?>
-								<option <?php echo esc_attr($childselect) ?> value="<?php echo esc_attr($term_child_id) ?>" data-content="<?php echo esc_attr($imgtag); ?><span class='childcat'><?php echo esc_attr($term_child_name) ?></span>"><?php echo esc_html($term_child_name) ?></option>
+								<option <?php echo sc_ttr($childselect) ?> value="<?php echo esc_attr($term_child_id) ?>" data-content="<img class='childcat-img' width='50' height='auto' src='<?php echo esc_url($catimage)?>'><span class='childcat'><?php echo esc_attr($term_child_name) ?></span>"><?php echo esc_html($term_child_name) ?></option>
 								<?php
                                 }else{
                                 ?>
@@ -321,11 +319,6 @@ if($searchprice || $searchradius){
         <li>
         <?php
 		$country = service_finder_get_data($_REQUEST,'country');
-		if($country == '')
-		{
-			$country = (!empty($service_finder_options['default-country'])) ? $service_finder_options['default-country'] : '';
-		}
-		
 	    if($restrictuserarea && $identitycheck){
 	    $qry = $wpdb->prepare("select DISTINCT state from ".$service_finder_Tables->providers." WHERE admin_moderation = 'approved' AND country = '%s' AND identity = 'approved' AND account_blocked != 'yes' ORDER BY `state`",$country);
 	    }else{
@@ -553,7 +546,7 @@ if($searchprice || $searchradius){
 <?php
 if($searchprice || $searchradius){
 $price = (isset($_REQUEST['price'])) ? esc_html($_REQUEST['price']) : $minpricerange.','.$maxpricerange;
-$defaultradius = (!empty($_REQUEST)) ? service_finder_get_data($_REQUEST,'distance',$defaultradius) : $defaultradius;
+$defaultradius = service_finder_get_data($_REQUEST,'distance',$defaultradius);
 ?>
 <div class="sf-advace-search-two <?php echo sanitize_html_class($hiddenclass) ?>">
     <div class="row">

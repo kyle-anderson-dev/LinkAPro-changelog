@@ -10,11 +10,6 @@
 
 ?>
 <?php 
-if(get_option('timezone_string') != ""){
-date_default_timezone_set(get_option('timezone_string'));
-}
-
-
 wp_enqueue_script('service_finder-js-upgrade');
 $service_finder_options = get_option('service_finder_options');
 $wpdb = service_finder_plugin_global_vars('wpdb');
@@ -103,11 +98,10 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
 		  $packagename = (!empty($service_finder_options['package'.$roleNum.'-name'])) ? $service_finder_options['package'.$roleNum.'-name'] : '';
 		  $timeInSec = $provider_activation_time['time'];
 		  
-		  $activationdate = date('Y-m-d H:i:s',$timeInSec);
+		  $activationdate = date('Y-m-d',$timeInSec);
 		  $date = new DateTime($activationdate);
 		  $date->add(new DateInterval('P'.$expire_limit.'D'));
 		  $expiredate = $date->format('Y-m-d');
-		  $expiretime = $date->format('H:i:s');
 		  
 		  $packageprice = (!empty($service_finder_options['package'.$roleNum.'-price'])) ? $service_finder_options['package'.$roleNum.'-price'] : '';
   		  $free = (trim($packageprice) > 0) ? false : true;
@@ -135,7 +129,7 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
                 <?php } ?>
             </div>
             <div class="sf-plan-right-block">
-                <div class='countdown' data-date="<?php echo esc_attr($expiredate)?>" data-time="<?php echo esc_attr($expiretime); ?>"></div>
+                <div class='countdown' data-date="<?php echo esc_attr($expiredate)?>"></div>
             </div>
           </div>
           <?php } ?>
@@ -181,7 +175,6 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
 			$enablepackage = (!empty($service_finder_options['enable-package'.$i])) ? $service_finder_options['enable-package'.$i] : '';
 			$packageprice = (!empty($service_finder_options['package'.$i.'-price'])) ? $service_finder_options['package'.$i.'-price'] : '';
 			$currency = service_finder_currencycode();
-			$billingPeriod = '';
 			if(isset($service_finder_options['enable-package'.$i]) && $enablepackage > 0 && $i >= $roleNum){
 			$free = (trim($packageprice) > 0) ? false : true;
 			
@@ -214,7 +207,7 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
 			
 			if($i >= 0){
 			if (isset($service_finder_options['payment-type']) && ($service_finder_options['payment-type'] == 'recurring') && $service_finder_options['package'.$i.'-price'] > 0) {
-			$displayprice = trim($service_finder_options['package'.$i.'-price']).' '.$currency;
+			$displayprice = trim($service_finder_options['package'.$i.'-price']).' '.$currency.' '.esc_html__('per','service-finder').' '.$billingPeriod;
 			$price = (!empty($service_finder_options['package'.$i.'-price'])) ? trim($service_finder_options['package'.$i.'-price']) : '';
 			} else {
 			$currentPayType = get_user_meta($globalproviderid,'pay_type',true);
@@ -225,9 +218,8 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
 			if($current_role == 'package_'.$i){
 			$price = (!empty($service_finder_options['package'.$i.'-price'])) ? trim($service_finder_options['package'.$i.'-price']) : '';	
 			}else{	
-			/*$pacprice = (!empty($service_finder_options['package'.$i.'-price'])) ? $service_finder_options['package'.$i.'-price'] : 0;
-			$price = $pacprice - $paidAmount;*/
-			$price = (!empty($service_finder_options['package'.$i.'-price'])) ? trim($service_finder_options['package'.$i.'-price']) : '';						
+			$pacprice = (!empty($service_finder_options['package'.$i.'-price'])) ? $service_finder_options['package'.$i.'-price'] : 0;
+			$price = $pacprice - $paidAmount;							
 			}
 			
 			}else{
@@ -236,11 +228,6 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
 			$displayprice = $price.' '.$currency;
 			}
 			$class = ($price > 0 && $price != "") ? '' : 'free';
-			
-			$packageexpday = '';
-			if (isset($service_finder_options['payment-type']) && $service_finder_options['payment-type'] == 'single') {
-				$packageexpday = (!empty($service_finder_options['package'.$i.'-expday'])) ? $service_finder_options['package'.$i.'-expday'] : '';
-			}
 			?>
             <li data-toggle="popover" data-container="body" data-placement="top" data-html="true" id="packageinfo-<?php echo esc_attr($i); ?>" data-trigger="hover" class="col-md-4 sf-plans-outer <?php echo sanitize_html_class($class).' '.sanitize_html_class($class3); ?>" data-packageid="<?php echo 'package_'.esc_attr($i); ?>">
             <div id="popover-content-packageinfo-<?php echo esc_attr($i); ?>" class="hide">
@@ -251,12 +238,6 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
                   <div class="sf-plans-bx">
                         <h5 class="sf-plans-name"><?php echo (!empty($service_finder_options['package'.$i.'-name'])) ? esc_html($service_finder_options['package'.$i.'-name']) : ''; ?></h5>
                         <div class="sf-plans-price"><?php echo ($price > 0 && $price != "") ? esc_html($displayprice) : esc_html__('Free','service-finder'); ?></div>
-                        <?php if($billingPeriod != '' && $service_finder_options['payment-type'] == 'recurring'){ ?>
-                        <span class="sf-account-billingperiod"><?php echo esc_html($billingPeriod); ?></span>
-                        <?php } ?>
-                        <?php if($packageexpday != ''){ ?>
-                        <span class="sf-account-expperiod"><?php echo esc_html($packageexpday).' '.esc_html__('Days','service-finder'); ?></span>
-                        <?php } ?>
                         <div class="sf-plans-done"><i class="fa fa-check"></i></div>
                     </div>
             </li>	
@@ -555,13 +536,13 @@ $current_role = get_user_meta($globalproviderid,'provider_role',true);
 	  } ?>
 </div>
 </div>
-<?php if($service_finder_options['provider-feature']){ ?>
+
 <div class="panel panel-default">
 <div class="panel-heading sf-panel-heading">
   <h3 class="panel-tittle m-a0"><span class="fa fa-money"></span> <?php esc_html_e('Featured', 'service-finder'); ?> </h3>
 </div>
 <div class="panel-body sf-panel-body padding-30">
-  <?php if(service_finder_check_profile_after_trial_expire($globalproviderid)){ ?>
+  <?php if($service_finder_options['provider-feature'] && service_finder_check_profile_after_trial_expire($globalproviderid)){ ?>
       <?php if(service_finder_check_display_features_after_social_login($globalproviderid)){ ?>
       <!--Request to make feature-->
         <div id="feature-req-bx">
@@ -618,8 +599,10 @@ echo '<div class="alert alert-warning">'.esc_html__('Your feature account has be
 </form>
 <?php 
 }elseif($row->status == 'Payment Pending'){
-$amt = service_finder_money_format($row->amount);
-echo '<div class="alert-bx alert-info">'.sprintf( esc_html__('Congratulations! Your request have been approved. Please make a payment of %s to be featured', 'service-finder'), $amt ).'</div>';
+$featuredamount = service_finder_get_featured_amount();
+
+$amt = service_finder_money_format($featuredamount);
+echo '<div class="alert-bx alert-info">'.sprintf( esc_html__('Please make a payment of %s to be featured', 'service-finder'), $amt ).'</div>';
 echo '<form class="feature-payment-form sf-card-group" method="post">';
 		$payment_methods = (!empty($service_finder_options['payment-methods'])) ? $service_finder_options['payment-methods'] : '';															
 		?>
@@ -902,4 +885,3 @@ echo '<form class="feature-payment-form sf-card-group" method="post">';
       <?php } ?>
 </div>
 </div>
-<?php } ?>

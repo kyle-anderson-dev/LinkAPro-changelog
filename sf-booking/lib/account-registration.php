@@ -351,9 +351,7 @@ if($wootype != 'signup' && $wootype != 'upgrade' && (isset($_POST['payment_mode'
 					update_user_meta($userId, 'recurring_profile_type',$type);
 					update_user_meta( $userId, 'provider_role', $role );
 					if($expire_limit > 0){
-						update_user_meta($userId, 'expire_limit', $expire_limit);
-					}else{
-						delete_user_meta($userId, 'expire_limit');
+					update_user_meta($userId, 'expire_limit', $expire_limit);
 					}
 					update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 					
@@ -681,11 +679,7 @@ if(isset($_GET['user-register']) && ($userregister == 'success') && !empty($_GET
 					
 					update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 					update_user_meta( $userId, 'provider_role', $role );
-					if($expire_limit > 0){
-						update_user_meta($userId, 'expire_limit', $expire_limit);
-					}else{
-						delete_user_meta($userId, 'expire_limit');
-					}
+					update_user_meta($userId, 'expire_limit', $expire_limit);
 					update_user_meta($userId, 'profile_amt',$rolePrice);
 					
 					$pay_mode = (isset($_POST['pay_mode'])) ? $_POST['pay_mode'] : '';
@@ -1077,11 +1071,7 @@ $expire_limit = $service_finder_options['package'.$roleNum.'-expday'];
 
 update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 update_user_meta( $userId, 'provider_role', $role );
-if($expire_limit > 0){
-	update_user_meta($userId, 'expire_limit', $expire_limit);
-}else{
-	delete_user_meta($userId, 'expire_limit');
-}
+update_user_meta($userId, 'expire_limit', $expire_limit);
 update_user_meta($userId, 'profile_amt',$rolePrice);
 
 $pay_mode = 'payumoney_upgrade';
@@ -1517,25 +1507,10 @@ $adminmessage = str_replace($tokens,$replacements,$adminmessage);
 
 service_finder_wpmailer($admin_email,$admin_msg_subject,$adminmessage);
 }else{
-if($service_finder_options['provider-subscription-expire-reminder-subject'] != ""){
-	$msg_subject = $service_finder_options['provider-subscription-expire-reminder-subject'];
-}else{
-	$msg_subject = esc_html__('Subscription Expiry Reminder Notification', 'service-finder');
-}
-
-if($service_finder_options['send-to-subscription-expire-reminder-provider'] != ""){
-	$message = $service_finder_options['send-to-subscription-expire-reminder-provider'];
-}else{
-	$message = '
-	<h3>Subscription Expire Notification</h3>
-	<br>
-	Your subscription will be expire after %NUMBEROFDAYS% days. Please upgrade it now.<br/>';
-}
-
-$tokens = array('%NUMBEROFDAYS%');
-$replacements = array($days);
-$message = str_replace($tokens,$replacements,$message);
-
+$message = '
+<h3>Subscription Expire Notification</h3>
+<br>
+Your subscription will be expire after '.$days.' days. Please upgrade it now.<br/>';
 }
 }
 			
@@ -1647,6 +1622,17 @@ function service_finder_expireProviderUser($userId) {
 			);		
 	
 	$wpdb->update($service_finder_Tables->job_limits,wp_unslash($data),$where);
+	
+	$data = array(
+			'free_limits' => 0,
+			'available_limits' => 0,
+			'paid_limits' => 0,
+			);
+	$where = array(
+			'provider_id' => $userId,
+			);		
+	
+	$wpdb->update($service_finder_Tables->purchase_credit,wp_unslash($data),$where);
 }
 
 /*Get the remaining days*/
@@ -1764,7 +1750,7 @@ function service_finder_login(){
 			$redirect = home_url('/');
 		}
 		$redirectnonce = (!empty($_POST['redirectnonce'])) ? $_POST['redirectnonce'] : '';
-		$login_successfull = (!empty($service_finder_options['login-successfull'])) ? $service_finder_options['login-successfull'] : esc_html__('Login Successful.', 'service-finder');
+		$login_successfull = (!empty($service_finder_options['login-successfull'])) ? $service_finder_options['login-successfull'] : esc_html__('Login Successfull.', 'service-finder');
 		
 		if($redirectnonce == 'no'){
 			$successmsg = $login_successfull;
@@ -2451,11 +2437,7 @@ $paypal = new Paypal($paypalCreds,$paypalTypeBool);
 								update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 								
 								update_user_meta($userId, 'txn_id', $charge->balance_transaction);
-								if($expire_limit > 0){
-									update_user_meta($userId, 'expire_limit', $expire_limit);
-								}else{
-									delete_user_meta($userId, 'expire_limit');
-								}
+								update_user_meta($userId, 'expire_limit', $expire_limit);
 								update_user_meta($userId, 'stripe_token', $token);
 								update_user_meta($userId, 'stripe_customer_id', $customer->id);
 								update_user_meta( $userId, 'provider_role', $role );
@@ -2559,11 +2541,7 @@ $paypal = new Paypal($paypalCreds,$paypalTypeBool);
 					update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 					$roleNum = intval(substr($role, 8));
 					$roleName = $service_finder_options['package'.$roleNum.'-name'];
-					if($expire_limit > 0){
-						update_user_meta($userId, 'expire_limit', $expire_limit);
-					}else{
-						delete_user_meta($userId, 'expire_limit');
-					}
+					update_user_meta($userId, 'expire_limit', $expire_limit);
 					update_user_meta( $userId, 'provider_role', $role );
 					$userInfo = service_finder_getUserInfo($userId);
 					$args = array(
@@ -2764,9 +2742,7 @@ $service_finder_options = get_option('service_finder_options');
 					update_user_meta($userId, 'recurring_profile_type',$type);
 					update_user_meta( $userId, 'provider_role', $role );
 					if($expire_limit > 0){
-						update_user_meta($userId, 'expire_limit', $expire_limit);
-					}else{
-						delete_user_meta($userId, 'expire_limit');
+					update_user_meta($userId, 'expire_limit', $expire_limit);
 					}
 					update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 					
@@ -3437,11 +3413,7 @@ $paypal = new Paypal($paypalCreds,$paypalTypeBool);
 								update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 								
 								update_user_meta($userId, 'txn_id', $txnid);
-								if($expire_limit > 0){
-									update_user_meta($userId, 'expire_limit', $expire_limit);
-								}else{
-									delete_user_meta($userId, 'expire_limit');
-								}
+								update_user_meta($userId, 'expire_limit', $expire_limit);
 								update_user_meta( $userId, 'provider_role', $role );
 								update_user_meta($userId, 'profile_amt',$rolePrice);
 								update_user_meta( $userId, 'pay_type', 'single' );
@@ -4150,11 +4122,7 @@ if(is_wp_error( $userId )){
 						update_user_meta( $userId, 'provider_activation_time', array( 'role' => $role, 'time' => time()) );
 						
 						update_user_meta($userId, 'txn_id', $transactionid);
-						if($expire_limit > 0){
-							update_user_meta($userId, 'expire_limit', $expire_limit);
-						}else{
-							delete_user_meta($userId, 'expire_limit');
-						}
+						update_user_meta($userId, 'expire_limit', $expire_limit);
 						update_user_meta($userId, 'provider_role', $role );
 						update_user_meta($userId, 'profile_amt',$rolePrice);
 						update_user_meta( $userId, 'pay_type', 'single' );
@@ -4429,6 +4397,8 @@ if(email_exists( esc_attr($arg['signup_user_email']) )){
 		
 		service_finder_set_default_booking_settings($userId);
 		
+		service_finder_set_default_featured_settings($userId);
+		
 		$get_provider_role = (isset($arg['provider-role'])) ? $arg['provider-role'] : '';
 		$role = $get_provider_role;
 		if ($role == "package_0" || $role == "package_1" || $role == "package_2" || $role == "package_3"){
@@ -4460,6 +4430,35 @@ if(email_exists( esc_attr($arg['signup_user_email']) )){
 				);
 		
 		$wpdb->insert($service_finder_Tables->job_limits,wp_unslash($data));
+		
+		
+		
+		$allowedjobapply = (!empty($service_finder_options['package'.$packageNum.'-purchase-credit'])) ? $service_finder_options['package'.$packageNum.'-purchase-credit'] : '';
+		
+		$period = (!empty($service_finder_options['purchase-credit-limit-period'])) ? $service_finder_options['purchase-credit-limit-period'] : '';
+		$numberofweekmonth = (!empty($service_finder_options['purchase-credit-number-of-week-month'])) ? $service_finder_options['purchase-credit-number-of-week-month'] : 1;
+		$numberofperiod = (!empty($service_finder_options['purchase-credit-number-of-week-month'])) ? $service_finder_options['purchase-credit-number-of-week-month'] : '';
+		
+		$startdate = date('Y-m-d h:i:s');
+		
+		if($period == 'weekly'){
+			$freq = 7 * $numberofweekmonth;
+			$expiredate = date('Y-m-d h:i:s', strtotime("+".$freq." days"));
+		}elseif($period == 'monthly'){
+			$freq = 30 * $numberofweekmonth;
+			$expiredate = date('Y-m-d h:i:s', strtotime("+".$freq." days"));
+		}
+		
+		$data = array(
+				'provider_id' => $userId,
+				'free_limits' => $allowedjobapply,
+				'available_limits' => $allowedjobapply,
+				'membership_date' => $startdate,
+				'start_date' => $startdate,
+				'expire_date' => $expiredate,
+				);
+		
+		$wpdb->insert($service_finder_Tables->purchase_credit,wp_unslash($data));
 		}
 		
 		$primarycategory = (!empty($arg['signup_category'])) ? esc_attr($arg['signup_category']) : '';
@@ -4661,7 +4660,7 @@ $success = '';
 				
 				$reset_url = add_query_arg( array('sfresetpass' => true,'sfrp_action' => 'rp','key' => $key,'login' => rawurlencode( $user->user_login )), service_finder_get_url_by_shortcode('[service_finder_forgot_password') );
 				
-				$reset_link = '<a href="' . $reset_url . '">' . $reset_url . '</a>';
+				$reset_link = '<a href="' . $reset_url . '" style="display:table; padding:6px 40px; border:2px solid #555; margin:0px auto 30px; color:#555; font-size:16px;">Click Here</a>';
 				
 				$tokens = array('%USERNAME%','%EMAIL%','%RESETLINK%');
 				$replacements = array($user->user_login,$user->user_email,$reset_link);
@@ -4672,7 +4671,7 @@ $success = '';
 					$msg_subject = esc_html__('Account Password Reset', 'service-finder');
 				}
 				
-				if(service_finder_wpmailer($user->user_email,$msg_subject,$msg_body)) {
+				if(service_finder_wpmailer($user->user_email,$msg_subject,$msg_body,'yes')) {
 	
 					return true;
 					

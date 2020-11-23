@@ -68,19 +68,6 @@
 	var unavl_type;
 	var numberofdays;
 	provider_id = jQuery('#provider').attr('data-provider');
-	
-	jQuery('body').on('change', '#servicedate-Modal select[name="members_list"]', function(){
-		var memberid = jQuery(this).val();
-		var avatarurl = jQuery('#servicedate-Modal select[name="members_list"] option:selected').data('avatar');
-		if(avatarurl != "" && avatarurl != "undefined" && avatarurl != undefined){
-			jQuery("#sf-bookingmember-image").show();	
-			jQuery("#sf-bookingmember-image").html('<img src="'+avatarurl+'">');	
-		}else{
-			jQuery("#sf-bookingmember-image").hide();	
-			jQuery("#sf-bookingmember-image").html('');
-		}
-	});
-	
 	/*Display Services*/
 	jQuery('form.book-now').on('change', 'select[name="region"]', function(){
 
@@ -130,7 +117,7 @@
 
 	 }else{
 
-	 initMap(parseFloat(defaultlat),parseFloat(defaultlng),parseInt(defaultzoomlevel));	
+	 initMap(28.6430536,77.2223442,2);	
 
 	 }
 
@@ -345,8 +332,6 @@
 					jQuery('.loading-area').hide();
 					if(data != null){
 						if(data['status'] == 'success'){
-							jQuery("#sf-bookingmember-image").hide();
-							jQuery("#sf-bookingmember-image").html('');
 							jQuery('select[name="members_list"]').html(data['members']);
 							jQuery('.sf-select-box').selectpicker('refresh');
 						}

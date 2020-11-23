@@ -22,9 +22,6 @@ get_results('SELECT providers.wp_user_id, providers.full_name, providers.categor
 		
 		$columns = array( 
 			0 =>'full_name', 
-			1 =>'full_name',
-			2 =>'full_name',
-			3 =>'full_name'
 		);
 		// getting total number records without any search
 		$sql = $wpdb->prepare('SELECT providers.wp_user_id, providers.full_name, providers.category_id, favorites.id, favorites.favorite, favorites.user_id FROM '.$service_finder_Tables->favorites.' as favorites INNER JOIN '.$service_finder_Tables->providers.' as providers on providers.wp_user_id = favorites.provider_id WHERE favorites.favorite = "yes" AND  favorites.user_id = %d',$currUser->ID);

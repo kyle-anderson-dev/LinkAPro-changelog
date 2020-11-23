@@ -59,7 +59,6 @@ class WP_Job_Manager_Post_Types {
 
 		add_action( 'wp_head', [ $this, 'noindex_expired_filled_job_listings' ] );
 		add_action( 'wp_footer', [ $this, 'output_structured_data' ] );
-		add_filter( 'wp_sitemaps_posts_query_args', [ $this, 'sitemaps_maybe_hide_filled' ], 10, 2 );
 
 		add_filter( 'the_job_description', 'wptexturize' );
 		add_filter( 'the_job_description', 'convert_smilies' );
@@ -550,22 +549,9 @@ class WP_Job_Manager_Post_Types {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Input used to filter public data in feed.
 		$input_posts_per_page  = isset( $_GET['posts_per_page'] ) ? absint( $_GET['posts_per_page'] ) : 10;
 		$input_search_location = isset( $_GET['search_location'] ) ? sanitize_text_field( wp_unslash( $_GET['search_location'] ) ) : false;
-
-		if ( isset( $_GET['job_types'] ) ) {
-			$sanitized_job_types = sanitize_text_field( wp_unslash( $_GET['job_types'] ) );
-			$input_job_types     = empty( $sanitized_job_types ) ? false : explode( ',', $sanitized_job_types );
-		} else {
-			$input_job_types = false;
-		}
-
-		if ( isset( $_GET['job_categories'] ) ) {
-			$sanitized_job_categories = sanitize_text_field( wp_unslash( $_GET['job_categories'] ) );
-			$input_job_categories     = empty( $sanitized_job_categories ) ? false : explode( ',', $sanitized_job_categories );
-		} else {
-			$input_job_categories = false;
-		}
-
-		$job_manager_keyword = isset( $_GET['search_keywords'] ) ? sanitize_text_field( wp_unslash( $_GET['search_keywords'] ) ) : '';
+		$input_job_types       = isset( $_GET['job_types'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['job_types'] ) ) ) : false;
+		$input_job_categories  = isset( $_GET['job_categories'] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET['job_categories'] ) ) ) : false;
+		$job_manager_keyword   = isset( $_GET['search_keywords'] ) ? sanitize_text_field( wp_unslash( $_GET['search_keywords'] ) ) : '';
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		$query_args = [
@@ -589,14 +575,6 @@ class WP_Job_Manager_Post_Types {
 				];
 			}
 			$query_args['meta_query'][] = $location_search;
-		}
-
-		// Hide filled positions from the job feed.
-		if ( 1 === absint( get_option( 'job_manager_hide_filled_positions' ) ) ) {
-			$query_args['meta_query'][] = [
-				'key'   => '_filled',
-				'value' => '0',
-			];
 		}
 
 		if ( ! empty( $input_job_types ) ) {
@@ -895,7 +873,7 @@ class WP_Job_Manager_Post_Types {
 	 *
 	 * @since 1.34.1
 	 *
-	 * @param int $job_id Job ID to check.
+	 * @param int  $job_id Job ID to check.
 	 * @return bool
 	 */
 	public static function job_is_editable( $job_id ) {
@@ -1158,38 +1136,6 @@ class WP_Job_Manager_Post_Types {
 				'old_status' => $old_status,
 			]
 		);
-	}
-
-	/**
-	 * Hide filled job listings in WP core sitemaps when the `Hide filled positions` setting
-	 * is enabled.
-	 *
-	 * @access private
-	 * @since 1.34.3
-	 *
-	 * @param array  $query_args Array of WP_Query arguments.
-	 * @param string $post_type  Post type name.
-	 *
-	 * @return array
-	 */
-	public function sitemaps_maybe_hide_filled( $query_args, $post_type ) {
-		if (
-			'job_listing' !== $post_type
-			|| 1 !== absint( get_option( 'job_manager_hide_filled_positions' ) )
-		) {
-			return $query_args;
-		}
-
-		if ( ! isset( $query_args['meta_query'] ) ) {
-			$query_args['meta_query'] = [];
-		}
-
-		$query_args['meta_query'][] = [
-			'key'   => '_filled',
-			'value' => '0',
-		];
-
-		return $query_args;
 	}
 
 	/**

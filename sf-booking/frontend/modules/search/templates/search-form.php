@@ -369,10 +369,6 @@ $html = '<form class="clearfix search-providers" method="get" action="'.home_url
   if(service_finder_get_data($service_finder_options,'search-state')){
   ob_start();
 		$country = service_finder_get_data($_REQUEST,'country');
-		if($country == '')
-		{
-			$country = (!empty($service_finder_options['default-country'])) ? $service_finder_options['default-country'] : '';
-		}
 	    if($restrictuserarea && $identitycheck){
 	    $qry = $wpdb->prepare("select DISTINCT state from ".$service_finder_Tables->providers." WHERE admin_moderation = 'approved' AND country = '%s' AND identity = 'approved' AND account_blocked != 'yes' ORDER BY `state`",$country);
 	    }else{

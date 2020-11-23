@@ -40,36 +40,24 @@ $html = '<section class="section-full text-center bg-white" style="background-im
                     
                 <div class="section-content">
                     <div class="row">';
-                        $boxcnt = 0;
-						for($i = 1;$i <= 3; $i++ )
-						{
-						$show = (isset($service_finder_options['shortcode-how-works-step'.$i.'-show'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-show']) : true;
-						if($show == true)
-						{
-						$boxcnt++;
-						}
-						}
+                        
                         for($i = 1;$i <= 3; $i++ )
 						{
-						$show = (isset($service_finder_options['shortcode-how-works-step'.$i.'-show'])) ? $service_finder_options['shortcode-how-works-step'.$i.'-show'] : true;
 						$steptitle = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-title'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-title']) : '';
 						$stepcontent = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-content'])) ? wp_kses_post($service_finder_options['shortcode-how-works-step'.$i.'-content']) : '';
 						$stepnumber = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-number'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-number']) : '';
 						$stepicon = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-icon']['url'])) ? $service_finder_options['shortcode-how-works-step'.$i.'-icon']['url'] : '';
-						$boxwidth = ($boxcnt == 2) ? 'col-md-6' : 'col-md-4';
-						if($show == true)
-						{
-						$html .= '<div class="'.esc_attr($boxwidth).'">
+						
+						$html .= '<div class="col-md-4">
                           <div class="sf-how-work padding-lr-40 equal-col">
                                 <div class="sf-icon-xl margin-b-20">
                                     <img src="'.esc_url($stepicon).'" width="139" height="140" alt="">
                                     <span class="sf-no-step">'.esc_html($stepnumber).'</span>
                                 </div>
-                                <h4 class="sf-tilte" style="color:'.esc_attr($taglinecolor).'">'.esc_html($steptitle).'</h4>
-                                <p style="color:'.esc_attr($taglinecolor).'">'.$stepcontent.'</p>
+                                <h4 class="sf-tilte">'.esc_html($steptitle).'</h4>
+                                <p>'.$stepcontent.'</p>
                           </div>
                         </div>';
-						}
 						}
                         
                     $html .= '</div>
@@ -94,38 +82,25 @@ ob_start();
 			<div class="row">
 				
 				<?php
-                $boxcnt = 0;
-				for($i = 1;$i <= 3; $i++ )
+                for($i = 1;$i <= 3; $i++ )
 				{
-				$show = (isset($service_finder_options['shortcode-how-works-step'.$i.'-show'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-show']) : true;
-				if($show == true)
-				{
-				$boxcnt++;
-				}
-				}
-				for($i = 1;$i <= 3; $i++ )
-				{
-				$show = (isset($service_finder_options['shortcode-how-works-step'.$i.'-show'])) ? $service_finder_options['shortcode-how-works-step'.$i.'-show'] : true;
 				$steptitle = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-title'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-title']) : '';
 				$stepcontent = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-content'])) ? wp_kses_post($service_finder_options['shortcode-how-works-step'.$i.'-content']) : '';
 				$stepnumber = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-number'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-number']) : '';
 				$stepicon = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-icon']['url'])) ? $service_finder_options['shortcode-how-works-step'.$i.'-icon']['url'] : '';
-				$boxwidth = ($boxcnt == 2) ? 'col-md-6 col-sm-6' : 'col-md-4 col-sm-4';
-				if($show == true)
-				{
+				
 				?>
-				<div class="<?php echo esc_attr($boxwidth); ?>">
+				<div class="col-md-4 col-sm-4">
                   <div class="sf-howServFinWork-box padding-lr-40">
-                        <div class="sf-icon-xl margin-b-20" style="border-color:<?php echo esc_attr($taglinecolor); ?>">
+                        <div class="sf-icon-xl margin-b-20">
                             <img src="<?php echo esc_html($stepicon); ?>" alt="">
-                            <span class="sf-no-step text-primary" style="color:<?php echo esc_attr($taglinecolor); ?>"><?php echo esc_html($stepnumber); ?></span>
+                            <span class="sf-no-step text-primary"><?php echo esc_html($stepnumber); ?></span>
                         </div>
-                        <h4 class="sf-tilte text-white" style="color:<?php echo esc_attr($taglinecolor); ?>"><?php echo esc_html($steptitle); ?></h4>
-                        <p style="color:<?php echo esc_attr($taglinecolor); ?>"><?php echo esc_html($stepcontent); ?></p>
+                        <h4 class="sf-tilte text-white"><?php echo esc_html($steptitle); ?></h4>
+                        <p><?php echo esc_html($stepcontent); ?></p>
                   </div>
                 </div>
 				<?php
-				}
 				}
 				?>
 				
@@ -148,35 +123,22 @@ $html = '<section class="section-full text-center bg-white how-sf-work" style="b
     </div>
     <div class="section-content">
       <div class="row">';
-		$boxcnt = 0;
 		for($i = 1;$i <= 3; $i++ )
 		{
-		$show = (isset($service_finder_options['shortcode-how-works-step'.$i.'-show'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-show']) : true;
-		if($show == true)
-		{
-		$boxcnt++;
-		}
-		}
-		for($i = 1;$i <= 3; $i++ )
-		{
-		$show = (isset($service_finder_options['shortcode-how-works-step'.$i.'-show'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-show']) : true;
 		$steptitle = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-title'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-title']) : '';
 		$stepcontent = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-content'])) ? wp_kses_post($service_finder_options['shortcode-how-works-step'.$i.'-content']) : '';
 		$stepnumber = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-number'])) ? esc_html($service_finder_options['shortcode-how-works-step'.$i.'-number']) : '';
 		$stepicon = (!empty($service_finder_options['shortcode-how-works-step'.$i.'-icon']['url'])) ? $service_finder_options['shortcode-how-works-step'.$i.'-icon']['url'] : '';
-		$boxwidth = ($boxcnt == 2) ? 'col-md-6 col-sm-6' : 'col-md-4 col-sm-4';
-		if($show == true)
-		{
-		$html .= '<div class="'.esc_attr($boxwidth).'">
+		
+		$html .= '<div class="col-md-4 col-sm-4">
 				  <div class="sf-element-bx padding-lr-30">
 					<div class="icon-bx-lg rounded-bx mostion"><img src="'.esc_url($stepicon).'" width="139" height="140" alt=""></div>
 					<div class="shadow-bx mostion"><img src="'.plugins_url('/sf-shortcodes/').'images/shadow.png'.'" alt=""></div>
-					<h4 style="color:'.esc_attr($taglinecolor).'">'.esc_html($steptitle).'</h4>
-					<p style="color:'.esc_attr($taglinecolor).'">'.$stepcontent.'</p>
-					<div class="step-no-bx mostion" style="color:'.esc_attr($taglinecolor).'">'.esc_html($stepnumber).'</div>
+					<h4>'.esc_html($steptitle).'</h4>
+					<p>'.$stepcontent.'</p>
+					<div class="step-no-bx mostion">'.esc_html($stepnumber).'</div>
 				  </div>
 				</div>';
-		}
 		}
 $html .= '<div class="col-md-12">
           <div class="line-bx">

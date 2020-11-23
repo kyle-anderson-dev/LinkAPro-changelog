@@ -274,8 +274,7 @@ class SERVICE_FINDER_BookNow{
 				
 				if(!empty($members)){
 					foreach($members as $member){
-						$memberavatar = service_finder_getMemberAvatar($member->id);
-						$html .= '<option data-avatar="'.esc_url($memberavatar).'" value="'.$member->id.'">'.$member->member_name.'</option>';
+						$html .= '<option value="'.$member->id.'">'.$member->member_name.'</option>';
 					}
 				}else{
 					$html .= '<option value="">'.esc_html__('No members available', 'service-finder').'</option>';
@@ -578,8 +577,6 @@ class SERVICE_FINDER_BookNow{
 			$service_location = get_user_meta($bookingdata['provider'],'my_location',true);
 		}elseif($bookingdata['service_perform_at'] == 'customer_location'){
 			$service_location = (!empty($bookingdata['location'])) ? $bookingdata['location'] : '';
-		}else{
-			$service_location = '';
 		}
 		
 		$bookdata = array(
@@ -762,8 +759,7 @@ class SERVICE_FINDER_BookNow{
 			$noticedata = array(
 					'provider_id' => $bookingdata['provider'],
 					'target_id' => $booking_id, 
-					'topic' => 'Booking',
-					'title' => esc_html__('Booking', 'service-finder'),
+					'topic' => esc_html__('Booking', 'service-finder'),
 					'notice' => sprintf( esc_html__('You have new booking. Booking Ref id is #%d', 'service-finder'), $booking_id ),
 					);
 			service_finder_add_notices($noticedata);
@@ -771,8 +767,7 @@ class SERVICE_FINDER_BookNow{
 			$noticedata = array(
 					'provider_id' => $bookingdata['provider'],
 					'target_id' => $booking_id, 
-					'topic' => 'Booking',
-					'title' => esc_html__('Booking', 'service-finder'),
+					'topic' => esc_html__('Booking', 'service-finder'),
 					'notice' => sprintf( esc_html__('You have new booking on %s at %s by %s. Booking Ref id is #%d', 'service-finder'), $bookingdate,$time[0],$customername,$booking_id ),
 					);
 			service_finder_add_notices($noticedata);
@@ -781,8 +776,7 @@ class SERVICE_FINDER_BookNow{
 			$noticedata = array(
 					'provider_id' => $bookingdata['provider'],
 					'target_id' => $booking_id, 
-					'topic' => 'Booking',
-					'title' => esc_html__('Booking', 'service-finder'),
+					'topic' => esc_html__('Booking', 'service-finder'),
 					'notice' => sprintf( esc_html__('You have new booking on %s at %s by %s. Booking Ref id is #%d', 'service-finder'), $bookingdate,$time[0],$customername,$booking_id ),
 					);
 			service_finder_add_notices($noticedata);
@@ -820,9 +814,9 @@ class SERVICE_FINDER_BookNow{
 		
 		if ( $bookingdata && ! isset ( $bookingdata['processed'] ) ) {
 		
-		if($order_status == 'on-hold'){
+		if($order_status == 'on-hold' || $order_status == 'processing'){
 			$status = 'Need-Approval';
-		}elseif($order_status == 'completed' || $order_status == 'processing'){
+		}elseif($order_status == 'completed'){
 			$status = 'Pending';
 		}
 		
@@ -978,8 +972,6 @@ class SERVICE_FINDER_BookNow{
 				$service_location = get_user_meta($bookingdata['provider'],'my_location',true);
 			}elseif($bookingdata['service_perform_at'] == 'customer_location'){
 				$service_location = (!empty($bookingdata['location'])) ? $bookingdata['location'] : '';
-			}else{
-				$service_location = '';
 			}
 			
 			$bookdata = array(
@@ -987,8 +979,7 @@ class SERVICE_FINDER_BookNow{
 					'booking_made_by' => $booking_made_by, 
 					'date' => ($multidate == 'no' || $bookingdata['jobid'] > 0 || $bookingdata['quoteid'] > 0) ? $bookingdate : Null, 
 					'start_time' => ((!empty($time[0]) && $multidate == 'no') || ($bookingdata['jobid'] > 0 || $bookingdata['quoteid'] > 0)) ? $time[0] : Null, 
-					'end_time' => ((!empty($time[1]) && $multidate == 'no') || ($bookingdata['jobid'] > 0 || $bookingdata['quoteid'] > 0)) ? $booking_end_time : Null, 
-					'end_time_no_buffer' => ((!empty($time[1]) && $multidate == 'no') || ($bookingdata['jobid'] > 0 || $bookingdata['quoteid'] > 0)) ? $time[1] : Null,
+					'end_time' => ((!empty($time[1]) && $multidate == 'no') || ($bookingdata['jobid'] > 0 || $bookingdata['quoteid'] > 0)) ? $time[1] : Null, 
 					'jobid' => $jobid,
 					'quoteid' => $getquoteid,
 					'service_perform_at' => $bookingdata['service_perform_at'],
@@ -1158,8 +1149,7 @@ class SERVICE_FINDER_BookNow{
 				$noticedata = array(
 						'provider_id' => $bookingdata['provider'],
 						'target_id' => $booking_id, 
-						'topic' => 'Booking',
-						'title' => esc_html__('Booking', 'service-finder'),
+						'topic' => esc_html__('Booking', 'service-finder'),
 						'notice' => sprintf( esc_html__('You have new booking. Booking Ref id is #%d', 'service-finder'), $booking_id ),
 						);
 				service_finder_add_notices($noticedata);
@@ -1167,8 +1157,7 @@ class SERVICE_FINDER_BookNow{
 				$noticedata = array(
 						'provider_id' => $bookingdata['provider'],
 						'target_id' => $booking_id, 
-						'topic' => 'Booking',
-						'title' => esc_html__('Booking', 'service-finder'),
+						'topic' => esc_html__('Booking', 'service-finder'),
 						'notice' => sprintf( esc_html__('You have new booking on %s at %s by %s. Booking Ref id is #%d', 'service-finder'), $bookingdate,$time[0],$customername, $booking_id ),
 						);
 				service_finder_add_notices($noticedata);
@@ -1177,8 +1166,7 @@ class SERVICE_FINDER_BookNow{
 				$noticedata = array(
 						'provider_id' => $bookingdata['provider'],
 						'target_id' => $booking_id, 
-						'topic' => 'Booking',
-						'title' => esc_html__('Booking', 'service-finder'),
+						'topic' => esc_html__('Booking', 'service-finder'),
 						'notice' => sprintf( esc_html__('You have new booking on %s at %s by %s. Booking Ref id is #%d', 'service-finder'), $bookingdate,$time[0],$customername, $booking_id ),
 						);
 				service_finder_add_notices($noticedata);
@@ -1203,7 +1191,7 @@ class SERVICE_FINDER_BookNow{
 			}else{
 			
 			$existingbooking = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `payment_type` = "woocommerce" AND `order_id` = %d',$order_id));
-			if(!empty($existingbooking) && ($order_status == 'completed' || $order_status == 'processing') && $bookingdata && ! isset ( $bookingdata['completed'] ) && ! isset ( $bookingdata['cancelled'] )){
+			if(!empty($existingbooking) && $order_status == 'completed' && $bookingdata && ! isset ( $bookingdata['completed'] ) && ! isset ( $bookingdata['cancelled'] )){
 				$updatedata = array(
 							'status' => 'Pending'
 							);
@@ -1287,8 +1275,6 @@ Country: %COUNTRY%
 Services: %SERVICES%
 
 Service Location: %SERVICELOCATION%
-
-Description: %SHORTDESCRIPTION%
 
 <h4>Payment Details</h4>
 Pay Via: %PAYMENTMETHOD%
@@ -1476,8 +1462,6 @@ Services: %SERVICES%
 
 Service Location: %SERVICELOCATION%
 
-Description: %SHORTDESCRIPTION%
-
 <h4>Payment Details</h4>
 Pay Via: %PAYMENTMETHOD%
 				
@@ -1625,7 +1609,6 @@ Services: %SERVICES%
 
 Service Location: %SERVICELOCATION%
 
-Description: %SHORTDESCRIPTION%
 
 <h4>Payment Details</h4>
 Pay Via: %PAYMENTMETHOD%
@@ -1710,19 +1693,13 @@ Pay Via: %PAYMENTMETHOD%
 		
 		$results = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->timeslots.' AS timeslots WHERE (SELECT COUNT(*) FROM '.$service_finder_Tables->unavailability.' AS unavl WHERE `unavl`.`date` = "%s" AND  `unavl`.availability_method = "timeslots" AND `unavl`.`start_time` = `timeslots`.`start_time` AND `unavl`.`end_time` = `timeslots`.`end_time`) = 0 AND `timeslots`.`provider_id` = %d AND `timeslots`.`day` = "%s"',$data['seldate'],$data['provider_id'],strtolower($dayname)));
 		
-		$member_timeslots = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->member_timeslots.' where day = %s and provider_id = %d AND `member_id` = %d',strtolower($dayname),$data['provider_id'],$memberid));
+		$member_timeslots = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->member_timeslots.' where day = %s and provider_id = %d AND `member_id` = %d',$dayname,$data['provider_id'],$memberid));
 			
 		if(!empty($member_timeslots)){
 			foreach($member_timeslots as $member_timeslot){
 				$starttime[] = $member_timeslot->start_time;
 				$endtime[] = $member_timeslot->end_time;
 			}
-		}
-		
-		if($memberid > 0 && empty($member_timeslots))
-		{
-			$res = '<div class="notavail">'.esc_html__('There are no time slot available.', 'service-finder').'</div>';
-			return $res;
 		}
 		
 		$res = '';
@@ -2168,7 +2145,7 @@ Pay Via: %PAYMENTMETHOD%
 			
 				$success = array(
 						'status' => 'success',
-						'suc_message' => esc_html__('Login Successful', 'service-finder'),
+						'suc_message' => esc_html__('Login Successfull', 'service-finder'),
 						'userinfo' => $userinfo,
 						);
 				echo json_encode($success);
@@ -2294,11 +2271,7 @@ Pay Via: %PAYMENTMETHOD%
 				}
 			}
 			}else{
-			if($member_id > 0){
-			$getdays = $wpdb->get_results($wpdb->prepare('SELECT day FROM '.$service_finder_Tables->member_timeslots.' WHERE `provider_id` = %d AND `member_id` = %d GROUP BY day',$provider_id,$member_id));
-			}else{
-			$getdays = $wpdb->get_results($wpdb->prepare('SELECT day FROM '.$service_finder_Tables->timeslots.' WHERE `provider_id` = %d GROUP BY day',$provider_id));		
-			}
+			$getdays = $wpdb->get_results($wpdb->prepare('SELECT day FROM '.$service_finder_Tables->timeslots.' WHERE `provider_id` = %d GROUP BY day',$provider_id));
 
 			if(!empty($getdays)){
 				foreach($getdays as $getday){
@@ -2391,12 +2364,7 @@ Pay Via: %PAYMENTMETHOD%
 				}
 			}
 			}else{
-			
-			if($member_id > 0){
-			$getdays = $wpdb->get_results($wpdb->prepare('SELECT day FROM '.$service_finder_Tables->member_starttimes.' WHERE `provider_id` = %d AND `member_id` = %d GROUP BY day',$provider_id,$member_id));
-			}else{
 			$getdays = $wpdb->get_results($wpdb->prepare('SELECT day FROM '.$service_finder_Tables->starttime.' WHERE `provider_id` = %d GROUP BY day',$provider_id));
-			}
 
 			if(!empty($getdays)){
 				foreach($getdays as $getday){

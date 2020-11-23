@@ -133,6 +133,8 @@ if($userslots == ""){
 
 service_finder_set_default_booking_settings($user_id);
 
+service_finder_set_default_featured_settings($user_id);
+
 $primarycategory = (!empty($_POST['signup_category'])) ? esc_html($_POST['signup_category']) : '';
 update_user_meta($user_id,'primary_category',$primarycategory);
 
@@ -273,6 +275,33 @@ if(isset($_POST['provider-role'])){
 			);
 	
 	$wpdb->insert($service_finder_Tables->job_limits,wp_unslash($data));
+	
+	$allowedjobapply = (!empty($service_finder_options['package'.$packageNum.'-purchase-credit'])) ? $service_finder_options['package'.$packageNum.'-purchase-credit'] : '';
+		
+	$period = (!empty($service_finder_options['purchase-credit-limit-period'])) ? $service_finder_options['purchase-credit-limit-period'] : '';
+	$numberofweekmonth = (!empty($service_finder_options['purchase-credit-number-of-week-month'])) ? $service_finder_options['purchase-credit-number-of-week-month'] : 1;
+	$numberofperiod = (!empty($service_finder_options['purchase-credit-number-of-week-month'])) ? $service_finder_options['purchase-credit-number-of-week-month'] : '';
+	
+	$startdate = date('Y-m-d h:i:s');
+	
+	if($period == 'weekly'){
+		$freq = 7 * $numberofweekmonth;
+		$expiredate = date('Y-m-d h:i:s', strtotime("+".$freq." days"));
+	}elseif($period == 'monthly'){
+		$freq = 30 * $numberofweekmonth;
+		$expiredate = date('Y-m-d h:i:s', strtotime("+".$freq." days"));
+	}
+	
+	$data = array(
+			'provider_id' => $userId,
+			'free_limits' => $allowedjobapply,
+			'available_limits' => $allowedjobapply,
+			'membership_date' => $startdate,
+			'start_date' => $startdate,
+			'expire_date' => $expiredate,
+			);
+	
+	$wpdb->insert($service_finder_Tables->purchase_credit,wp_unslash($data));
 
 }
 }

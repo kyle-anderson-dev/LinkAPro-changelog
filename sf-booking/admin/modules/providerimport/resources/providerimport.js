@@ -11,48 +11,6 @@
 
 
 jQuery(document).ready( function(){
-	jQuery('#categoryimport').on('submit', function(e){
-        e.preventDefault();
-        if(document.getElementById("categorycsv").value == "" && jQuery( "#upload_catfile" ).is(":visible") ) {
-			var fileMessage = param.file_message;
-			alert(fileMessage);
-			return false;
-		}
-
-		jQuery.ajax({
-			type: 'POST',
-			url: ajaxurl,
-			beforeSend: function() {
-				jQuery('.category-loading-image').show();
-				jQuery('.category-form-overlay').show();
-			},
-			data:  new FormData(this),
-			contentType: false,
-			cache: false,
-			processData:false,
-			type: "POST",
-			success:function (response, textStatus) {
-				jQuery('.category-loading-image').hide();
-				jQuery('.category-form-overlay').hide();
-				
-				if(response.data.status == 'success'){
-					 jQuery("#success").removeClass("alert alert-danger");
-				 	 jQuery("#success").addClass("alert alert-success");
-					 jQuery("#success").html(param.import_categories_success);
-					 jQuery("#categorycsv").val(''); 
-					 return false;
-				}
-			
-			},
-			error:function (data, textStatus) {
-				jQuery('.category-loading-image').hide();
-				jQuery('.category-form-overlay').hide();
-			}
-
-		});
-		
-    });
-	
 	jQuery('#upload_csv').on('submit', function(e){
         e.preventDefault();
         if(document.getElementById("uploadfiles").value == "" && jQuery( "#upload_file" ).is(":visible") ) {
@@ -61,7 +19,7 @@ jQuery(document).ready( function(){
 			return false;
 		}
         var fd = new FormData();
-		var file = jQuery(document).find('#upload_csv input[type="file"]');
+		var file = jQuery(document).find('input[type="file"]');
 		var individual_file = file[0].files[0];
 		var update_existing_users = jQuery("#update_existing_users").val();
 		var no_records = jQuery("#no_records").val();

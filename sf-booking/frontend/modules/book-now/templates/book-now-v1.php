@@ -24,7 +24,7 @@ $userInfo = service_finder_getCurrentUserInfo();
 $userCap = service_finder_get_capability($author);
 $settings = service_finder_getProviderSettings($author);
 
-$future_bookings_availability = (!empty($settings['future_bookings_availability'])) ? $settings['future_bookings_availability'] : 365;
+$future_bookings_availability = (!empty($settings['future_bookings_availability'])) ? $settings['future_bookings_availability'] : '';
 
 $number_of_months = (intval($future_bookings_availability)/30);
 
@@ -167,7 +167,6 @@ wp_add_inline_script( 'service_finder-js-booking-form-v1', '/*Declare global var
 var staffmember = "'.$settings['members_available'].'";
 var skipoption = "'.$skipoption.'";
 var jobid = "'.$jobid.'";
-var charge_admin_fee_from = "'.$charge_admin_fee_from.'";
 var disablemonths = '.$number_of_months.';
 var quoteid = "'.$quoteid.'";
 var walletamount = "'.$walletamount.'";
@@ -198,7 +197,6 @@ wp_add_inline_script( 'service_finder-js-booking-form-free-v1', '/*Declare globa
 var staffmember = "'.$settings['members_available'].'";
 var skipoption = "'.$skipoption.'";
 var jobid = "'.$jobid.'";
-var charge_admin_fee_from = "'.$charge_admin_fee_from.'";
 var disablemonths = '.$number_of_months.';
 var quoteid = "'.$quoteid.'";
 var walletamount = "'.$walletamount.'";
@@ -781,7 +779,7 @@ google.maps.event.addDomListener(window, "load", service_finder_initBookingAddre
   $checkstripe = false;
   $checkpayumoney = false;
   $checkcod = false;
-  if(service_finder_is_booking_free_paid($author) == 'paid'){ 
+  if($settings['booking_option'] == 'paid' && $paid_booking){ 
   ?>
   <div id="panel-4" class="padding-20 clearfix margin-b-30  bg-white sf-rouned-box">
     <div class="form-step-bx padding-lr-20">

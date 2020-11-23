@@ -26,16 +26,14 @@ jQuery(function() {
 				var address = document.getElementById('searchAddress');
 
 
-				if(allowedcountry != ''){
 				var options = {
-
 						  componentRestrictions: {country: allowedcountry}
-
 						 };
+						
 				var my_address = new google.maps.places.Autocomplete(address, options);
-				}else{
-				var my_address = new google.maps.places.Autocomplete(address);	
-				}
+						
+				var my_address = new google.maps.places.Autocomplete(address);
+
 		
 
 				google.maps.event.addListener(my_address, 'place_changed', function() {

@@ -22,11 +22,11 @@ class service_finder_payment_masspay{
 
     public function __construct() {
 		global $service_finder_options;
-		$masspaypayoutenable = (isset($service_finder_options['masspay-payout-enable'])) ? $service_finder_options['masspay-payout-enable'] : false;
+		$masspaypayoutenable = (!empty($service_finder_options['masspay-payout-enable'])) ? $service_finder_options['masspay-payout-enable'] : false;
 		$masspayapiusername = (!empty($service_finder_options['masspay-api-username'])) ? $service_finder_options['masspay-api-username'] : '';
 		$masspayapipassword = (!empty($service_finder_options['masspay-api-password'])) ? $service_finder_options['masspay-api-password'] : '';
 		$masspayapisignature = (!empty($service_finder_options['masspay-api-signature'])) ? $service_finder_options['masspay-api-signature'] : '';
-		$masspaytestmode = (isset($service_finder_options['masspay-test-mode'])) ? $service_finder_options['masspay-test-mode'] : true;
+		$masspaytestmode = (!empty($service_finder_options['masspay-test-mode'])) ? $service_finder_options['masspay-test-mode'] : true;
 		$providerreplacestring = (!empty($service_finder_options['provider-replace-string'])) ? $service_finder_options['provider-replace-string'] : esc_html__('Provider', 'service-finder');
         
         $this->massapi_username = $masspayapiusername;
@@ -36,7 +36,7 @@ class service_finder_payment_masspay{
         $this->enabled = $masspaypayoutenable;
 
         $this->massapi_endpoint = 'https://api-3t.paypal.com/nvp';
-        if ($masspaytestmode == true) {
+        if ($masspaytestmode == 'yes') {
             $this->test_mode = true;
             $this->massapi_endpoint = 'https://api-3t.sandbox.paypal.com/nvp';
         }

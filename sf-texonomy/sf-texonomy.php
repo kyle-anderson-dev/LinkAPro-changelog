@@ -3,7 +3,7 @@
 Plugin Name: Service Finder Texonomies
 Plugin URI: http://aonetheme.com/
 Description: This is a plugin for providers category
-Version: 3.5
+Version: 3.4
 Author: Aonetheme
 Author URI: http://aonetheme.com/
 */
@@ -69,14 +69,25 @@ if(!class_exists('service_finder_texonomy_plugin')) {
 			
 			add_action( 'create_sf-cities', array(&$this, 'service_finder_save_country_meta') );
 			
+			add_filter( 'register_taxonomy_job_listing_category_object_type', array(&$this, 'service_finder_job_listing_category_object_type') );
+			
+			
+			
 		} // END public function __construct
 		
-		public function sk_fn_add_testimonials_metabox() {
+		public static function service_finder_job_listing_category_object_type() {
+	
+			$option = array('job_listing','jobqa');
+			return $option;
+		
+		}
+		
+		public static function sk_fn_add_testimonials_metabox() {
 	
 			add_meta_box(
 				'testimonialsinfo',
 				esc_html__( 'Testimonial Details', 'service-finder' ),
-				array($this, 'sk_fn_testimonials_meta_box'),
+				array(&$this, 'sk_fn_testimonials_meta_box'),
 				'sf_testimonials',
 				'normal',
 				'high'
@@ -121,7 +132,7 @@ if(!class_exists('service_finder_texonomy_plugin')) {
 		}
 		
 		/*Callback function for testimonials info meta box*/ 
-		public function sk_fn_testimonials_meta_box() 
+		public static function sk_fn_testimonials_meta_box() 
 		{
 			global $post;
 			
@@ -187,6 +198,41 @@ if(!class_exists('service_finder_texonomy_plugin')) {
 		}
 		/*Register Post type*/
 		public function service_finder_register_post_type(){
+			
+			/*Register Job Question post type*/
+			register_post_type('jobqa', array(
+				'labels' => array(
+					'name' => esc_html__('Job Questions', 'service-finder'),
+					'all_items' => esc_html__('Job Questions', 'service-finder'),
+					'singular_name' => esc_html__('Job Question', 'service-finder'),
+					'add_new' => esc_html__('Add Job Question', 'service-finder'),
+					'add_new_item' => esc_html__('Add New Job Question', 'service-finder'),
+					'edit' => esc_html__('Edit', 'service-finder'),
+					'edit_item' => esc_html__('Edit Job Question', 'service-finder'),
+					'new_item' => esc_html__('New Job Question', 'service-finder'),
+					'view' => esc_html__('View Job Question', 'service-finder'),
+					'view_item' => esc_html__('View Job Question', 'service-finder'),
+					'search_items' => esc_html__('Search Job Question', 'service-finder'),
+					'not_found' => esc_html__('No Job Question found', 'service-finder'),
+					'not_found_in_trash' => esc_html__('No Question found in trash', 'service-finder'),
+					'parent' => esc_html__('Parent Job Question', 'service-finder'),
+				),
+				'description' => '',
+				'public' => true,
+				'supports' => array('title'),
+				'show_ui' => true,
+				'capability_type' => 'post',
+				'map_meta_cap' => true,
+				'publicly_queryable' => false,
+				'exclude_from_search' => true,
+				'hierarchical' => false,
+				'menu_position' => 10,
+				'rewrite' => array('slug' => 'jobquestions', 'with_front' => true),
+				'query_var' => true,
+				'has_archive' => 'jobquestions'
+			));
+			
+			
 			$labels = array(
 				'name'                => esc_html_x( 'Payout Transactions', 'Post Type General Name', 'service-finder' ),
 				'singular_name'       => esc_html_x( 'Payout Transaction', 'Post Type Singular Name', 'service-finder' ),

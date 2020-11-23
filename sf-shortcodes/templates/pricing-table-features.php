@@ -14,7 +14,7 @@
 <?php 
 
 $available = (isset($a['available'])) ? esc_html($a['available']) : '';
-$availableclass = ($available == 'yes') ? 'check' : 'times';
+$availableclass = ($available == 'yes') ? 'fa-check' : 'fa-times';
 $notavailableclass = ($available == 'no') ? 'sf-featued-no-provide' : '';
 if(service_finder_themestyle_for_plugin() == 'style-3'){
 ob_start();

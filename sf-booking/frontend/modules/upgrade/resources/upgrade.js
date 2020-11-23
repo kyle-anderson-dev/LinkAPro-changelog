@@ -1183,7 +1183,6 @@
 								jQuery('form.upgrade-form').find('input[type="submit"]').prop('disabled', false);
 								if(data['status'] == 'success'){
 									jQuery( "<div class='alert alert-success'>"+data['suc_message']+"</div>" ).insertBefore( "form.upgrade-form" );	
-									window.location.reload();
 								}else{
 									jQuery( "<div class='alert alert-danger'>"+data['err_message']+"</div>" ).insertBefore( "form.upgrade-form" );
 								}

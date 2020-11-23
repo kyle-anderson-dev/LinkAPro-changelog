@@ -44,19 +44,6 @@
 	var serviceslot = '';
 	var singleservicehour = 0;
 	provider_id = jQuery('#provider').attr('data-provider');
-	
-	jQuery('body').on('change', '#servicedate-Modal select[name="members_list"]', function(){
-		var memberid = jQuery(this).val();
-		var avatarurl = jQuery('#servicedate-Modal select[name="members_list"] option:selected').data('avatar');
-		if(avatarurl != "" && avatarurl != "undefined" && avatarurl != undefined){
-			jQuery("#sf-bookingmember-image").show();	
-			jQuery("#sf-bookingmember-image").html('<img src="'+avatarurl+'">');	
-		}else{
-			jQuery("#sf-bookingmember-image").hide();	
-			jQuery("#sf-bookingmember-image").html('');
-		}
-	});
-	
 	/*Display Services*/
 	jQuery('form.book-now').on('change', 'select[name="region"]', function(){
 		var region = jQuery('select[name="region"]').val();
@@ -84,7 +71,7 @@
 	 if(providerlat != "" && providerlng != ""){
 	 initMap(providerlat,providerlng,zooml);
 	 }else{
-	 initMap(parseFloat(defaultlat),parseFloat(defaultlng),parseInt(defaultzoomlevel));	
+	 initMap(28.6430536,77.2223442,2);	
 	 }
 	 
 	 });
@@ -282,8 +269,6 @@
 					jQuery('.loading-area').hide();
 					if(data != null){
 						if(data['status'] == 'success'){
-							jQuery("#sf-bookingmember-image").hide();
-							jQuery("#sf-bookingmember-image").html('');
 							jQuery('select[name="members_list"]').html(data['members']);
 							jQuery('.sf-select-box').selectpicker('refresh');
 						}
@@ -2319,13 +2304,7 @@
 												}
 												if(woooption == "wallet"){
 													
-													if(charge_admin_fee_from == 'customer')
-													{
-														var walletchargeamount = parseFloat(totalcost) + parseFloat(adminfee);
-													}else{
-														var walletchargeamount = parseFloat(totalcost);
-													}
-													if(parseFloat(walletamount) < parseFloat(walletchargeamount)){
+													if(parseFloat(walletamount) < (parseFloat(totalcost) + parseFloat(adminfee))){
 														jQuery( "<div class='alert alert-danger'>"+param.insufficient_wallet_amount+"</div>" ).insertBefore( "#bookingwalletpayment" );
 															jQuery("html, body").animate({
 															scrollTop: jQuery(".alert-danger").offset().top
@@ -2761,13 +2740,7 @@
 					
 					}else if(paymode == 'wallet'){
 					
-						if(charge_admin_fee_from == 'customer')
-						{
-							var walletchargeamount = parseFloat(totalcost) + parseFloat(adminfee);
-						}else{
-							var walletchargeamount = parseFloat(totalcost);
-						}
-						if(parseFloat(walletamount) < parseFloat(walletchargeamount)){
+						if(parseFloat(walletamount) < (parseFloat(totalcost) + parseFloat(adminfee))){
 							jQuery( "<div class='alert alert-danger'>"+param.insufficient_wallet_amount+"</div>" ).insertBefore( "form.book-now" );
 								jQuery("html, body").animate({
 								scrollTop: jQuery(".alert-danger").offset().top

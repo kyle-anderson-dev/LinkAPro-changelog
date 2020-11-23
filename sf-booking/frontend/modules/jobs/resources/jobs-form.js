@@ -83,10 +83,21 @@
 		jQuery('#sf-selectplan').remove();
 	});	
 	
+	jQuery('ul#sf-purchase-credit-plans').on('click', 'li', function(){
+		var planid = jQuery(this).data('planid');
+		jQuery('#purchase-credit-planid').val(planid);
+		jQuery('ul#sf-purchase-credit-plans li').removeClass('selected');
+		jQuery(this).addClass('selected');																				   
+		jQuery('#sf-purchase-credit-selectplan').remove();
+	});	
+	
 	if(joblimitstab == "yes"){
 		load_job_limit_datatable('#job-limits');
 	}
 	
+	if(purchasecredittab == "yes"){
+		//load_job_limit_datatable('#purchase-credit');
+	}
 	//Tabbing on My Account Page
 	jQuery("#myTab a").click(function(e){
 		e.preventDefault();
@@ -165,7 +176,11 @@
 	
 	jQuery('body').on('click', '.addlimits', function(){
 		  jQuery( "#sf-paybox" ).slideToggle( "slow" );												  
-	});	
+	});
+	
+	jQuery('body').on('click', '.addpurchasecredit', function(){
+		  jQuery( "#sf-purchase-credit-paybox" ).slideToggle( "slow" );												  
+	});
 	
 	jQuery('body').on('click', '.viewjoblimittxn', function(){
 		  jQuery( "#sf-limit-bx" ).slideToggle( "slow" );
@@ -489,6 +504,107 @@
 						
 					}
 			}
+	});
+	
+	//Make payment for feature
+	jQuery('.purchase-credit-payment-form')
+	.bootstrapValidator({
+		message: param.not_valid,
+		feedbackIcons: {
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+		fields: {
+			payment_mode: {
+				validators: {
+					notEmpty: {
+						message: param.select_payment
+					}
+				}
+			},
+		}
+	})
+	.on('error.field.bv', function(e, data) {
+		data.bv.disableSubmitButtons(false); // disable submit buttons on errors
+	})
+	.on('status.field.bv', function(e, data) {
+		data.bv.disableSubmitButtons(false); // disable submit buttons on valid
+	})
+	.on('success.form.bv', function(form) {
+			
+			var planid = jQuery('#purchase-credit-planid').val();
+			if(planid == ""){
+				jQuery('#sf-purchase-credit-selectplan').remove();
+				jQuery( "<div class='alert alert-danger' id='sf-purchase-credit-selectplan'>"+param.select_plan+"</div>" ).insertBefore( "form.purchase-credit-payment-form" );
+				jQuery('form.purchase-credit-payment-form').find('input[type="submit"]').prop('disabled', false);	
+				return false;	
+			}
+			
+			jQuery('form.purchase-credit-payment-form').find('input[type="submit"]').prop('disabled', false);	
+			var payment_mode = jQuery(this).find('input[name=payment_mode]:checked').val();
+			var woooption = jQuery(this).find('input[name=purchasecredit_woopayment]:checked').val();
+			
+			if(payment_mode == undefined){
+				payment_mode = '';
+			}
+			if(woooption == undefined){
+				woooption = '';
+			}
+			
+			if(woopayment && woooption == '' && jQuery(this).find('input[name=joblimit_woopayment]').length){
+				jQuery('.alert').remove();	
+				jQuery( "<div class='alert alert-danger'>"+param.payment_method_req+"</div>" ).insertAfter( "form.purchase-credit-payment-form" );
+				jQuery('form.purchase-credit-payment-form').find('input[type="submit"]').prop('disabled', false);	
+				return false;
+			}
+			
+			if(payment_mode == 'wired' || payment_mode == 'paypal' || payment_mode == 'payumoney' || payment_mode == 'skippayment' || woooption == "skippayment"){
+				return true;
+			}else if(payment_mode == 'wallet' || woooption == "wallet"){
+					
+						form.preventDefault();
+						var data = {
+						  "action": "purchase_credit_wallet_payment",
+						};
+						
+						var formdata = jQuery('form.purchase-credit-payment-form').serialize() + "&" + jQuery.param(data);
+						
+						jQuery.ajax({
+	
+							type: 'POST',
+	
+							url: ajaxurl,
+							
+							dataType: "json",
+							
+							beforeSend: function() {
+								jQuery(".alert-success,.alert-danger").remove();
+								jQuery('.loading-area').show();
+							},
+							
+							data: formdata,
+	
+							success:function (data, textStatus) {
+								jQuery('.loading-area').hide();
+								jQuery('form.purchase-credit-payment-form').find('input[type="submit"]').prop('disabled', false);
+								if(data['status'] == 'success'){
+									jQuery( "<div class='alert alert-success'>"+data['suc_message']+"</div>" ).insertBefore( "form.purchase-credit-payment-form" );	
+									window.setTimeout(function(){
+										window.location.href = data['redirect_url'];
+									}, 2000);
+								}else{
+									jQuery( "<div class='alert alert-danger'>"+param.insufficient_wallet_amount+"</div>" ).insertBefore( "form.purchase-credit-payment-form" );
+									jQuery("html, body").animate({
+										scrollTop: jQuery(".alert-danger").offset().top
+									}, 1000);	
+								}
+							
+							}
+	
+						});
+						
+					}
 	});
 	
 	//Stripe handler for payment to make feature

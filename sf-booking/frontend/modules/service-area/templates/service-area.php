@@ -58,8 +58,8 @@ var user_id = "'.$globalproviderid.'";', 'after' );
           <div class="modal-body clearfix row input_fields_wrap">
             <div class="col-md-12">
               <div class="form-group">
-                <textarea class="form-control sf-form-control" name="zipcode" id="areazipcode" placeholder="<?php esc_html_e('Add commas to separate postal codes', 'service-finder'); ?>" rows="" cols="4"><?php echo (!empty($sAreas)) ? $sAreas : ''; ?></textarea>
-                <p><?php esc_html_e('Add commas to separate postal codes', 'service-finder'); ?></p>
+                <textarea class="form-control sf-form-control" name="zipcode" id="areazipcode" placeholder="<?php esc_html_e('Add comma separate postal codes', 'service-finder'); ?>" rows="" cols="4"><?php echo (!empty($sAreas)) ? $sAreas : ''; ?></textarea>
+                <p><?php esc_html_e('Add comma separate postal codes', 'service-finder'); ?></p>
               </div>
             </div>
           </div>

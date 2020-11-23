@@ -248,7 +248,7 @@ $currUser = wp_get_current_user();
 				  ?>
               </div>
             </div>
-            <?php if(service_finder_offers_method($globalproviderid) == 'services' && service_finder_check_offer_system() == true){ ?>
+            <?php if(service_finder_offers_method($globalproviderid) == 'services'){ ?>
             <div class="col-md-12">
               <div class="form-group form-inline">
                 <label>
@@ -508,7 +508,7 @@ $currUser = wp_get_current_user();
          <textarea id="editdesc" name="editdesc"></textarea>
         </div>
       </div>
-    <?php if(service_finder_offers_method($globalproviderid) == 'services' && service_finder_check_offer_system() == true){ ?>
+    <?php if(service_finder_offers_method($globalproviderid) == 'services'){ ?>
     <div class="col-md-12">
       <div class="form-group form-inline">
         <label>

@@ -15,7 +15,6 @@ jQuery(function() {
 	var $bookingdate;
 	var $bookingslot;
 	var $stripepublickey = jsdata.stripepublickey;
-	var $radiussearchunit = jsdata.radiussearchunit;
 	var walletamount;
 	var walletamountwithcurrency;
 	var walletsystem;
@@ -23,56 +22,6 @@ jQuery(function() {
 	var adminfeetype;
 	var adminfeefixed;
 	var adminfeepercentage;
-	var defaultlocation = '';
-	
-	jQuery(document).on('click','#viewjoblocation',function(){
-     jQuery('.set-marker-popup').show();
-	 
-	 var providerlat = jQuery(this).data('providerlat');
-	 var providerlng = jQuery(this).data('providerlng');
-  	 var zooml = jQuery(this).data('locationzoomlevel');
-	 
-	 if(zooml == ""){
-		zooml = 14;	 
-	 }
-	 
-	 if(providerlat != "" && providerlng != ""){
-	 initMap(providerlat,providerlng,zooml);
-	 }else{
-	 initMap(28.6430536,77.2223442,2);	
-	 }
-	 
-	});
-	
-	function initMap(lat,lng,zoom) {
-	var map = new google.maps.Map(document.getElementById('marker-map'), {
-	  zoom: zoom,
-	  center: {lat: lat, lng: lng}
-	});
-	
-	marker = new google.maps.Marker({
-	  map: map,
-	  draggable: true,
-	  animation: google.maps.Animation.DROP,
-	  position: {lat: lat, lng: lng}
-	});
-
-	}
-	
-	jQuery(document).on('click','.set-marker-popup-close',function(){
-		jQuery('.set-marker-popup').hide();
-	});
-	
-	jQuery('#jobapplicantsfilter input[name="radius"]').TouchSpin({
-	  verticalbuttons: true,
-	  verticalupclass: 'glyphicon glyphicon-plus',
-	  verticaldownclass: 'glyphicon glyphicon-minus',
-	   min: 1,
-	   max: 500,
-	   postfix: $radiussearchunit
-	}).on('change', function() {
-		filter_providers();
-	});
 	
 	function initAddressAutoComplete(){
 		var address = document.getElementById("booking-address");
@@ -145,134 +94,7 @@ jQuery(function() {
 		var autocomplete = new google.maps.places.Autocomplete(input);
 	}
 	
-	/*Load more providers*/
-	jQuery(".moreproviderbox").slice(0, 10).show();
-	jQuery("body").on('click', "#loadmorejobproviders", function(e){
-		e.preventDefault();
-		jQuery(".moreproviderbox:hidden").slice(0, 5).slideDown();
-		if (jQuery(".moreproviderbox:hidden").length == 0) {
-			jQuery("#loadmorejobproviders a").fadeOut('slow');
-		}
-	});
-	
-	jQuery('body').on('click','#allinvitationrow',function() { // bulk checked
-		var status = this.checked;
-		jQuery(".invitationrow").each( function() {
-			jQuery(this).prop("checked",status);
-		});
-	});
-	
-	jQuery('body').on('click','#sendallinvitations', function(event){ // triggering delete one by one
-		if( jQuery('.invitationrow:checked').length > 0 ){  // at-least one checkbox checked
-		  var jobid = jQuery(this).data('jobid');		
-		  bootbox.confirm(param.are_you_sure, function(result) {
-	
-		  if(result){
-	
-		   var ids = [];
-			jQuery('.invitationrow').each(function(){
-				if(jQuery(this).is(':checked')) { 
-					ids.push(jQuery(this).val());
-				}
-			});
-			var ids_string = ids.toString();  // array to string conversion 
-			jQuery.ajax({
-				type: "POST",
-				url: ajaxurl,
-				beforeSend: function() {
-					jQuery(".alert-success,.alert-danger").remove();
-					jQuery('.loading-area').show();
-				},
-				data: {action: "send_bulk_invitations", data_ids:ids_string, jobid:jobid},
-				success: function(result) {
-					jQuery('.loading-area').hide();
-					jQuery( "<div class='alert alert-success'>"+result.data+"</div>" ).insertBefore( "#jobapplicantsfilter" );
-					window.location.reload();
-				},
-				error: function(result) {
-					jQuery('.loading-area').hide();
-					jQuery( "<div class='alert alert-success'>"+result.data+"</div>" ).insertBefore( "#jobapplicantsfilter" );
-					window.location.reload();
-				},
-				async:false
-			});
-	
-		}
-	
-		});
-			
-		}else{
-	
-				bootbox.alert(param.select_checkbox);
-	
-		}
-	});
-	
-	jQuery( 'body' ).on( 'click', '#jobapplicantsfilter input[name="service_perform_at[]"]', function (event)
-	{
-		var service_perform_at = jQuery( this ).val();
-		
-		var service_locations = [];
-
-		jQuery.each(jQuery("#jobapplicantsfilter input[name='service_perform_at[]']:checked"), function(){
-		
-			service_locations.push(jQuery(this).val());
-		
-		});
-		
-		if(service_locations.includes("customer_location") && service_locations.includes("provider_location"))
-		{
-			jQuery('#filter-by-location-wrap').show();
-			jQuery('#sf-jobserach-bar-radius').show();
-			jQuery('.staging-distance').show();
-			if(defaultlocation != '')
-			{
-			jQuery('#filterlocation').val(defaultlocation);
-			}
-		}else if(service_locations.includes("provider_location"))
-		{
-			jQuery('#filter-by-location-wrap').show();
-			jQuery('#sf-jobserach-bar-radius').show();
-			jQuery('.staging-distance').show();
-			if(defaultlocation == '')
-			{
-			defaultlocation = jQuery('#filterlocation').val();
-			}
-			//jQuery('#filterlocation').val('');
-		}else if(service_locations.includes("customer_location"))
-		{
-			jQuery('#filter-by-location-wrap').show();
-			jQuery('#sf-jobserach-bar-radius').hide();
-			jQuery('.staging-distance').show();
-			if(defaultlocation != '')
-			{
-			jQuery('#filterlocation').val(defaultlocation);
-			}
-		}
-    });
-	
-	jQuery( 'body' ).on( 'click', '.staging-toggle-filter input[type="radio"]', function (event)
-	{
-		var toggletab = jQuery( this ).val();
-		if(toggletab == 'yes')
-		{
-			jQuery( '#quotereceivedyes' ).addClass('active');
-			jQuery( '#quotereceivedno' ).removeClass('active');
-			jQuery( '.sf-chkallinv-outer' ).hide();
-			
-		}else{
-			jQuery( '#quotereceivedno' ).addClass('active');
-			jQuery( '#quotereceivedyes' ).removeClass('active');
-			jQuery( '.sf-chkallinv-outer' ).show();
-		}
-    });
-	
 	jQuery( 'body' ).on( 'click', '#jobapplicantsfilter input[type="checkbox"],#jobapplicantsfilter input[type="radio"]', function (event)
-	{
-		filter_providers();
-    });
-	
-	jQuery( 'body' ).on( 'change', '#jobapplicantsfilter select[name="amenities"]', function (event)
 	{
 		filter_providers();
     });
@@ -282,28 +104,19 @@ jQuery(function() {
 		var filterlocation = jQuery( '#jobapplicantsfilter input[name="filterlocation"]' ).val();
 		var radius = jQuery( '#jobapplicantsfilter input[name="radius"]' ).val();
 		
-		if(jQuery('#jobapplicantsfilter input[name="radius"]').is(':visible')){
-			if(filterlocation != '' && radius != '')
-			{
-			filter_providers();
-			}
-		}else{
-			if(filterlocation != '')
-			{
-			filter_providers();
-			}	
+		if(filterlocation != '' && radius != '')
+		{
+		filter_providers();
 		}
-		
-		
     });
-	filter_providers();
+	
 	function filter_providers()
 	{
-		var quotereceived = jQuery("input[name='quotereceived']:checked"). val();
+		var quotereceived = jQuery( this ).data('params');
+		
 		var data = {
 		  action: 'job_filter_applicants',
-		  jobid: jsdata.jobid,
-		  quotereceived: quotereceived
+		  jobid: jsdata.jobid
 		};
 		
 		var formdata = jQuery.param(data);
@@ -323,24 +136,8 @@ jQuery(function() {
 				if( response.success )
 				{
 					jQuery('#loadfiltered').html(response.data);
-					jQuery('[data-toggle="tooltip"]').tooltip();
 					jQuery('.display-ratings').rating();
 					jQuery('.sf-show-rating').show();
-					
-					jQuery('.staging-distance').show();
-					
-					if(quotereceived == 'yes')
-					{
-						jQuery( '.sf-chkallinv-outer' ).hide();
-						
-					}else{
-						if(jQuery( '.moreproviderbox' ).length > 0)
-						{
-							jQuery( '.sf-chkallinv-outer' ).show();
-						}else{
-							jQuery( '.sf-chkallinv-outer' ).hide();	
-						}
-					}
 				}
 				
 			},
@@ -365,25 +162,6 @@ jQuery(function() {
 		
 		jQuery("#jobid").val($jobsdata.jobid);
 		jQuery("#provider").val($jobsdata.providerid);
-		
-		if($jobsdata.is_booking_free_paid == 'free')
-		{
-			jQuery("#jobbooking-paid-panel").hide();	
-		}
-		
-		if($jobsdata.pay_booking_amount_to == 'provider')
-		{
-			jQuery("#sf-payment-options").html($jobsdata.paymentoptions);
-			
-			$stripepublickey = $jobsdata.stripepublickey;
-			
-			if($jobsdata.paymentoptionsavl == 0)
-			{
-				jQuery("#sf-bookform-submitarea").hide();	
-			}else{
-				jQuery("#sf-bookform-submitarea").show();
-			}
-		}
 		
 		walletamount = $jobsdata.walletamount;
 		walletamountwithcurrency = $jobsdata.walletamountwithcurrency;
@@ -489,12 +267,6 @@ jQuery(function() {
 		var $validator = jQuery('.book-now').data('bootstrapValidator').validate();
 		
 		if($validator.isValid()){
-			
-			if($jobsdata.is_booking_free_paid == 'free')
-			{
-				booking_free_checkout();
-				return false;
-			}
 			
 			if(woopayment){
 							
@@ -934,8 +706,7 @@ jQuery(function() {
 			multidate: false,
 			toggleActive: true,
 			format: dateformat,
-			startDate: date,
-			language: langcode
+			startDate: date
 		})
 		.on('changeDate', function(e) {
 			

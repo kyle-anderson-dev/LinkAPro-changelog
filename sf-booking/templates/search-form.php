@@ -321,10 +321,6 @@ $html = '<form class="clearfix search-providers" method="get" action="'.home_url
   if($service_finder_options['search-state']){
   ob_start();
 		$country = service_finder_theme_get_data($_REQUEST,'country');
-		if($country == '')
-		{
-			$country = (!empty($service_finder_options['default-country'])) ? $service_finder_options['default-country'] : '';
-		}
 	    if($restrictuserarea && $identitycheck){
 	    $qry = $wpdb->prepare("select DISTINCT state from ".$service_finder_Tables->providers." WHERE admin_moderation = 'approved' AND country = '%s' AND identity = 'approved' AND account_blocked != 'yes' ORDER BY `state`",$country);
 	    }else{
@@ -337,7 +333,7 @@ $html = '<form class="clearfix search-providers" method="get" action="'.home_url
 		
 		$branchstates = $wpdb->get_results($qry);
 		?>
-        <div class="<?php echo esc_attr($fieldclass); ?>">
+        <div class="<?php echo sanitize_html_class($fieldclass); ?>">
         <div class="select-state">
         <select class="sf-select-box form-control sf-form-control" data-live-search="true" name="state" id="state" title="<?php echo esc_html__('State','service-finder') ?>" data-header="<?php echo esc_html__('Select a State','service-finder') ?>">
         <option value=""><?php echo esc_html__('Select State','service-finder')?></option>
@@ -540,7 +536,7 @@ $html = '<form class="clearfix search-providers" method="get" action="'.home_url
   if($service_finder_options['search-zipcode']){
   ob_start();
   ?>
-  	<div class="<?php echo esc_attr($fieldclass); ?>">
+  	<div class="<?php echo sanitize_html_class($fieldclass); ?>">
     <div class="type-zipcode">
 	<input type="text" value="<?php echo esc_attr($zipcode); ?>" placeholder="<?php echo esc_html__('Zipcode', 'service-finder'); ?>" id="zipcode" name="zipcode" class="form-control sf-form-control">  
     </div>

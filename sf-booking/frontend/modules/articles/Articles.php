@@ -33,12 +33,6 @@ class SERVICE_FINDER_Articles{
             
 			$post_id = wp_insert_post($article_data);
 			
-			$cat_ids = array( $categoryid );
-			$cat_ids = array_map( 'intval', $cat_ids );
-			$cat_ids = array_unique( $cat_ids );
-
-			wp_set_object_terms( $post_id, $cat_ids, 'sf_article_category',true );
-			
 			update_post_meta($post_id, '_article_category_id', $categoryid);
 			
 			if (!empty($attachment_id)) {

@@ -32,7 +32,7 @@ ob_start();
                     <p style="color:<?php echo esc_attr($a['tagline-color']); ?>"><?php echo apply_filters('the_content', $a['tagline']); ?></p>
                 </div>
                 <div class="section-content">
-		            <?php echo do_shortcode( $content ); ?>
+		            <?php do_shortcode( $content ); ?>
                 </div>
             </div>
             <div class="sf-curve-topWrap"><div class="sf-curveTop sf-postJobs-curveTop" style="background-color:<?php echo esc_attr($curveleftcolor); ?>"></div></div>

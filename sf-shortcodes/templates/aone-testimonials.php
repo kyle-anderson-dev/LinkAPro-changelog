@@ -57,7 +57,7 @@ ob_start();
 				while ( $the_query->have_posts() ) : $the_query->the_post();
 				$postid = get_the_id();
 				if ( has_post_thumbnail() ) { 
-				$imgsrc = wp_get_attachment_image_src( get_post_thumbnail_id(), 'service_finder-related-provider' );
+				$imgsrc = wp_get_attachment_image_src( get_post_thumbnail_id(), 'service_finder-blog-home-page' );
 				$imgsrc = $imgsrc[0];
 				}else{
 				$imgsrc = '';
@@ -78,7 +78,6 @@ ob_start();
                 </div>
 				<?php
 				endwhile;
-				wp_reset_query();
 				?>
               </div>
         </div>
@@ -109,7 +108,7 @@ ob_start();
                                 while ( $the_query->have_posts() ) : $the_query->the_post();
 								$postid = get_the_id();
 								if ( has_post_thumbnail() ) { 
-								$imgsrc = wp_get_attachment_image_src( get_post_thumbnail_id(), 'service_finder-related-provider' );
+								$imgsrc = wp_get_attachment_image_src( get_post_thumbnail_id(), 'service_finder-blog-home-page' );
 								$imgsrc = $imgsrc[0];
 								}else{
 								$imgsrc = '';
@@ -130,7 +129,6 @@ ob_start();
                                 </div>
 								<?php
 								endwhile;
-								wp_reset_query();
 								?>
                             </div>
                         </div>
@@ -161,7 +159,7 @@ ob_start();
 		while ( $the_query->have_posts() ) : $the_query->the_post();
 		$postid = get_the_id();
 		if ( has_post_thumbnail() ) { 
-		$imgsrc = wp_get_attachment_image_src( get_post_thumbnail_id(), 'service_finder-related-provider' );
+		$imgsrc = wp_get_attachment_image_src( get_post_thumbnail_id(), 'service_finder-blog-home-page' );
 		$imgsrc = $imgsrc[0];
 		}else{
 		$imgsrc = '';
@@ -176,7 +174,6 @@ ob_start();
         </div>
 		<?php
 		endwhile;
-		wp_reset_query();
 		?>
         </div>
       </div>

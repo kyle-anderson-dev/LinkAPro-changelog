@@ -855,9 +855,9 @@ global $wpdb, $stripe_options, $service_finder_options, $service_finder_Tables;
 				)
 			);	
 			
-			$acct_id = service_finder_get_stripe_connect_id($providerid);
+			$acct_id = get_user_meta($providerid,'stripe_connect_custom_account_id',true);
 			
-			if($acct_id != "" && $destinationamount > 0 && get_user_meta($providerid,'stripe_connect_custom_account_id',true) != ''){
+			if($acct_id != "" && $destinationamount > 0){
 			
 			$destinationamount = $destinationamount * 100;
 			
@@ -1283,19 +1283,6 @@ $smsbody = str_replace($tokens,$smsreplacements,$smsbody);
 aonesms_send_sms_notifications($providerInfo->mobile,$smsbody);
 }
 }
-}
-
-if(function_exists('service_finder_add_notices')) {
-		
-	$noticedata = array(
-			'provider_id' => $provider_id,
-			'target_id' => $invitedjob, 
-			'topic' => 'Job Invitation',
-			'title' => esc_html__('Job Invitation', 'service-finder'),
-			'notice' => sprintf( esc_html__('You have been invited for job. Job title is %s', 'service-finder'), get_the_title( $invitedjob ) ),
-			);
-	service_finder_add_notices($noticedata);
-	
 }
 
 if(service_finder_wpmailer($provider->user_email,$msg_subject,$msg_body)) {

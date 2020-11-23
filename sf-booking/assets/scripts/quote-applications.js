@@ -132,25 +132,6 @@ jQuery(function() {
 		jQuery("#quoteid").val($quotedata.quoteid);
 		jQuery("#provider").val($quotedata.providerid);
 		
-		if($quotedata.is_booking_free_paid == 'free')
-		{
-			jQuery("#quotebooking-paid-panel").hide();	
-		}
-		
-		if($quotedata.pay_booking_amount_to == 'provider')
-		{
-			jQuery("#sf-payment-options").html($quotedata.paymentoptions);
-			
-			$stripepublickey = $quotedata.stripepublickey;
-			
-			if($quotedata.paymentoptionsavl == 0)
-			{
-				jQuery("#sf-bookform-submitarea").hide();	
-			}else{
-				jQuery("#sf-bookform-submitarea").show();
-			}
-		}
-		
 		walletamount = $quotedata.walletamount;
 		walletamountwithcurrency = $quotedata.walletamountwithcurrency;
 		walletsystem = $quotedata.walletsystem;
@@ -255,13 +236,6 @@ jQuery(function() {
 		var $validator = jQuery('.book-now').data('bootstrapValidator').validate();
 		
 		if($validator.isValid()){
-			
-			if($quotedata.is_booking_free_paid == 'free')
-			{
-				booking_free_checkout();
-				return false;
-			}
-			
 			if(woopayment){
 							
 			if(walletsystem == true || $quotedata.skipoption == true){
@@ -698,8 +672,7 @@ jQuery(function() {
 			multidate: false,
 			toggleActive: true,
 			format: dateformat,
-			startDate: date,
-			language: langcode
+			startDate: date
 		})
 		.on('changeDate', function(e) {
 			

@@ -76,15 +76,7 @@ $html .= '<div class="show_more_main" id="show_more_main'.esc_attr($newoffset).'
 		}else{
 					$limit = 3;
 					$getoffset = (!empty($_POST['offset'])) ? $_POST['offset'] : '';
-					
-					$fromthemeoption = service_finder_manage_shortcode();
-					if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
-					{
-					$getsubcat = (isset($service_finder_options['shortcode-subcategories'])) ? esc_html($service_finder_options['shortcode-subcategories']) : '';
-					}else{
 					$getsubcat = (!empty($_POST['subcat'])) ? $_POST['subcat'] : '';
-					}
-					
 					$newoffset = $getoffset + $limit;
 					
 					if($getsubcat == true){
@@ -190,13 +182,7 @@ $html .= '<div class="show_more_main" id="show_more_main'.esc_attr($newoffset).'
 		}else{
 					$limit = 3;
 					$getoffset = (!empty($_POST['offset'])) ? $_POST['offset'] : '';
-					$fromthemeoption = service_finder_manage_shortcode();
-					if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
-					{
-					$getsubcat = (isset($service_finder_options['shortcode-subcategories'])) ? esc_html($service_finder_options['shortcode-subcategories']) : '';
-					}else{
 					$getsubcat = (!empty($_POST['subcat'])) ? $_POST['subcat'] : '';
-					}
 					$newoffset = $getoffset + $limit;
 					
 					if($getsubcat == true){
@@ -319,13 +305,7 @@ $html .= '<div class="show_more_main_v2" id="show_more_main_v2'.esc_attr($newoff
 		}else{
 					$limit = 4;
 					$getoffset = (!empty($_POST['offset'])) ? $_POST['offset'] : '';
-					$fromthemeoption = service_finder_manage_shortcode();
-					if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
-					{
-					$getsubcat = (isset($service_finder_options['shortcode-subcategories'])) ? esc_html($service_finder_options['shortcode-subcategories']) : '';
-					}else{
 					$getsubcat = (!empty($_POST['subcat'])) ? $_POST['subcat'] : '';
-					}
 					$newoffset = $getoffset + $limit;
 					
 					if($getsubcat == true){
@@ -437,13 +417,7 @@ $html .= '<div class="show_more_main_v2" id="show_more_main_v2'.esc_attr($newoff
 		}else{
 					$limit = 4;
 					$getoffset = (!empty($_POST['offset'])) ? $_POST['offset'] : '';
-					$fromthemeoption = service_finder_manage_shortcode();
-					if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
-					{
-					$getsubcat = (isset($service_finder_options['shortcode-subcategories'])) ? esc_html($service_finder_options['shortcode-subcategories']) : '';
-					}else{
 					$getsubcat = (!empty($_POST['subcat'])) ? $_POST['subcat'] : '';
-					}
 					$newoffset = $getoffset + $limit;
 					
 					if($getsubcat == true){

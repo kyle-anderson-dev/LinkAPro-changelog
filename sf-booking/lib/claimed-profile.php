@@ -2751,26 +2751,6 @@ if($wiretransfermailinstructions != ''){
 }
 $message .= 'Invoice ID:'.$invoiceid;
 
-$userinfo = get_userdata($provider_id);
-$username = $userinfo->user_login;
-$password = wp_generate_password( 8, false );
-wp_set_password( $password, $provider_id );
-
-wp_update_user( array( 'ID' => $provider_id, 'user_email' => $claiminfo->email ) );
-	
-$cdata = array(
-	'email' => $claiminfo->email,
-);
-$cwhere = array(
-	'wp_user_id' => $provider_id
-);
-					
-$wpdb->update($service_finder_Tables->providers,wp_unslash($cdata),$cwhere);
-
-$tokens = array('%USERNAME%','%PASSWORD%');
-$replacements = array($username,$password);
-$msg_body = str_replace($tokens,$replacements,$message);
-
 if(service_finder_wpmailer($claiminfo->email,$subject,$msg_body)) {
 		
 	$success = array(
@@ -2862,7 +2842,7 @@ if(service_finder_wpmailer($claiminfo->email,$subject,$msg_body)) {
 
 
 /*After claimed payment mail to admin*/
-function service_finder_after_claimedpayment_admin($args,$cid,$invoiceid = ''){
+function service_finder_after_claimedpayment_admin($args,$cid,$invoiceid){
 global $wpdb, $service_finder_Tables, $service_finder_options;			
 
 $wpdb->query($wpdb->prepare('UPDATE '.$service_finder_Tables->claim_business.' SET `status` = "claimed" WHERE `id` = %d',$cid));

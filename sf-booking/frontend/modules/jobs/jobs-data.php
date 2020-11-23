@@ -269,6 +269,235 @@ if(isset($_GET['joblimitpayment_made']) && ($_GET['joblimitpayment_made'] == 'ca
 }
 /*Featured via paypal end*/
 
+/*purchase credit via paypal*/
+if(isset($_POST['payment_mode']) && $payment_mode == 'paypal' && isset($_POST['purchasecredit-payment'])){
+$service_finder_options = get_option('service_finder_options');
+$paypal = service_finder_plugin_global_vars('paypal');
+$service_finder_Errors = service_finder_plugin_global_vars('service_finder_Errors');
+$service_finder_Tables = service_finder_plugin_global_vars('service_finder_Tables');
+$registerErrors = service_finder_plugin_global_vars('registerErrors');
+$registerMessages = service_finder_plugin_global_vars('registerMessages');
+
+$service_finder_options = get_option('service_finder_options');
+$creds = array();
+/*Assign papal credentials*/
+$paypalCreds['USER'] = (isset($service_finder_options['paypal-username'])) ? $service_finder_options['paypal-username'] : '';
+$paypalCreds['PWD'] = (isset($service_finder_options['paypal-password'])) ? $service_finder_options['paypal-password'] : '';
+$paypalCreds['SIGNATURE'] = (isset($service_finder_options['paypal-signatue'])) ? $service_finder_options['paypal-signatue'] : '';
+$sandbox = (isset($service_finder_options['paypal-type']) && $service_finder_options['paypal-type'] == 'live') ? '' : 'sandbox.';
+$paypalType = (isset($service_finder_options['paypal-type']) && $service_finder_options['paypal-type'] == 'live') ? '' : 'sandbox.';
+
+$paypalTypeBool = (!empty($paypalType)) ? true : false;
+
+$paypal = new Paypal($paypalCreds,$paypalTypeBool);
+
+$paypalTypeBool = (!empty($paypalType)) ? true : false;
+
+$paypal = new Paypal($paypalCreds,$paypalTypeBool);
+
+$provider_id = (isset($_POST['provider_id'])) ? esc_html($_POST['provider_id']) : '';
+$plan = (isset($_POST['plan'])) ? esc_html($_POST['plan']) : '';
+
+$planprice = (!empty($service_finder_options['purchase-credit-package'.$plan.'-price'])) ? $service_finder_options['purchase-credit-package'.$plan.'-price'] : '';
+
+$userdata = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$wpdb->users.' WHERE `ID` = %d',$provider_id));
+
+$currencyCode = service_finder_currencycode();
+
+	$returnUrl = add_query_arg( array('purchasecreditpayment_made' => 'success','plan' => $plan), service_finder_get_url_by_shortcode('[service_finder_my_account') );
+	$cancelUrl = add_query_arg( array('purchasecreditpayment_made' => 'cancel'), service_finder_get_url_by_shortcode('[service_finder_my_account') );
+	$urlParams = array(
+		'RETURNURL' => $returnUrl,
+		'CANCELURL' => $cancelUrl
+	);
+					
+	$orderParams = array(
+		'PAYMENTREQUEST_0_AMT' => $planprice,
+		'PAYMENTREQUEST_0_SHIPPINGAMT' => '0',
+		'PAYMENTREQUEST_0_CURRENCYCODE' => strtoupper($currencyCode),
+		'PAYMENTREQUEST_0_ITEMAMT' => $planprice
+	);
+	$itemParams = array(
+		'L_PAYMENTREQUEST_0_NAME0' => 'Payment via paypal',
+		'L_PAYMENTREQUEST_0_DESC0' => 'Payment made for purchase credit',
+		'L_PAYMENTREQUEST_0_AMT0' => $planprice,
+		'L_PAYMENTREQUEST_0_QTY0' => '1'
+	);
+	$params = $urlParams + $orderParams + $itemParams;
+	$response = $paypal -> request('SetExpressCheckout',$params);
+	$errors = new WP_Error();
+	if(!$response){
+		$errorMessage = esc_html__( 'ERROR: Bad paypal API settings! Check paypal api credentials in admin settings!', 'service-finder' );
+		$detailErrorMessage = reset($paypal->getErrors());
+		$errors->add( 'bad_paypal_api', $errorMessage . ' ' . $detailErrorMessage );
+		$registerErrors = $errors;
+	}
+	
+	// Request successful
+	if(is_array($response) && $response['ACK'] == 'Success') {
+		// write token to DB
+		$token = $response['TOKEN'];
+		$data = array(
+					'paypal_token' => $token
+					);
+		$where = array(
+					'provider_id' => $provider_id
+			);
+		$res = $wpdb->update($service_finder_Tables->job_limits,wp_unslash($data),$where);
+		// go to payment site
+		header( 'Location: https://www.'.$sandbox.'paypal.com/webscr?cmd=_express-checkout&token=' . urlencode($token) );
+		die();
+
+	} else {
+		$errorMessage = esc_html__( 'ERROR: Bad paypal API settings! Check paypal api credentials in admin settings!', 'service-finder' );
+		$detailErrorMessage = (isset($response['L_LONGMESSAGE0'])) ? $response['L_LONGMESSAGE0'] : '';
+		$errors->add( 'bad_paypal_api', $errorMessage . ' ' . $detailErrorMessage );
+		$registerErrors = $errors;
+	}
+}
+
+
+/*Job Limit via skip payment*/
+if(isset($_POST['payment_mode']) && $payment_mode == 'skippayment' && isset($_POST['purchasecredit-payment'])){
+global $wpdb, $service_finder_options, $service_finder_Tables;
+
+$provider_id = (isset($_POST['provider_id'])) ? esc_html($_POST['provider_id']) : '';
+$plan = (isset($_POST['plan'])) ? esc_html($_POST['plan']) : '';
+
+$planlimit = (!empty($service_finder_options['purchase-credit-package'.$plan.'-limit'])) ? $service_finder_options['purchase-credit-package'.$plan.'-limit'] : 0;
+$planprice = (!empty($service_finder_options['purchase-credit-package'.$plan.'-price'])) ? $service_finder_options['purchase-credit-package'.$plan.'-price'] : 0;
+
+$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->purchase_credit.' WHERE `provider_id` = "'.$provider_id.'"');
+if(!empty($row)){
+	$paidlimit = $planlimit + $row->paid_limits;
+	$available_limits = $planlimit + $row->available_limits;
+}else{
+	$paidlimit = $planlimit;
+	$available_limits = $planlimit;
+}
+
+$data = array(
+		'paid_limits' => $paidlimit,
+		'available_limits' => $available_limits,
+		'txn_id' => '-',
+		'payment_method' => 'skippayment',
+		'payment_status' => 'paid',
+		'current_plan' => $plan,
+		);
+$where = array(
+		'provider_id' => $provider_id
+);
+
+$res = $wpdb->update($service_finder_Tables->purchase_credit,wp_unslash($data),$where);
+
+send_mail_after_purchase_credit( $provider_id );
+// show messages
+$currentpageurl = service_finder_get_my_account_url($provider_id);
+$currentpageurl = add_query_arg( array('tabname' => 'purchase-credit','purchasecreditplanupdate' => 'success'), $currentpageurl );
+
+wp_redirect($currentpageurl);
+die;
+
+}
+
+// check token (paypal merchant authorization) and Do Payment
+if(isset($_GET['purchasecreditpayment_made']) && ($_GET['purchasecreditpayment_made'] == 'success') && !empty($_GET['token'])) {
+
+	// find token
+	$service_finder_options = get_option('service_finder_options');
+	$service_finder_Tables = service_finder_plugin_global_vars('service_finder_Tables');
+	$registerErrors = service_finder_plugin_global_vars('registerErrors');
+	$registerMessages = service_finder_plugin_global_vars('registerMessages');
+
+	$token = (isset($_GET['token'])) ? esc_html($_GET['token']) : '';
+	$tokenRow = $wpdb->get_row( $wpdb->prepare("SELECT * FROM ".$service_finder_Tables->purchase_credit." WHERE `paypal_token` = '%s'",$token) );
+	if(!empty($tokenRow)){
+		
+		// get checkout details from token
+		$checkoutDetails = $paypal -> request('GetExpressCheckoutDetails', array('TOKEN' => $token));
+		if( is_array($checkoutDetails) && ($checkoutDetails['ACK'] == 'Success') ) {
+				//  Single payment
+				$params = array(
+					'TOKEN' => $checkoutDetails['TOKEN'],
+					'PAYERID' => $checkoutDetails['PAYERID'],
+					'PAYMENTACTION' => 'Sale',
+					'PAYMENTREQUEST_0_AMT' => $checkoutDetails['PAYMENTREQUEST_0_AMT'], // Same amount as in the original request
+					'PAYMENTREQUEST_0_CURRENCYCODE' => $checkoutDetails['CURRENCYCODE'] // Same currency as the original request
+				);
+				$singlePayment = $paypal -> request('DoExpressCheckoutPayment',$params);
+
+				// IF PAYMENT OK
+				if( is_array($singlePayment) && $singlePayment['ACK'] == 'Success') {
+					
+					// We'll fetch the transaction ID for internal bookkeeping
+					$transactionId = $singlePayment['PAYMENTINFO_0_TRANSACTIONID'];
+					
+					$provider_id = $tokenRow->provider_id;
+					$plan = (isset($_GET['plan'])) ? esc_html($_GET['plan']) : '';
+					
+					$planlimit = (!empty($service_finder_options['purchase-credit-package'.$plan.'-limit'])) ? $service_finder_options['purchase-credit-package'.$plan.'-limit'] : 0;
+					$planprice = (!empty($service_finder_options['purchase-credit-package'.$plan.'-price'])) ? $service_finder_options['purchase-credit-package'.$plan.'-price'] : 0;
+					
+					$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->purchase_credit.' WHERE `provider_id` = "'.$provider_id.'"');
+					if(!empty($row)){
+						$paidlimit = $planlimit + $row->paid_limits;
+						$available_limits = $planlimit + $row->available_limits;
+					}else{
+						$paidlimit = $planlimit;
+						$available_limits = $planlimit;
+					}
+					
+					
+					
+					$data = array(
+							'paid_limits' => $paidlimit,
+							'available_limits' => $available_limits,
+							'txn_id' => $transactionId,
+							'payment_method' => 'paypal',
+							'payment_status' => 'paid',
+							'current_plan' => $plan,
+							);
+					$where = array(
+							'provider_id' => $provider_id
+					);
+					$res = $wpdb->update($service_finder_Tables->purchase_credit,wp_unslash($data),$where);
+					
+					send_mail_after_purchase_credit( $provider_id );
+					
+					// show messages
+					$currentpageurl = service_finder_get_my_account_url($provider_id);
+					$currentpageurl = add_query_arg( array('tabname' => 'purchase-credit','purchase-credit' => 'success'), $currentpageurl );
+					wp_redirect($currentpageurl);
+					die;
+
+				}
+
+			}
+
+		}
+}
+
+// delete token and show messages if user cancel payment 
+if(isset($_GET['purchasecreditpayment_made']) && ($_GET['purchasecreditpayment_made'] == 'cancel') && !empty($_GET['token'])){
+	// delete token from DB
+	$registerErrors = service_finder_plugin_global_vars('registerErrors');
+	
+	// delete token from DB
+	$token = (isset($_GET['token'])) ? esc_html($_GET['token']) : '';
+	$tokenRow = $wpdb->get_row( $wpdb->prepare("SELECT * FROM ".$service_finder_Tables->purchase_credit." WHERE `paypal_token` = '%s'",$token) );
+	if($tokenRow){
+		
+		$wpdb->query($wpdb->prepare("UPDATE ".$service_finder_Tables->purchase_credit." SET `paypal_token` = '' WHERE `paypal_token` = '%s'",$token));
+		
+		$errors = new WP_Error();
+		$message = esc_html__("You canceled payment. Your payment wasn't made","service-finder");
+		$errors->add( 'cancel_payment', $message);
+		$registerErrors = $errors;
+	}	
+	
+}
+/*purchase credit via paypal end*/
+
 /*Job Limit via payu money start*/
 if(isset($_POST['payment_mode']) && $payment_mode == 'payumoney' && isset($_POST['joblimit-payment'])){
 global $wpdb, $service_finder_options, $service_finder_Tables;
@@ -567,6 +796,81 @@ $args = array(
 service_finder_add_wallet_history($args);
 
 $cashbackamount = service_finder_cashback_amount('job-apply-limit');
+
+if(floatval($cashbackamount['amount']) > 0){
+$remaining_wallet_amount = floatval($remaining_wallet_amount) + floatval($cashbackamount['amount']);
+
+$args = array(
+	'user_id' => $provider_id,
+	'amount' => $cashbackamount['amount'],
+	'action' => 'credit',
+	'debit_for' => $cashbackamount['description'],
+	'payment_mode' => '',
+	'payment_method' => '',
+	'payment_status' => 'completed'
+	);
+	
+service_finder_add_wallet_history($args);
+
+}
+
+update_user_meta($provider_id,'_sf_wallet_amount',$remaining_wallet_amount);
+
+$currentpageurl = service_finder_get_my_account_url($provider_id);
+$currentpageurl = add_query_arg( array('tabname' => 'job-limits'), $currentpageurl );
+
+$msg = esc_html__('Payment has been made successfully', 'service-finder');
+$success = array(
+		'status' => 'success',
+		'suc_message' => $msg,
+		'redirect_url' => $currentpageurl
+		);
+echo json_encode($success);
+
+exit;
+}
+
+/*Make payment for job limit via wallet*/
+add_action('wp_ajax_purchase_credit_wallet_payment', 'service_finder_purchase_credit_wallet_payment');
+function service_finder_purchase_credit_wallet_payment(){
+require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/jobs/MyJobs.php';
+global $wpdb, $stripe_options, $service_finder_options, $service_finder_Tables;
+$provider_id = (isset($_POST['provider_id'])) ? $_POST['provider_id'] : '';
+$plan = (isset($_POST['plan'])) ? $_POST['plan'] : '';
+
+$planprice = (!empty($service_finder_options['purchase-credit-package'.$plan.'-price'])) ? $service_finder_options['purchase-credit-package'.$plan.'-price'] : '';
+
+$walletamount = service_finder_get_wallet_amount($provider_id);
+
+if(floatval($walletamount) < floatval($planprice)){
+$error = array(
+		'status' => 'error',
+		'err_message' => 'insufficient_amount'
+		);
+echo json_encode($error);
+exit(0);
+}
+
+$userdata = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$wpdb->prefix.'users WHERE `ID` = %d',$provider_id));
+
+$makePayment = new SERVICE_FINDER_MyJobs();
+$makePayment->service_finder_makepurchasecreditPayment($_POST,'','','wallet');
+
+$remaining_wallet_amount = floatval($walletamount) - floatval($planprice); 
+
+$args = array(
+	'user_id' => $provider_id,
+	'amount' => $planprice,
+	'action' => 'debit',
+	'debit_for' => esc_html__('Purchase Credit Plan', 'service-finder'),
+	'payment_mode' => 'local',
+	'payment_method' => 'wallet',
+	'payment_status' => 'completed'
+	);
+	
+service_finder_add_wallet_history($args);
+
+$cashbackamount = service_finder_cashback_amount('purchase-credit');
 
 if(floatval($cashbackamount['amount']) > 0){
 $remaining_wallet_amount = floatval($remaining_wallet_amount) + floatval($cashbackamount['amount']);

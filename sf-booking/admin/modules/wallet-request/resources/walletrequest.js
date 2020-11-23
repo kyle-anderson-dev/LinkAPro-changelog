@@ -71,7 +71,7 @@ jQuery(function() {
 			{ "data": "paymentmethod" },
 			{ "data": "paymentstatus" },
 			{ "data": "amount" },
-			{ "data": "actions" }
+			{ "data": "action" }
 		],
 		"columnDefs": [
 			{

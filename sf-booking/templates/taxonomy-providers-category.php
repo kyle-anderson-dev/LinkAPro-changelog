@@ -59,7 +59,7 @@ jQuery("body").on("change", "#country", function(){
 $subheader = service_finder_sub_header_pl();
 $innersubheaderbgimage = service_finder_innerpage_banner_pl();
 if($subheader){
-	$catimage = (isset($service_finder_options['category-image-banner'])) ? $service_finder_options['category-image-banner'] : false;
+	$catimage = (!empty($service_finder_options['category-image-banner'])) ? $service_finder_options['category-image-banner'] : '';
 	
 	if($catimage){
 		$bannerimg = service_finder_getCategoryImage(get_queried_object()->term_id,'full');

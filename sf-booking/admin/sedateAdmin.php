@@ -67,7 +67,7 @@ class SERVICE_FINDER_sedateAdmin {
 		$upgraderequest       = esc_html__( 'Upgrade Package Request', 'service-finder' );
 		$jobconnectrequest       = esc_html__( 'Job Connect Request', 'service-finder' );
 		$notifications       = esc_html__( 'Notifications', 'service-finder' );
-		$providerimport       = esc_html__( 'Provider/Category Import', 'service-finder' );
+		$providerimport       = esc_html__( 'Provider Import', 'service-finder' );
 		$xmlsitemap       = esc_html__( 'XML Sitemap', 'service-finder' );
 		$catimport       = esc_html__( 'Category Import', 'service-finder' );
 		$walletrequest       = esc_html__( 'Wallet Request', 'service-finder' );

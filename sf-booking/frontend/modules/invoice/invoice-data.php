@@ -198,8 +198,7 @@ $paypal = new Paypal($paypalCreds,$paypalTypeBool);
 					$noticedata = array(
 							'provider_id' => $providerid,
 							'target_id' => $invoiceid, 
-							'topic' => 'Invoice Paid',
-							'title' => esc_html__('Invoice Paid', 'service-finder'),
+							'topic' => esc_html__('Invoice Paid', 'service-finder'),
 							'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $row->customer_email ),
 							);
 					service_finder_add_notices($noticedata);
@@ -404,8 +403,7 @@ if(function_exists('service_finder_add_notices')) {
 	$noticedata = array(
 			'provider_id' => $providerid,
 			'target_id' => $invoiceid, 
-			'topic' => 'Invoice Paid',
-			'title' => esc_html__('Invoice Paid', 'service-finder'),
+			'topic' => esc_html__('Invoice Paid', 'service-finder'),
 			'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $row->customer_email ),
 			);
 	service_finder_add_notices($noticedata);
@@ -616,8 +614,7 @@ global $wpdb, $service_finder_Tables, $service_finder_options;
 					$noticedata = array(
 							'provider_id' => $provider_id,
 							'target_id' => $invoiceid, 
-							'topic' => 'Invoice Paid',
-							'title' => esc_html__('Invoice Paid', 'service-finder'),
+							'topic' => esc_html__('Invoice Paid', 'service-finder'),
 							'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $email ),
 							);
 					service_finder_add_notices($noticedata);
@@ -726,8 +723,7 @@ if(function_exists('service_finder_add_notices')) {
 	$noticedata = array(
 			'provider_id' => $provider_id,
 			'target_id' => $invoiceid, 
-			'topic' => 'Invoice Paid',
-			'title' => esc_html__('Invoice Paid', 'service-finder'),
+			'topic' => esc_html__('Invoice Paid', 'service-finder'),
 			'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $email ),
 			);
 	service_finder_add_notices($noticedata);
@@ -914,8 +910,7 @@ if ($response->transactionResponse->state == 'APPROVED') {
 					$noticedata = array(
 							'provider_id' => $provider_id,
 							'target_id' => $invoiceid, 
-							'topic' => 'Invoice Paid',
-							'title' => esc_html__('Invoice Paid', 'service-finder'),
+							'topic' => esc_html__('Invoice Paid', 'service-finder'),
 							'notice' => sprintf( esc_html__('Invoice paid by %s', 'service-finder'), $user_email ),
 							);
 					service_finder_add_notices($noticedata);
@@ -1088,7 +1083,7 @@ Tax Type: %TAXTYPE%
 
 Tax: %TAX%
 
-Description: %DESCRIPTION%
+Description: %DISCRIPTION%
 
 Total: %TOTAL%
 
@@ -1099,7 +1094,6 @@ Status: Paid';
 								
 			$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->invoice.' WHERE `id` = %d',$invoiceid));
 			$prorow = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE `wp_user_id` = %d',$row->provider_id));
-			$customerInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->customers.' WHERE `email` = "%s" GROUP BY email',$row->customer_email));
 			
 			if($row->discount != ""){
 			$discounttype = $row->discount_type;
@@ -1124,8 +1118,8 @@ Status: Paid';
 			}
 			
 			
-			$tokens = array('%REFERENCENO%','%DUEDATE%','%CUSTOMEREMAIL%','%DISCOUNTTYPE%','%DISCOUNT%','%TAXTYPE%','%TAX%','%DESCRIPTION%','%TOTAL%','%GRANDTOTAL%','%CUSTOMERNAME%','%CUSTOMEREMAIL%','%CUSTOMERPHONE%','%CUSTOMERPHONE2%','%ADDRESS%','%APT%','%CITY%','%STATE%','%ZIPCODE%','%COUNTRY%');
-			$replacements = array($row->reference_no,$row->duedate,$row->customer_email,$discounttype,$discount,$taxtype,$tax,$description,service_finder_money_format($row->total),service_finder_money_format($row->grand_total),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country);
+			$tokens = array('%REFERENCENO%','%DUEDATE%','%CUSTOMEREMAIL%','%DISCOUNTTYPE%','%DISCOUNT%','%TAXTYPE%','%TAX%','%DISCRIPTION%','%TOTAL%','%GRANDTOTAL%');
+			$replacements = array($row->reference_no,$row->duedate,$row->customer_email,$discounttype,$discount,$taxtype,$tax,$description,$row->total,$row->grand_total);
 			$msg_body = str_replace($tokens,$replacements,$message);
 			
 			if($service_finder_options['invoice-to-provider-subject'] != ""){
@@ -1180,7 +1174,7 @@ Tax Type: %TAXTYPE%
 
 Tax: %TAX%
 
-Description: %DESCRIPTION%
+Description: %DISCRIPTION%
 
 Total: %TOTAL%
 
@@ -1192,7 +1186,6 @@ Status: Paid';
 								
 			$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->invoice.' WHERE `id` = %d',$invoiceid));
 			$prorow = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE `wp_user_id` = %d',$row->provider_id));
-			$customerInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->customers.' WHERE `email` = "%s" GROUP BY email',$row->customer_email));
 			
 			if($row->discount != ""){
 			$discounttype = $row->discount_type;
@@ -1217,8 +1210,8 @@ Status: Paid';
 			}
 			
 			
-			$tokens = array('%REFERENCENO%','%DUEDATE%','%PROVIDEREMAIL%','%DISCOUNTTYPE%','%DISCOUNT%','%TAXTYPE%','%TAX%','%DISCRIPTION%','%TOTAL%','%GRANDTOTAL%','%CUSTOMERNAME%','%CUSTOMEREMAIL%','%CUSTOMERPHONE%','%CUSTOMERPHONE2%','%ADDRESS%','%APT%','%CITY%','%STATE%','%ZIPCODE%','%COUNTRY%');
-			$replacements = array($row->reference_no,$row->duedate,$prorow->full_name,$discounttype,$discount,$taxtype,$tax,$description,service_finder_money_format($row->total),service_finder_money_format($row->grand_total),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country);
+			$tokens = array('%REFERENCENO%','%DUEDATE%','%PROVIDEREMAIL%','%DISCOUNTTYPE%','%DISCOUNT%','%TAXTYPE%','%TAX%','%DISCRIPTION%','%TOTAL%','%GRANDTOTAL%');
+			$replacements = array($row->reference_no,$row->duedate,$prorow->full_name,$discounttype,$discount,$taxtype,$tax,$description,$row->total,$row->grand_total);
 			$msg_body = str_replace($tokens,$replacements,$message);
 			
 			if($service_finder_options['invoice-to-customer-paid-subject'] != ""){

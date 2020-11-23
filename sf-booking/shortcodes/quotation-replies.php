@@ -163,50 +163,10 @@ function service_finder_view_quote_provider($quoteinfo = array(),$providerid = '
 							$walletamount = service_finder_get_wallet_amount($current_user->ID);
 							$walletsystem = service_finder_check_wallet_system();
 							
-							$settings = service_finder_getProviderSettings($providerid);
-							
 							if(service_finder_getUserRole($current_user->ID) == 'Provider' || service_finder_getUserRole($current_user->ID) == 'administrator'){
 							$skipoption = true;
 							}else{
 							$skipoption = false;
-							}
-							
-							$paymentoptions = '';
-							$payflag = 0;
-							$stripepublickey = '';
-							
-							if(service_finder_get_payment_goes_to() == 'provider')
-							{
-								ob_start();
-								$stripepublickey = $settings['stripepublickey'];
-								if(!empty($settings['paymentoption']))
-								{
-									foreach($settings['paymentoption'] as $paymentoption)
-									{
-									$payflag = 1;
-									?>
-									<div class="radio sf-radio-checkbox">
-									  <input type="radio" value="<?php echo esc_attr($paymentoption); ?>" name="bookingpayment_mode" id="paymentvia<?php echo esc_attr($paymentoption); ?>" >
-									  <label for="paymentvia<?php echo esc_attr($paymentoption); ?>"><?php echo '<img src="'.SERVICE_FINDER_BOOKING_IMAGE_URL.'/payment/'.$paymentoption.'.jpg" title="'.esc_attr(ucfirst($paymentoption)).'" alt="'.esc_attr(ucfirst($paymentoption)).'">'; ?></label>
-									</div>
-									<?php
-									}
-								}elseif(!service_finder_check_wallet_system()){
-									$payflag = 0;
-									echo '<p>';
-									echo esc_html__('There is no payment method available.','service-finder');
-									echo '</p>';
-								}
-								
-								if(service_finder_check_wallet_system())
-								{
-									$payflag = 1;
-								}
-								
-								echo service_finder_add_wallet_option('bookingpayment_mode','paymentvia');
-                                echo service_finder_add_skip_option('bookingpayment_mode','paymentvia');
-								
-								$paymentoptions = ob_get_clean();
 							}
 
 							$params = array(
@@ -220,11 +180,6 @@ function service_finder_view_quote_provider($quoteinfo = array(),$providerid = '
 								'adminfeetype' 	=> service_finder_get_data($service_finder_options,'admin-fee-type'),
 								'adminfeefixed' 	=> service_finder_get_data($service_finder_options,'admin-fee-fixed'),
 								'adminfeepercentage' 	=> service_finder_get_data($service_finder_options,'admin-fee-percentage'),
-								'pay_booking_amount_to' 	=> service_finder_get_payment_goes_to(),
-								'paymentoptions' 	=> $paymentoptions,
-								'paymentoptionsavl' 	=> $payflag,
-								'stripepublickey' 	=> $stripepublickey,
-								'is_booking_free_paid' 	=> service_finder_is_booking_free_paid($providerid),
 							);
 							
 							echo '<a href="javascript:;" class="btn btn-primary bookthisprovider" data-params="'.esc_attr(wp_json_encode( $params )).'">'.esc_html__( 'Book Now', 'service-finder' ).'</a>';

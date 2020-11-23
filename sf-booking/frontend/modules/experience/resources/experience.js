@@ -91,8 +91,7 @@
     });
 		
 	jQuery('.job_period_date').datepicker({
-		format: 'yyyy-mm-dd',			
-		language: langcode
+		format: 'yyyy-mm-dd',													
 	})
 	.on('changeDate', function(evt) {
 		// Revalidate the date field

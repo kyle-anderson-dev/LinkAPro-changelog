@@ -17,9 +17,6 @@ $bgattachment = (isset($service_finder_options['bio-background-attachment'])) ? 
 $bgcolor = (!empty($service_finder_options['bio-bg-color'])) ? $service_finder_options['bio-bg-color'] : '';
 $bgopacity = (!empty($service_finder_options['bio-bg-opacity'])) ? $service_finder_options['bio-bg-opacity'] : '';
 $bgopacity = ($bgopacity > 0) ? $bgopacity : ''; 
-
-$curveleftcolor = (!empty($service_finder_options['bio-left-curve-color'])) ? $service_finder_options['bio-left-curve-color'] : '';
-$curverightcolor = (!empty($service_finder_options['bio-right-curve-color'])) ? $service_finder_options['bio-right-curve-color'] : '';
 ?>
 <!-- Who's on sf  -->
 <?php 
@@ -30,33 +27,6 @@ if($a['btntext'] != "" && service_finder_getUserRole($current_user->ID) == 'Prov
 	$btnlink = '';
 }
 
-if(service_finder_themestyle_for_plugin() == 'style-3'){
-ob_start();
-?>
-<section class="section-full sf-overlay-wrapper text-center who-fs-com" style="background:url(<?php echo esc_url($imgurl); ?>) center <?php echo esc_attr($bgattachment); ?> no-repeat;">
-		  <div class="container">
-			<div class="section-head">
-                <h2 class="text-white" style="color:<?php echo esc_attr($a['title-color']); ?>"><?php echo esc_html($a['title']); ?></h2>
-                <?php echo service_finder_title_separator($a['divider-color']); ?>
-                <p style="color:<?php echo esc_attr($a['tagline-color']); ?>"><?php echo apply_filters('the_content', $a['tagline']); ?></p>
-            </div>
-			<div class="section-content sf-about-text">
-			  <div class="row">
-				<div class="col-md-12">
-				  <p> <em><?php echo do_shortcode( $content ); ?></em> </p>
-				  <?php echo wp_kses_post($btnlink); ?>
-				</div>
-			  </div>
-			</div>
-		  </div>
-		  
-          <div class="sf-curve-topWrap"><div class="sf-curveTop sf-howitwork-curveTop" style="background-color:<?php echo esc_attr($curveleftcolor); ?>"></div></div>
-        <div class="sf-curve-botWrap"><div class="sf-curveBot sf-howitwork-curveBot" style="background-color:<?php echo esc_attr($curverightcolor); ?>"></div></div>            
-        <div class="sf-overlay-main" style="opacity:<?php echo esc_attr($bgopacity); ?>; background-color:<?php echo esc_attr($bgcolor); ?> "></div>
-		</section>
-<?php
-$html = ob_get_clean();		
-}else{
 $html = '<section class="section-full sf-overlay-wrapper text-center who-fs-com" style="background:url('.$imgurl.') center '.$bgattachment.' no-repeat;">
 		  <div class="container">
 			<div class="section-head w-t-element">
@@ -76,6 +46,5 @@ $html = '<section class="section-full sf-overlay-wrapper text-center who-fs-com"
 		  <div class="sf-overlay-main" style="opacity:'.$bgopacity.'; background-color:'.$bgcolor.'">
 		  </div>
 		</section>';
-}
 ?>
 <!-- Who's on sf END -->

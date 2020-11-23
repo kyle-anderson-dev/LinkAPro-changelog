@@ -26,7 +26,7 @@
 	jQuery('.srhdatepicker').datepicker({
 		format: 'yyyy-mm-dd',													
 		startDate: date,
-		language: langcode
+		//language: 'ar'
 	})
 	.on('hide', function(event) {
 		event.preventDefault();

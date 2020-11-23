@@ -40,7 +40,7 @@ $bookingid = (isset($_GET['bookingid'])) ? esc_html($_GET['bookingid']) : 0;
 $invoiceid = (isset($_GET['invoiceid'])) ? esc_html($_GET['invoiceid']) : 0;
 $quoteid = (isset($_GET['quoteid'])) ? esc_html($_GET['quoteid']) : 0;
 
-$availabilitytab = $busitab = $wallettab = $bookingstab = $articlestab = $experiencetab = $certificatestab = $qualificationtab = $unavailabilitytab = $postalcodestab = $ourbranchestab = $serviceregionstab = $myservicestab = $myjobstab = $joblimitstab = $teammemberstab = $scheduletab = $invoicetab = $quotationtab = $upgradetab = '';
+$availabilitytab = $busitab = $wallettab = $bookingstab = $articlestab = $experiencetab = $certificatestab = $qualificationtab = $unavailabilitytab = $postalcodestab = $ourbranchestab = $serviceregionstab = $myservicestab = $myjobstab = $purchasecredittab = $joblimitstab = $teammemberstab = $scheduletab = $invoicetab = $quotationtab = $upgradetab = '';
 $busitab = '';
 $wallettab = '';
 if($tabname == 'availability'){
@@ -73,6 +73,8 @@ $myservicestab = 'yes';
 $myjobstab = 'yes';
 }elseif($tabname == 'job-limits'){
 $joblimitstab = 'yes';
+}elseif($tabname == 'purchase-credit'){
+$purchasecredittab = 'yes';
 }elseif($tabname == 'team-members'){
 $teammemberstab = 'yes';
 }elseif($tabname == 'schedule'){
@@ -106,6 +108,7 @@ var upgradetab = "'.$upgradetab.'";', 'after' );
 
 wp_add_inline_script( 'service_finder-js-job-form', '/*Declare global variable*/
 var joblimitstab = "'.$joblimitstab.'";
+var purchasecredittab = "'.$purchasecredittab.'";
 var myjobstab = "'.$myjobstab.'";', 'after' );
 
 wp_add_inline_script( 'service_finder-js-invoice-form', '/*Declare global variable*/
@@ -239,6 +242,9 @@ var user_id = "'.$globalproviderid.'";', 'after' );
                   <?php echo (!empty($service_finder_options['label-job-limits'])) ? esc_html($service_finder_options['label-job-limits']) : esc_html__('Job Apply Limits', 'service-finder'); ?>
                   </a></li>
                   <?php } ?>
+                  <li class="<?php echo ($tabname == 'purchase-credit') ? 'active' : ''; ?>"><a href="#purchase-credit"><i class="fa fa-check-circle-o"></i>
+                  <?php echo (!empty($service_finder_options['label-purchase-credit'])) ? esc_html($service_finder_options['label-purchase-credit']) : esc_html__('Purchase Credit Plans', 'service-finder'); ?>
+                  </a></li>
                   </ul>
                   </li>  
                 <?php }
@@ -308,7 +314,8 @@ var user_id = "'.$globalproviderid.'";', 'after' );
 				?>
                 <?php
                 $woopayment = (isset($service_finder_options['woocommerce-payment'])) ? esc_html($service_finder_options['woocommerce-payment']) : false;
-				if($woopayment && $service_finder_options['payout-menu'] && class_exists( 'WC_Vendors' ) && class_exists( 'WooCommerce' ) && class_exists( 'mangopayWCMain' )){
+				if($woopayment && $service_finder_options['payout-menu']){
+				if( class_exists( 'WC_Vendors' ) && class_exists( 'WooCommerce' ) && class_exists( 'mangopayWCMain' ) ) {
 				?>
                 <li class="<?php echo ($tabname == 'payout-settings') ? 'active' : ''; ?>">
                   <a href="#payout-settings"><i class="fa fa-money"></i><span class="admin-nav-text"><?php echo (!empty($service_finder_options['label-payout'])) ? esc_html($service_finder_options['label-payout']) : esc_html__('Payout Settings', 'service-finder'); ?></span></a>
@@ -317,12 +324,13 @@ var user_id = "'.$globalproviderid.'";', 'after' );
                               <?php echo esc_html__('General', 'service-finder'); ?>
                               </a></li>
                             <li class="<?php echo ($tabname == 'payout-history') ? 'active' : ''; ?>"><a href="#payout-history"><i class="fa fa-money"></i>
-                              <?php echo (!empty($service_finder_options['label-payout-history'])) ? esc_html($service_finder_options['label-payout-history']) : esc_html__('Payout History', 'service-finder'); ?>
+                              <?php echo esc_html__('Payout History', 'service-finder'); ?>
                               </a></li>        
                         </ul>
                   </li>
 				<?php
-				}elseif((($payment_methods['stripe'] && $stripeconnecttype == 'custom') || $payment_methods['paypal'] || $woopayment) && $service_finder_options['payout-menu']){
+				}
+				}elseif((($payment_methods['stripe'] && $stripeconnecttype == 'custom') || $payment_methods['paypal']) && $service_finder_options['payout-menu']){
 				?>
                 <li class="<?php echo ($tabname == 'payout-general') ? 'active' : ''; ?>">
                   <a href="#payout-general"><i class="fa fa-money"></i><span class="admin-nav-text"><?php echo (!empty($service_finder_options['label-payout'])) ? esc_html($service_finder_options['label-payout']) : esc_html__('Payout Settings', 'service-finder'); ?></span></a>
@@ -332,13 +340,13 @@ var user_id = "'.$globalproviderid.'";', 'after' );
                               <?php echo esc_html__('Stripe Connect', 'service-finder'); ?>
                               </a></li>
                             <?php } ?>
-							<?php if($payment_methods['paypal'] || $woopayment){ ?>
+							<?php if($payment_methods['paypal']){ ?>
                             <li class="<?php echo ($tabname == 'paypal-masspay') ? 'active' : ''; ?>"><a href="#paypal-masspay"><i class="fa fa-user"></i>
                               <?php echo esc_html__('Paypal', 'service-finder'); ?>
                               </a></li>  
                             <?php } ?>  
                             <li class="<?php echo ($tabname == 'payout-history') ? 'active' : ''; ?>"><a href="#payout-history"><i class="fa fa-money"></i>
-                              <?php echo (!empty($service_finder_options['label-payout-history'])) ? esc_html($service_finder_options['label-payout-history']) : esc_html__('Payout History', 'service-finder'); ?>
+                              <?php echo esc_html__('Payout History', 'service-finder'); ?>
                               </a></li>        
                         </ul>
                   </li>
@@ -450,8 +458,9 @@ var user_id = "'.$globalproviderid.'";', 'after' );
           </div>
           <?php } ?>
           <?php
-		  $woopayment = (isset($service_finder_options['woocommerce-payment'])) ? esc_html($service_finder_options['woocommerce-payment']) : false;
-		  if($woopayment && class_exists( 'WC_Vendors' ) && class_exists( 'WooCommerce' ) && class_exists( 'mangopayWCMain' ) && $service_finder_options['payout-menu']){
+			$woopayment = (isset($service_finder_options['woocommerce-payment'])) ? esc_html($service_finder_options['woocommerce-payment']) : false;
+			if($woopayment){
+			if( class_exists( 'WC_Vendors' ) && class_exists( 'WooCommerce' ) && class_exists( 'mangopayWCMain' ) && $service_finder_options['payout-menu'] ) {
 			?>
           <div id="payout-settings" class="tab-pane fade <?php echo ($tabname == 'payout-settings') ? 'in active' : ''; ?>">
             <?php require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/payout/templates/mp-settings.php'; ?>
@@ -460,14 +469,15 @@ var user_id = "'.$globalproviderid.'";', 'after' );
             <?php require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/payout/templates/payout-history-mp.php'; ?>
           </div>
           <?php 
-		  }elseif((($payment_methods['stripe'] && $stripeconnecttype == 'custom') || $payment_methods['paypal'] || $woopayment) && $service_finder_options['payout-menu']){
+		  }
+		  }elseif((($payment_methods['stripe'] && $stripeconnecttype == 'custom') || $payment_methods['paypal']) && $service_finder_options['payout-menu']){
 		  ?>
           <?php if($payment_methods['stripe'] && $stripeconnecttype == 'custom'){ ?>
           <div id="payout-general" class="tab-pane fade <?php echo ($tabname == 'payout-general') ? 'in active' : ''; ?>">
             <?php require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/payout/templates/general.php'; ?>
           </div>
           <?php } ?>
-		  <?php if($payment_methods['paypal'] || $woopayment){ ?>
+		  <?php if($payment_methods['paypal']){ ?>
           <div id="paypal-masspay" class="tab-pane fade <?php echo ($tabname == 'paypal-masspay') ? 'in active' : ''; ?>">
             <?php require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/payout/templates/masspay.php'; ?>
           </div>
@@ -622,6 +632,11 @@ var user_id = "'.$globalproviderid.'";', 'after' );
             <?php require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/jobs/templates/job-limits.php'; ?>
           </div>
           <?php } 
+		  ?>
+		  <div id="purchase-credit" class="tab-pane fade <?php echo ($tabname == 'purchase-credit') ? 'in active' : ''; ?>">
+            <?php require SERVICE_FINDER_BOOKING_FRONTEND_MODULE_DIR . '/jobs/templates/purchase-credit.php'; ?>
+          </div>
+		  <?php
 		  }
 		  }
 		  ?>

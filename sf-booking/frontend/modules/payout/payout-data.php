@@ -58,7 +58,7 @@ try {
 	$acct = \Stripe\Account::create(array(
 	  'type' => 'custom',
 	  'country' => $bank_country,
-	  'requested_capabilities' => ['transfers','card_payments'],
+	  'requested_capabilities' => ['transfers'],
 	  'email' => $email,
 	  'business_type' => 'individual',
 	  'external_account' => array(
@@ -107,7 +107,7 @@ try {
 	$acct = \Stripe\Account::create(array(
 	  'type' => 'custom',
 	  'country' => $bank_country,
-	  'requested_capabilities' => ['transfers','card_payments'],
+	  'requested_capabilities' => ['transfers'],
 	  'email' => $email,
 	  'business_type' => 'individual',
 	  'external_account' => array(
@@ -158,99 +158,98 @@ try {
 	update_user_meta($user_id,'stripe_connect_custom_account_id',$acct_id);
 	}else{
 	if($routing_number != ''){
-	$acct = \Stripe\Account::update($acct_id,
-	  [
-		'requested_capabilities' => ['transfers','card_payments'],
-		'email' => $email,
-		'business_type' => 'individual',
-		'external_account' => [
-			"object" => 'bank_account',
-			"country" => $bank_country,
-			"currency" => $currency,
-			"routing_number" => $routing_number,
-			"account_number" => $account_number,
-		],
-		'business_profile' => [
+	$acct = \Stripe\Account::update($acct_id,array(
+	  'requested_capabilities' => ['transfers'],
+	  'email' => $email,
+	  'business_type' => 'individual',
+	  'external_account' => array(
+		"object" => 'bank_account',
+		"country" => $bank_country,
+		"currency" => $currency,
+		"routing_number" => $routing_number,
+		"account_number" => $account_number,
+	  ),
+	  'business_profile' => array(
 			'url' => $website,
 			'product_description' => $product_description
-	    ],
-        'tos_acceptance' => [
-		  'date' => time(),
-		  'ip' => $_SERVER['REMOTE_ADDR'], // Assumes you're not using a proxy
-		],
-		'individual' => [
+	  ),
+	  'tos_acceptance' => array(
+			'date' => time(),
+			'ip' => $_SERVER['REMOTE_ADDR']
+	  ),
+	  'individual' => array(
 			'first_name' => $first_name,
 			'last_name' => $last_name,
+			'id_number' => $id_number,
+			//'phone' => $phone,
 			'email' => $email,
-			'address' => [
+			'address' => array(
 						'line1' => $address,
 						'city' => $city,
 						'country' => $country,
 						'state' => $state,
 						'postal_code' => $postal_code,
-					],
-			'dob' => [
+					),
+			'dob' => array(
 						'day' => $dob[2],
 						'month' => $dob[1],
 						'year' => $dob[0],
-					]
-			
-		],
-		'settings' => [
-			'payouts' => [
-						'schedule' => [
-										'delay_days' => 10
-									]
-					]
-		]
-	  ]
-	);
+					)
+		),
+		'settings' => array(
+			'payouts' => array(
+						'schedule' => array(
+										'interval' => 'manual'
+									)
+					)
+		)
+	));
 	}else{
-	$acct = \Stripe\Account::update($acct_id,
-	[
-	  'requested_capabilities' => ['transfers','card_payments'],
+	$acct = \Stripe\Account::update($acct_id,array(
+	  'requested_capabilities' => ['transfers'],
 	  'email' => $email,
 	  'business_type' => 'individual',
-	  'external_account' => [
+	  'external_account' => array(
 		"object" => 'bank_account',
 		"country" => $bank_country,
 		"currency" => $currency,
 		"account_number" => $account_number,
-	  ],
-	  'business_profile' => [
+	  ),
+	  'business_profile' => array(
 			'url' => $website,
 			'product_description' => $product_description
-	  ],
-	  'tos_acceptance' => [
+	  ),
+	  'tos_acceptance' => array(
 			'date' => time(),
 			'ip' => $_SERVER['REMOTE_ADDR']
-	  ],
-	  'individual' => [
+	  ),
+	  'individual' => array(
 			'first_name' => $first_name,
 			'last_name' => $last_name,
+			'id_number' => $id_number,
+			//'phone' => $phone,
 			'email' => $email,
-			'address' => [
+			'address' => array(
 						'line1' => $address,
 						'city' => $city,
 						'country' => $country,
 						'state' => $state,
 						'postal_code' => $postal_code,
-					],
-			'dob' => [
+					),
+			'dob' => array(
 						'day' => $dob[2],
 						'month' => $dob[1],
 						'year' => $dob[0],
-					]
-		],
-		'settings' => [
-			'payouts' => [
-						'schedule' => [
-										'delay_days' => 10
-									]
-					]
-		]
-	]
-	);
+					)
+		),
+		'settings' => array(
+			'payouts' => array(
+						'schedule' => array(
+										'interval' => 'manual'
+									)
+					)
+		)
+	));
 	}
 	update_user_meta($user_id,'stripe_personal_id_number',$id_number);
 	}

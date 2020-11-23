@@ -600,7 +600,7 @@ wp_add_inline_script( 'bootstrap', 'jQuery(document).ready(function($) {
 
       <?php 
 
-	  require SERVICE_FINDER_BOOKING_TEMPLATES_DIR . 'search-form.php';
+	  require get_template_directory() . '/templates/search-form.php'; 
 
 	  echo $html;
 

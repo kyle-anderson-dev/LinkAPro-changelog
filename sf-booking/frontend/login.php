@@ -43,7 +43,7 @@ var formtype = "login"; var selectedpackage;', 'after' );
 
         if(!is_user_logged_in()){
 
-        echo '<div class="padding-20  margin-b-30  bg-white sf-rouned-box clearfix loginform_dx_outer">
+        echo '<div class="padding-20  margin-b-30  bg-white sf-rouned-box clearfix">
 
 		<div class="loginform_dx row">';
 

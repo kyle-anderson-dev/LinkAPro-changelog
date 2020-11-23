@@ -136,20 +136,20 @@
 		{
 			var defaultLoc = $( this.canvas ).data( 'default-loc' ),
 				latLng;
-			var currentdefaultlat = jQuery('#lat').val();
-			var currentdefaultlng = jQuery('#long').val();
+			var defaultlat = jQuery('#lat').val();
+			var defaultlng = jQuery('#long').val();
 			var providerzoomlevel = jQuery('#zoomlevel').val();
 			if(providerzoomlevel == ""){
 
 				providerzoomlevel = 14;	
 			}
 
-			defaultLoc = defaultLoc ? defaultLoc.split( ',' ) : [defaultlat, defaultlng];
-			if(currentdefaultlat == "" && currentdefaultlng == ""){
-				var currentdefaultlat = defaultlat;
-				var currentdefaultlng = defaultlng;
+			defaultLoc = defaultLoc ? defaultLoc.split( ',' ) : [53.346881, -6.258860];
+			if(defaultlat == "" && defaultlng == ""){
+				var defaultlat = '53.346881';
+				var defaultlng = '-6.258860';
 			}
-			latLng = new google.maps.LatLng( currentdefaultlat, currentdefaultlng ); // Initial position for map
+			latLng = new google.maps.LatLng( defaultlat, defaultlng ); // Initial position for map
 			
 			this.map = new google.maps.Map( this.canvas, {
 				center           : latLng,
@@ -263,124 +263,129 @@
 		autocomplete      : function ()
 		{
 			var that = this;
-			
+
 			// No address field or more than 1 address fields, ignore
 			if ( !this.addressField || this.addressField.split( ',' ).length > 1 )
 			{
 				return;
 			}
-			
-			var address = document.getElementById('address');
 
-			if(allowedcountry != ''){
-			var options = {
-
-					  componentRestrictions: {country: allowedcountry}
-
-					 };
-			var my_address = new google.maps.places.Autocomplete(address, options);
-			}else{
-			var my_address = new google.maps.places.Autocomplete(address);	
-			}
-			
-			google.maps.event.addListener(my_address, 'place_changed', function() {
-
-				var place = my_address.getPlace();
-				// if no location is found
-				if (!place.geometry) {
-					return;
-				}
-				var city = '';
-				var state = '';
-				
-				var latLng = new google.maps.LatLng( place.geometry.location.lat(), place.geometry.location.lng() );
-				jQuery('#lat').val(place.geometry.location.lat());
-				jQuery('#long').val(place.geometry.location.lng());
-				that.map.setCenter( latLng );
-				that.marker.setPosition( latLng );
-				that.updateCoordinate( latLng );
-				
-				var $city = jQuery("#city");
-				var $state = jQuery("#state");
-				var $zipcode = jQuery("#zipcode");
-				var $country = jQuery("#country");
-				
-				var country_long_name = '';
-				var country_short_name = '';
-				
-				for(var i=0; i<place.address_components.length; i++){
-				var address_component = place.address_components[i];
-				var ty = address_component.types;
-
-				for (var k = 0; k < ty.length; k++) {
-					if (ty[k] === 'locality' || ty[k] === "sublocality" || ty[k] === "sublocality_level_1"  || ty[k] === 'postal_town') {
-						city = address_component.long_name;
-					} else if (ty[k] === "administrative_area_level_1" || ty[k] === "administrative_area_level_2") {
-						$state.val(address_component.long_name);
-						state = address_component.long_name;
-					} else if (ty[k] === 'postal_code') {
-						$zipcode.val(address_component.short_name);
-					} else if(ty[k] === 'country'){
-						
-						var countrycode = address_component.short_name;
-
-						if(!parseInt(allcountry)){
-							if(countrycount > 1){
-								if(jQuery.inArray(countrycode,allowedcountries) > -1){
-								countryflag = 0;
-								}else{
-								countryflag = 1;
+			$( '#' + this.addressField ).autocomplete( {
+				source: function ( request, response )
+				{
+					// TODO: add 'region' option, to help bias geocoder.
+					that.geocoder.geocode( {
+						'address': request.term
+					}, function ( results )
+					{
+						response( $.map( results, function ( item )
+						{
+							return {
+								label    : item.formatted_address,
+								value    : item.formatted_address,
+								address_components	 : item.address_components,
+								latitude : item.geometry.location.lat(),
+								longitude: item.geometry.location.lng()
+							};
+						} ) );
+					} );
+				},
+				select: function ( event, ui )
+				{
+					var city = '';
+					var state = '';
+					
+					var latLng = new google.maps.LatLng( ui.item.latitude, ui.item.longitude );
+					jQuery('#lat').val(ui.item.latitude);
+					jQuery('#long').val(ui.item.longitude);
+					that.map.setCenter( latLng );
+					that.marker.setPosition( latLng );
+					that.updateCoordinate( latLng );
+					
+					var $city = jQuery("#city");
+					var $state = jQuery("#state");
+					var $zipcode = jQuery("#zipcode");
+					var $country = jQuery("#country");
+					
+					var country_long_name = '';
+		            var country_short_name = '';
+					
+					for(var i=0; i<ui.item.address_components.length; i++){
+					var address_component = ui.item.address_components[i];
+					var ty = address_component.types;
+	
+					for (var k = 0; k < ty.length; k++) {
+						if (ty[k] === 'locality' || ty[k] === "sublocality" || ty[k] === "sublocality_level_1"  || ty[k] === 'postal_town') {
+							city = address_component.long_name;
+						} else if (ty[k] === "administrative_area_level_1" || ty[k] === "administrative_area_level_2") {
+							$state.val(address_component.long_name);
+							state = address_component.long_name;
+						} else if (ty[k] === 'postal_code') {
+							$zipcode.val(address_component.short_name);
+						} else if(ty[k] === 'country'){
+							
+							var countrycode = address_component.short_name;
+	
+							if(!parseInt(allcountry)){
+								if(countrycount > 1){
+									if(jQuery.inArray(countrycode,allowedcountries) > -1){
+									countryflag = 0;
+									}else{
+									countryflag = 1;
+									}
 								}
 							}
+							country_long_name = address_component.long_name;
+							country_short_name = address_component.short_name;
+							if(countryflag == 0){
+							mycountry = address_component.short_name;
+							//$country.val(address_component.long_name);
+							jQuery("#country option:contains(" + address_component.long_name + ")").attr('selected', 'selected'); 
+							$city.val(city);
+							mycity = city;
+							jQuery('.user-update input[name="city"]').parent('div').addClass('has-success').removeClass('has-error');
+							jQuery('.user-update select[name="country"]').parent('div').addClass('has-success').removeClass('has-error');
+							jQuery('.sf-select-box').selectpicker('refresh');
+							$city.removeAttr('readonly');
+							$city.attr('placeholder','Please select city from suggestion');
+							}
+						
 						}
-						country_long_name = address_component.long_name;
-						country_short_name = address_component.short_name;
-						if(countryflag == 0){
-						mycountry = address_component.short_name;
-						//$country.val(address_component.long_name);
-						jQuery("#country option:contains(" + address_component.long_name + ")").attr('selected', 'selected'); 
-						$city.val(city);
-						mycity = city;
-						jQuery('.user-update input[name="city"]').parent('div').addClass('has-success').removeClass('has-error');
-						jQuery('.user-update select[name="country"]').parent('div').addClass('has-success').removeClass('has-error');
-						jQuery('.sf-select-box').selectpicker('refresh');
-						$city.removeAttr('readonly');
-						$city.attr('placeholder','Please select city from suggestion');
-						}
-					
 					}
 				}
-			}
+				
+				var address = jQuery("#address").val();
+				
+				address = address.toLowerCase();
+				city = city.toLowerCase();
+				state = state.toLowerCase();
+				country_long_name = country_long_name.toLowerCase();
+				country_short_name = country_short_name.toLowerCase();
+				
+				var new_address = address.replace(city,"");
+				new_address = new_address.replace(state,"");
+				
+				new_address = new_address.replace(country_long_name,"");
+				new_address = new_address.replace(country_short_name,"");
+				new_address = jQuery.trim(new_address);
+				
+				
+				new_address = new_address.replace(/,/g, '');
+				new_address = new_address.replace(/ +/g," ");
+				jQuery("#address").val(new_address);
+				
+				if(new_address == ''){
+				jQuery('.user-update input[name="address"]').parent('div').addClass('has-error').removeClass('has-success');	
+				return false;	 
+				}else{
+				jQuery('.user-update input[name="address"]').parent('div').removeClass('has-error').addClass('has-success');
+				return true
+				}
+				
+				
+				}
+			} );
 			
-			var address = jQuery("#address").val();
-			
-			address = address.toLowerCase();
-			city = city.toLowerCase();
-			state = state.toLowerCase();
-			country_long_name = country_long_name.toLowerCase();
-			country_short_name = country_short_name.toLowerCase();
-			
-			var new_address = address.replace(city,"");
-			new_address = new_address.replace(state,"");
-			
-			new_address = new_address.replace(country_long_name,"");
-			new_address = new_address.replace(country_short_name,"");
-			new_address = jQuery.trim(new_address);
-			
-			
-			new_address = new_address.replace(/,/g, '');
-			new_address = new_address.replace(/ +/g," ");
-			jQuery("#address").val(new_address);
-			
-			if(new_address == ''){
-			jQuery('.user-update input[name="address"]').parent('div').addClass('has-error').removeClass('has-success');	
-			return false;	 
-			}else{
-			jQuery('.user-update input[name="address"]').parent('div').removeClass('has-error').addClass('has-success');
-			return true
-			}
-		 });
-
 		},
 
 		// Update coordinate to input field

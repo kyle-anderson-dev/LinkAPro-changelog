@@ -277,9 +277,6 @@ jQuery(function() {
 	function service_finder_resetform(){
 		jQuery('.provider_registration').bootstrapValidator('resetForm',true); // Reset form
 		
-		jQuery('.provider_registration input[name="signup_company_name"]').val('');
-		jQuery('.provider_registration select[name="signup_category"]').val('');
-		
 		jQuery('.provider_registration select[name="signup_category"]').parent('div').removeClass('has-error');
 		jQuery('.provider_registration select[name="provider-role"]').parent('div').removeClass('has-error');
 		jQuery('.provider_registration select[name="cd_month"]').parent('div').removeClass('has-error');
@@ -288,8 +285,6 @@ jQuery(function() {
 		jQuery('.customer_registration').bootstrapValidator('resetForm',true); // Reset form
 		jQuery('.loginform').bootstrapValidator('resetForm',true); // Reset form
 		jQuery('.forgotpassform').bootstrapValidator('resetForm',true); // Reset form	
-		
-		jQuery('.sf-select-box').selectpicker('refresh');
 		
 		jQuery(".register-modal .alert").remove();
 		jQuery('.login-bx-dynamic .alert').remove();
@@ -382,11 +377,8 @@ jQuery(function() {
 	  }
 	  
 	  var package = button.data('package');
-	  if(package != '' && package != 'undefined' && package != undefined){
-	  selectedpackage = 'package_'+parseInt(package);
-	  	jQuery('#login-Modal .customer-signup-tab').hide();
-	  }else{
-		jQuery('#login-Modal .customer-signup-tab').show();
+	  if(package > 0){
+	  selectedpackage = 'package_'+(parseInt(package) - 1);
 	  }
 	  
 	  var redirectoption = button.data('redirect');
@@ -1504,23 +1496,6 @@ jQuery(function() {
 						}
 					}
 				},
-				fillsignupotp_customer: {
-					validators: {
-						notEmpty: {
-								message: param.req
-							},
-						callback: {
-								message: param.edit_text,
-								callback: function(value, validator, $field) {
-									if(service_finder_getCookie('signupotppasscustomer') == value && service_finder_getCookie('signupotppasscustomer') != ""){
-									return true;
-									}else{
-									return false;	
-									}
-								}
-							}
-					}
-				},
 				customertermsncondition: {
 					validators: {
 						notEmpty: {
@@ -1568,88 +1543,6 @@ jQuery(function() {
 		.on('status.field.bv', function(e, data) {
             data.bv.disableSubmitButtons(false); // disable submit buttons on valid
         })
-		.on('click', '.signupotp-customer', function() {
-				jQuery(".alert-danger").remove();											
-				
-				var emailid = jQuery('#signup_customer_user_email').val();
-				if(emailid == ''){
-					jQuery( '<div class="alert alert-danger">'+param.email_req+'</div>' ).insertAfter( ".signupotp-section-customer .input-group" );
-					return false;
-				}
-				
-				var data = {
-						  "action": "sendotp",
-						  "emailid": emailid,
-						};
-				
-				var formdata = jQuery.param(data);
-				
-				jQuery.ajax({
-
-						type: 'POST',
-
-						url: ajaxurl,
-						
-						beforeSend: function() {
-							jQuery('.loading-area').show();
-						},
-						
-						data: formdata,
-
-						success:function (data, textStatus) {
-							service_finder_clearconsole();
-							jQuery('.loading-area').hide();
-							jQuery( '<div class="alert alert-success padding-5 signupotpsuccess">'+param.otp_mail+'</div>' ).insertAfter( ".signupotp-section-customer .input-group" );
-							service_finder_setCookie('signupotppasscustomer', data); 
-							
-							service_finder_setCookie('signupvaildcustomeremail',emailid);
-							jQuery(".signupotp-customer").remove();
-							
-											jQuery('.customer_registration')
-											.bootstrapValidator('addField', 'fillsignupotp_customer', {
-												validators: {
-															notEmpty: {
-																message: param.otp_pass
-															},
-															callback: {
-																message: param.right,
-																callback: function(value, validator, $field) {
-																	if(service_finder_getCookie('signupotppasscustomer') == value){
-																	jQuery(".signupotpsuccess").remove();	
-																	return true;
-																	}else{
-																	jQuery(".signupotpsuccess").remove();	
-																	return false;	
-																	}
-																}
-															}
-														}
-											})
-											.bootstrapValidator('addField', 'signup_user_email', {
-												validators: {
-															emailAddress: {
-																message: param.signup_user_email
-															},
-															callback: {
-																message: param.reconfirm_email,
-																callback: function(value, validator, $field) {
-																	if(service_finder_getCookie('signupvaildcustomeremail') == value){
-																	return true;
-																	}else{
-																	jQuery(".signupotp-customer").remove();
-																	jQuery(".signupotpsuccess").remove();	
-																	jQuery( '<a href="javascript:;" class="signupotp-customer">'+param.gen_otp+'</a>' ).insertAfter( ".signupotp-section-customer .input-group" );
-																	
-																	return false;	
-																	}
-																}
-															}
-														}
-											});
-						}
-
-					});					  
-		})
         .on('success.form.bv', function(form) {
 				// Prevent form submission
 				form.preventDefault();

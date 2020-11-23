@@ -657,19 +657,16 @@ class SERVICE_FINDER_sedateProviders extends SERVICE_FINDER_sedateManager{
 	if($messagetmp != ""){
 	$message = $messagetmp;
 	}else{
-	$message = 'Dear %PROVIDERNAME%,
+	$message = 'Dear '.esc_html($providerreplacestring).',
 	Congratulations! Your identity has been approved.';
 	}
 	
-	$tokens = array('%PROVIDERNAME%');
-	$replacements = array(service_finder_getProviderName($providerid));
-	$msg_body = str_replace($tokens,$replacements,$message);
+	$msg_body = $message;
 	
 	$noticedata = array(
 			'provider_id' => $providerid,
 			'target_id' => $providerid, 
-			'topic' => 'Identity Approved',
-			'title' => esc_html__('Identity Approved', 'service-finder'),
+			'topic' => esc_html__('Identity Approved', 'service-finder'),
 			'notice' => esc_html__('Your identity has been approved.', 'service-finder'),
 			);
 	service_finder_add_notices($noticedata);
@@ -710,25 +707,17 @@ class SERVICE_FINDER_sedateProviders extends SERVICE_FINDER_sedateManager{
 	if($messagetmp != ""){
 	$message = $messagetmp;
 	}else{
-	$message = 'Dear %PROVIDERNAME%,
+	$message = 'Dear '.esc_html($providerreplacestring).',
 	Your identity has been unapproved.';
 	}
 	
-	$tokens = array('%PROVIDERNAME%');
-	$replacements = array(service_finder_getProviderName($providerid));
-	$msg_body = str_replace($tokens,$replacements,$message);
-	
-	if($service_finder_options['identity-unapprove-mail-subject'] != ""){
-		$msg_subject = $service_finder_options['identity-unapprove-mail-subject'];
-	}else{
-		$msg_subject = esc_html__('Identity check unapproved', 'service-finder');
-	}
+	$msg_body = $message;
+	$msg_subject = 'Identity check unapproved';
 	
 	$noticedata = array(
 			'provider_id' => $providerid,
 			'target_id' => $providerid, 
-			'topic' => 'Identity Declined',
-			'title' => esc_html__('Identity Declined', 'service-finder'),
+			'topic' => esc_html__('Identity Declined', 'service-finder'),
 			'notice' => esc_html__('Your identity has been declined.', 'service-finder'),
 			);
 	service_finder_add_notices($noticedata);

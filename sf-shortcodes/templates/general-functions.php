@@ -267,26 +267,3 @@ function service_finder_manage_shortcode(){
 	
 	return $manageshortcode;
 }
-
-/*Check is new installation or existing client*/
-function service_finder_check_new_client_for_shortcode(){
-	global $wpdb, $service_finder_Tables, $service_finder_options;
-	$flag = 0;
-	$result = $wpdb->get_results('SHOW TABLES');
-	$dbname = key($result[0]);
-	foreach ($result as $mytable)
-    {
-        if($mytable->$dbname == 'service_finder_cities')
-		{
-			$flag = 1;
-			break;
-		}
-    }
-	
-	if($flag == 1)
-	{
-		return false;
-	}else{
-		return true;
-	}
-}

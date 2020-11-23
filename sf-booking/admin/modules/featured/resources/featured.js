@@ -13,7 +13,7 @@ var dataTable = '';
   'use strict';
   var dataTable = '';
   
-  /*Approive Feature Request*/
+  	/*Approive Feature Request*/
   jQuery('body').on('click', '#approve-bx', function(){
 			var fid = jQuery(this).attr('data-id');
 			bootbox.dialog({

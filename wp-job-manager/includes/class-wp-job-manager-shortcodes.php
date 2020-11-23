@@ -61,33 +61,15 @@ class WP_Job_Manager_Shortcodes {
 		add_shortcode( 'job', [ $this, 'output_job' ] );
 		add_shortcode( 'job_summary', [ $this, 'output_job_summary' ] );
 		add_shortcode( 'job_apply', [ $this, 'output_job_apply' ] );
-
-		add_filter( 'paginate_links', [ $this, 'filter_paginate_links' ], 10, 1 );
-	}
-
-	/**
-	* Helper function used to check if page is WPJM dashboard page.
-	*
-	* Checks if page has 'job_dashboard' shortcode.
-	*
-	* @access private
-	* @return bool True if page is dashboard page, false otherwise.
-	*/
-	private function is_job_dashboard_page() {
-		global $post;
-
-		if ( is_page() && has_shortcode( $post->post_content, 'job_dashboard' ) ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
 	 * Handles actions which need to be run before the shortcode e.g. post actions.
 	 */
 	public function shortcode_action_handler() {
-		if ( $this->is_job_dashboard_page() ) {
+		global $post;
+
+		if ( is_page() && has_shortcode( $post->post_content, 'job_dashboard' ) ) {
 			$this->job_dashboard_handler();
 		}
 	}
@@ -291,21 +273,6 @@ class WP_Job_Manager_Shortcodes {
 	}
 
 	/**
-	 * Filters the url from paginate_links to avoid multiple calls for same action in job dashboard
-	 *
-	 * @param string $link
-	 * @return string
-	 */
-	public function filter_paginate_links( $link ) {
-
-		if ( $this->is_job_dashboard_page() ) {
-			return remove_query_arg( [ 'action', 'job_id', '_wpnonce' ], $link );
-		}
-
-		return $link;
-	}
-
-	/**
 	 * Displays edit job form.
 	 */
 	public function edit_job() {
@@ -375,26 +342,19 @@ class WP_Job_Manager_Shortcodes {
 			$atts['filled'] = ( is_bool( $atts['filled'] ) && $atts['filled'] ) || in_array( $atts['filled'], [ 1, '1', 'true', 'yes' ], true );
 		}
 
-		// By default, use client-side state to populate form fields.
-		$disable_client_state = false;
-
 		// Get keywords, location, category and type from querystring if set.
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Input is used safely.
 		if ( ! empty( $_GET['search_keywords'] ) ) {
-			$atts['keywords']     = sanitize_text_field( wp_unslash( $_GET['search_keywords'] ) );
-			$disable_client_state = true;
+			$atts['keywords'] = sanitize_text_field( wp_unslash( $_GET['search_keywords'] ) );
 		}
 		if ( ! empty( $_GET['search_location'] ) ) {
-			$atts['location']      = sanitize_text_field( wp_unslash( $_GET['search_location'] ) );
-			$disable_client_state  = true;
+			$atts['location'] = sanitize_text_field( wp_unslash( $_GET['search_location'] ) );
 		}
 		if ( ! empty( $_GET['search_category'] ) ) {
 			$atts['selected_category'] = sanitize_text_field( wp_unslash( $_GET['search_category'] ) );
-			$disable_client_state      = true;
 		}
 		if ( ! empty( $_GET['search_job_type'] ) ) {
 			$atts['selected_job_types'] = sanitize_text_field( wp_unslash( $_GET['search_job_type'] ) );
-			$disable_client_state       = true;
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
@@ -419,15 +379,14 @@ class WP_Job_Manager_Shortcodes {
 		}
 
 		$data_attributes = [
-			'location'                   => $atts['location'],
-			'keywords'                   => $atts['keywords'],
-			'show_filters'               => $atts['show_filters'] ? 'true' : 'false',
-			'show_pagination'            => $atts['show_pagination'] ? 'true' : 'false',
-			'per_page'                   => $atts['per_page'],
-			'orderby'                    => $atts['orderby'],
-			'order'                      => $atts['order'],
-			'categories'                 => implode( ',', $atts['categories'] ),
-			'disable-form-state-storage' => $disable_client_state,
+			'location'        => $atts['location'],
+			'keywords'        => $atts['keywords'],
+			'show_filters'    => $atts['show_filters'] ? 'true' : 'false',
+			'show_pagination' => $atts['show_pagination'] ? 'true' : 'false',
+			'per_page'        => $atts['per_page'],
+			'orderby'         => $atts['orderby'],
+			'order'           => $atts['order'],
+			'categories'      => implode( ',', $atts['categories'] ),
 		];
 
 		if ( $atts['show_filters'] ) {

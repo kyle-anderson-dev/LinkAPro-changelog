@@ -70,7 +70,7 @@ var user_id = "'.$user_id.'";', 'after' );
 	<div class="col-lg-6">
       <div class="form-group">
         <div class="input-group"> <i class="input-group-addon fixed-w fa fa-money"></i>
-          <input type="text" class="form-control sf-form-control" name="amount" placeholder="<?php esc_html_e('Please enter amount', 'service-finder'); ?>" >
+          <input type="text" class="form-control sf-form-control" name="amount" placeholder="<?php esc_html_e('Please enter amout', 'service-finder'); ?>" >
         </div>
       </div>
     </div>

@@ -104,7 +104,7 @@ $postinner .= '<div class="blog-post '.sanitize_html_class($class).' equal-heigh
 }elseif(service_finder_themestyle_for_plugin() == 'style-3'){
 ob_start();
 ?>
-<div class="col-md-4 col-sm-4" style="background-image:url(<?php echo esc_url($imgurl) ?>); background-attachment: <?php echo esc_attr($bgattachment); ?>">
+<div class="col-md-4 col-sm-4 equal-col" style="background-image:url(<?php echo esc_url($imgurl) ?>); background-attachment: <?php echo esc_attr($bgattachment); ?>">
     <div class="blog-post">
       <div class="post-bx sf-latest-news2">
       
@@ -169,7 +169,6 @@ $postinner .= '<div class="blog-post '.sanitize_html_class($class).' equal-heigh
 ?>                                        
 <?php 
 endwhile; 
-wp_reset_query();
 ?>
 <!-- Latest blog post -->
 
@@ -209,7 +208,7 @@ ob_start();
         </div>
             
         <div class="section-content">
-            <div class="row">
+            <div class="row equal-col-outer">
                 
                 <?php
                 echo wp_kses_post($postinner); 

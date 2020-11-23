@@ -276,8 +276,7 @@ class SERVICE_FINDER_MyJobs{
 		$noticedata = array(
 					'customer_id' => $row->post_author,
 					'target_id' => $jobid, 
-					'topic' => 'Job Completed',
-					'title' => esc_html__('Job Completed', 'service-finder'),
+					'topic' => esc_html__('Job Completed', 'service-finder'),
 					'notice' => esc_html__('Job have been completed by service provider', 'service-finder')
 					);
 		service_finder_add_notices($noticedata);
@@ -351,6 +350,67 @@ class SERVICE_FINDER_MyJobs{
 				$error = array(
 						'status' => 'error',
 						'err_message' => sprintf( wp_kses(esc_html__('Couldn&#8217;t make payment for increase job limit... please contact the <a href="mailto:%s">Administrator</a> !', 'service-finder'),$allowedhtml), $adminemail )
+						);
+				$service_finder_Errors = json_encode($error);
+				return $service_finder_Errors;
+			}else{
+				$success = array(
+						'status' => 'success',
+						'suc_message' => esc_html__('Payment made successfully.', 'service-finder'),
+						);
+				$service_finder_Success = json_encode($success);
+				return $service_finder_Success;
+			}
+			
+		}	
+		
+	/*Make Stripe Payment for Increase job apply limit*/
+	public function service_finder_makepurchasecreditPayment($arg = '',$customerID = '',$txnid = '',$payment_mode = ''){
+			global $wpdb, $service_finder_Tables, $service_finder_options;
+			$stripetoken = (!empty($arg['stripeToken'])) ? $arg['stripeToken'] : '';
+			$provider_id = (!empty($arg['provider_id'])) ? $arg['provider_id'] : '';
+			$plan = (!empty($arg['plan'])) ? $arg['plan'] : '';
+			
+			$planlimit = (!empty($service_finder_options['purchase-credit-package'.$plan.'-limit'])) ? $service_finder_options['purchase-credit-package'.$plan.'-limit'] : 0;
+			$planprice = (!empty($service_finder_options['purchase-credit-package'.$plan.'-price'])) ? $service_finder_options['purchase-credit-package'.$plan.'-price'] : 0;
+			
+			$row = $wpdb->get_row('SELECT * FROM '.$service_finder_Tables->purchase_credit.' WHERE `provider_id` = "'.$provider_id.'"');
+			if(!empty($row)){
+				$paidlimit = $planlimit + $row->paid_limits;
+				$available_limits = $planlimit + $row->available_limits;
+			}else{
+				$paidlimit = $planlimit;
+				$available_limits = $planlimit;
+			}
+			
+			
+			
+			$data = array(
+					'paid_limits' => $paidlimit,
+					'available_limits' => $available_limits,
+					'txn_id' => $txnid,
+					'payment_method' => $payment_mode,
+					'payment_status' => 'paid',
+					'current_plan' => $plan,
+					);
+			$where = array(
+					'provider_id' => $provider_id
+			);
+			$res = $wpdb->update($service_finder_Tables->purchase_credit,wp_unslash($data),$where);
+			
+			send_mail_after_joblimit_connect_purchase( $provider_id );
+			
+			if ( ! $res) {
+				$adminemail = get_option( 'admin_email' );
+				$allowedhtml = array(
+					'a' => array(
+						'href' => array(),
+						'title' => array()
+					),
+				);
+				$error = array(
+						'status' => 'error',
+						'err_message' => sprintf( wp_kses(esc_html__('Couldn&#8217;t make payment for increase purchase credits... please contact the <a href="mailto:%s">Administrator</a> !', 'service-finder'),$allowedhtml), $adminemail )
 						);
 				$service_finder_Errors = json_encode($error);
 				return $service_finder_Errors;

@@ -19,12 +19,7 @@ switch($type){
 case 'providers': 
 	$number = (!empty($a['number'])) ? esc_html($a['number']) : 0;
 	if($number == 0 || $number == ''){
-	if(function_exists('service_finder_totalProviders'))
-	{
-		$total = service_finder_totalProviders();
-	}else{
-		$total = 0;
-	}
+	$total = service_finder_totalProviders();
 	$number = $total;
 	}
 	$text = (!empty($a['text'])) ? $a['text'] : $providerreplacestring;
@@ -32,12 +27,7 @@ case 'providers':
 case 'customers': 
 	$number = (!empty($a['number'])) ? esc_html($a['number']) : 0;
 	if($number == 0 || $number == ''){
-	if(function_exists('service_finder_totalCustomers'))
-	{
-		$total = service_finder_totalCustomers();
-	}else{
-		$total = 0;
-	}
+	$total = service_finder_totalCustomers();
 	$number = $total;
 	}
 	$text = (!empty($a['text'])) ? $a['text'] : $customerreplacestring;

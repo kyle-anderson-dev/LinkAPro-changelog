@@ -96,7 +96,7 @@ $radiusunit = esc_html__( ' Mi.', 'service-finder' );
 $identitycheck = (isset($service_finder_options['identity-check'])) ? esc_attr($service_finder_options['identity-check']) : '';
 $restrictmyaccount = (isset($service_finder_options['restrict-my-account'])) ? esc_attr($service_finder_options['restrict-my-account']) : '';
 
-$signupautosuggestion = (!empty($service_finder_options['signup-auto-suggestion'])) ? esc_html($service_finder_options['signup-auto-suggestion']) : false;
+$signupautosuggestion = (!empty($service_finder_options['signup-auto-suggestion'])) ? esc_html($service_finder_options['signup-auto-suggestion']) : '';
 
 $identityapproved = $userInfo['identity'];
 $attachmentIDs = service_finder_get_identity($globalproviderid);
@@ -159,9 +159,8 @@ wp_enqueue_script('service-finder-crop');
   <a href="<?php echo esc_js(service_finder_get_author_url($globalproviderid)); ?>" class="btn btn-primary"><i class="fa fa-user"></i> <?php esc_html_e('My Profile', 'service-finder'); ?></a>
   <?php if ( class_exists( 'WP_Job_Manager_Alerts' ) ) { ?>
   <?php
-  $jobnotification = (!empty($service_finder_options['job-notification'])) ? $service_finder_options['job-notification'] : '';
   if(!empty($userCap)){
-  if(in_array('job-alerts',$userCap) && $jobnotification == 'job-alert'){	
+  if(in_array('job-alerts',$userCap)){	
   ?>
   <a href="<?php echo esc_url(service_finder_get_url_by_shortcode('[job_alerts')); ?>" class="btn btn-primary"><i class="fa fa-bell"></i>  <?php esc_html_e('Job Alerts', 'service-finder'); ?></a>
   <?php
@@ -528,10 +527,31 @@ wp_enqueue_script('service-finder-crop');
         <div class="col-lg-6">
           <div class="form-group">
             <label>
-            <?php esc_html_e('State', 'service-finder'); ?>
+            <?php esc_html_e('Provinces', 'service-finder'); ?>
             </label>
-            <div class="input-group"> <i class="input-group-addon fixed-w fa fa-map-marker"></i>
-              <input type="text" class="form-control sf-form-control" name="state" id="state" value="<?php echo esc_attr($userInfo['state']) ?>">
+            <div class="input-group"> <i style="min-width: 50px;" class="input-group-addon fixed-w fa fa-map-marker"></i>
+              <?php 
+
+              $user = wp_get_current_user();
+
+              $id = $user->ID;
+
+              $sql = "select * from service_finder_providers where wp_user_id = '$id' ";
+              $res = $wpdb->get_results($sql);
+              foreach($res as $test):
+                $options = $test->state;
+              endforeach; ?>
+              <select name="state" id="state" class="form-control sf-form-control province-select">
+                  <option value="Eastern Cape" <?php if($options == "Eastern Cape" || !empty($options) ) echo 'selected="selected"'; ?>>Eastern Cape</option>
+                  <option value="Free State" <?php if($options == "Free State") echo 'selected="selected"'; ?>>Free State</option>
+                  <option value="Gauteng" <?php if($options == "Gauteng") echo 'selected="selected"'; ?>>Gauteng</option>
+                  <option value="KwaZulu-Natal" <?php if($options == "Kwazulu-Natal") echo 'selected="selected"'; ?>>KwaZulu-Natal</option>
+                  <option value="Limpopo" <?php if($options == "Limpopo") echo 'selected="selected"'; ?>>Limpopo</option>
+                  <option value="Mpumalanga" <?php if($options == "Mpumalanga") echo 'selected="selected"'; ?>>Mpumalanga</option>
+                  <option value="Northern Cape" <?php if($options == "Northern Cape") echo 'selected="selected"'; ?>>Northern Cape</option>
+                  <option value="North West" <?php if($options == "North West") echo 'selected="selected"'; ?>>North West</option>
+                  <option value="Western Cape" <?php if($options == "Western Cape") echo 'selected="selected"'; ?>>Western Cape</option>
+              </select>
             </div>
           </div>
         </div>
@@ -785,14 +805,10 @@ wp_enqueue_script('service-finder-crop');
   
   <?php 
   if(!empty($userCap)){
-  if(in_array('google-calendar',$userCap) && service_finder_getUserRole($current_user->ID) == 'Provider'){	
-  session_start();
+  if(in_array('google-calendar',$userCap)){	
     require_once SERVICE_FINDER_BOOKING_LIB_DIR.'/google-api-php-client/src/Google/autoload.php';
-	
-	$gcal_creds = service_finder_get_gcal_cred();
-	$client_id = $gcal_creds['client_id'];
-    $client_secret = $gcal_creds['client_secret'];
-	
+    $client_id = get_user_meta($globalproviderid,'google_client_id',true);
+    $client_secret = get_user_meta($globalproviderid,'google_client_secret',true);
     $redirect_uri = add_query_arg( array('action' => 'googleoauth-callback'), home_url() );
     $_SESSION['providerid'] = $globalproviderid;
     $client = new Google_Client();
@@ -800,7 +816,6 @@ wp_enqueue_script('service-finder-crop');
     $client->setClientSecret($client_secret);
     $client->setRedirectUri($redirect_uri);
     $client->setAccessType("offline");
-	$client->setApprovalPrompt('force');
     $client->setScopes('https://www.googleapis.com/auth/calendar');	
     
   ?>
@@ -831,11 +846,39 @@ wp_enqueue_script('service-finder-crop');
             </div>
           </div>
         </div>
-        
         <div id="google_calendar_options" <?php echo ($google_calendar != 'on') ? 'style="display: none;"' : ''; ?>>
+        <div class="col-lg-12">
+          <div class="form-group">
+            <label>
+            <?php esc_html_e('Google Client ID', 'service-finder'); ?>
+            </label>
+            <div class="input-group"> <i class="input-group-addon fixed-w fa fa-lock"></i>
+              <input type="text" class="form-control sf-form-control" name="google_client_id" value="<?php echo esc_attr(get_user_meta($globalproviderid,'google_client_id',true)) ?>">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="form-group">
+            <label>
+            <?php esc_html_e('Google Client Secret', 'service-finder'); ?>
+            </label>
+            <div class="input-group"> <i class="input-group-addon fixed-w fa fa-lock"></i>
+              <input type="text" class="form-control sf-form-control" name="google_client_secret" value="<?php echo esc_attr(get_user_meta($globalproviderid,'google_client_secret',true)) ?>">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="form-group">
+          <?php
+            echo '<a href="javascript:;" class="btn btn-primary margin-r-10 updategcal" data-providerid="'.$globalproviderid.'">'.esc_html__('Update Credentials', 'service-finder').'</a>';
+            
+          ?>
+          
+        </div>
+        </div>
         <?php
         $flag = 0;
-        if(isset($_SESSION['access_token']) && $_SESSION['access_token'] && service_finder_get_gcal_access_token($globalproviderid) != "") {
+        if(isset($_SESSION['access_token']) && $_SESSION['access_token']) {
           $client->setAccessToken($_SESSION['access_token']);
           $flag = 1;
         
@@ -843,8 +886,7 @@ wp_enqueue_script('service-finder-crop');
           $client->setAccessToken(service_finder_get_gcal_access_token($globalproviderid));
           $flag = 1;
         }
-         $newaccesstoken = json_decode(service_finder_get_gcal_access_token($globalproviderid));
-		 //echo '<pre>';print_r($newaccesstoken);echo '</pre>';
+         
         if($client->isAccessTokenExpired()) {
              try{
              
@@ -864,17 +906,6 @@ wp_enqueue_script('service-finder-crop');
          }
         ?>
         <?php if($flag == 1){ ?>
-        <div class="col-lg-12" style="display:block;" id="disconnectbtn-outer">
-          <div class="form-group">
-          <input type="hidden" class="form-control sf-form-control" name="google_client_id" value="<?php echo esc_attr($client_id) ?>">
-          <input type="hidden" class="form-control sf-form-control" name="google_client_secret" value="<?php echo esc_attr($client_secret) ?>">
-          <?php
-            echo '<a href="javascript:;" class="btn btn-primary margin-r-10 updategcal" data-providerid="'.$globalproviderid.'">'.esc_html__('Disconnect Google Calendar', 'service-finder').'</a>';
-            
-          ?>
-          
-        </div>
-        </div>
         <div class="col-lg-12" id="gcallist">
           <div class="form-group">
             <label>
@@ -895,7 +926,6 @@ wp_enqueue_script('service-finder-crop');
                         $select = '';
                     }
                     echo '<option '.$select.' value="'.$calendarListEntry->id.'">'.$calendarListEntry->getSummary().'</option>';
-					//$gcalid = $calendarListEntry->id;
                   }
                   $pageToken = $calendarList->getNextPageToken();
                   if ($pageToken) {
@@ -918,19 +948,17 @@ wp_enqueue_script('service-finder-crop');
          <div class="col-lg-12">
           <div class="form-group">
           <?php
-            if(isset($_SESSION['access_token']) && $_SESSION['access_token'] && service_finder_get_gcal_access_token($globalproviderid) != "") {
+            if(isset($_SESSION['access_token']) && $_SESSION['access_token']) {
               $client->setAccessToken($_SESSION['access_token']);
-              //echo '<div id="connectbtn"><a href="javascript:;" class="btn btn-primary margin-r-10">'.esc_html__('Already Connected to Google Calendar', 'service-finder').'</a></div>';
+              echo '<div id="connectbtn"><a href="javascript:;" class="btn btn-primary margin-r-10">'.esc_html__('Already Connected to Google Calendar', 'service-finder').'</a></div>';
             
             } elseif(service_finder_get_gcal_access_token($globalproviderid) != ""){
               $client->setAccessToken(service_finder_get_gcal_access_token($globalproviderid));
-              //echo '<div id="connectbtn"><a href="javascript:;" class="btn btn-primary margin-r-10">'.esc_html__('Already Connected to Google Calendar', 'service-finder').'</a></div>';
+              echo '<div id="connectbtn"><a href="javascript:;" class="btn btn-primary margin-r-10">'.esc_html__('Already Connected to Google Calendar', 'service-finder').'</a></div>';
             
             }else {
               $authUrl = $client->createAuthUrl();
-              echo '<div id="connectbtn"><a href="'.esc_url($authUrl).'" class="btn btn-primary margin-r-10"><span class="google-icon-wrapper">
-					  	<img class="google-icon" src="'.SERVICE_FINDER_BOOKING_IMAGE_URL.'/gcal.svg">
-					  </span>'.esc_html__('Connect to Google Calendar', 'service-finder').'</a></div>';
+              echo '<div id="connectbtn"><a href="'.esc_url($authUrl).'" class="btn btn-primary margin-r-10">'.esc_html__('Connect to Google Calendar', 'service-finder').'</a></div>';
             }
           ?>
           
@@ -1238,8 +1266,7 @@ wp_enqueue_script('service-finder-crop');
 						}
 					
 						$flagimgsrc = SERVICE_FINDER_BOOKING_IMAGE_URL.'/flags/'.$language.'.png';
-						$imgtag = '<img src="'.$flagimgsrc.'">';
-						echo '<option '.$select.' value="'.esc_attr($language).'" data-content="'.esc_attr($imgtag).'<span>'.esc_attr($languagearray[$language]).'</span>">'. $languagearray[$language].'</option>';
+						echo '<option '.$select.' value="'.esc_attr($language).'" data-content="<img src=\''. esc_url($flagimgsrc).'\'><span>'.esc_attr($languagearray[$language]).'</span>">'. $languagearray[$language].'</option>';
 					}
 				}	
                 ?>

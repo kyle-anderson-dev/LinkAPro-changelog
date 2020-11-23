@@ -444,8 +444,7 @@ update_post_meta($post_id, '_question_category_id', $categoryid);
 	$noticedata = array(
 			'provider_id' => $author_id,
 			'target_id' => $post_id, 
-			'topic' => 'Question',
-			'title' => esc_html__('Question', 'service-finder'),
+			'topic' => esc_html__('Question', 'service-finder'),
 			'notice' => esc_html__('You have new question on your profile. Click here to reply', 'service-finder'),
 			);
 	service_finder_add_notices($noticedata);
@@ -453,7 +452,7 @@ update_post_meta($post_id, '_question_category_id', $categoryid);
 	if($service_finder_options['question-submit-to-provider-subject'] != ""){
 		$subject = $service_finder_options['question-submit-to-provider-subject'];
 	}else{
-		$subject = esc_html__('Question Submitted', 'service-finder');
+		$subject = esc_html__('Question Submiited', 'service-finder');
 	}
 	
 	if(!empty($service_finder_options['question-submit-to-provider'])){
@@ -465,7 +464,7 @@ update_post_meta($post_id, '_question_category_id', $categoryid);
 	}
 	
 	$tokens = array('%QUESTIONTITLE%','%REPLYLINK%');
-	$replacements = array(get_the_title($post_id),'<a href="'.get_permalink($post_id).'">'.get_permalink($post_id).'</a>');
+	$replacements = array(get_the_title($post_id),'<a href="'.get_permalink($post_id).'" style="display:table; padding:6px 40px; border:2px solid #555; margin:0px auto 30px; color:#555; font-size:16px;">Click Here</a>');
 	$msg_body = str_replace($tokens,$replacements,$message);
 	
 	$provider_email = service_finder_getProviderEmail($author_id);
@@ -493,7 +492,7 @@ exit(0);
 add_action( 'wp_ajax_add_answer', 'service_finder_add_answer' );
 add_action( 'wp_ajax_nopriv_add_answer', 'service_finder_add_answer' );
 function service_finder_add_answer() {
-global $current_user, $service_finder_options;
+global $current_user;
 $question_id = (!empty($_POST['question_id'])) ? base64_decode($_POST['question_id']) : '';
 $description = (!empty($_POST['answer_description'])) ? $_POST['answer_description'] : '';
 		
@@ -516,8 +515,7 @@ if(service_finder_getUserRole($question_author) == 'administrator'){
 $noticedata = array(
 		'admin_id' => $question_author,
 		'target_id' => $post_id, 
-		'topic' => 'Answer Submitted',
-		'title' => esc_html__('Answer Submitted', 'service-finder'),
+		'topic' => esc_html__('Answer Submitted', 'service-finder'),
 		'notice' => esc_html__('You have received answer of your question.', 'service-finder'),
 		);
 service_finder_add_notices($noticedata);
@@ -526,8 +524,7 @@ $user_email = get_option( 'admin_email' );
 $noticedata = array(
 		'customer_id' => $question_author,
 		'target_id' => $post_id, 
-		'topic' => 'Answer Submitted',
-		'title' => esc_html__('Answer Submitted', 'service-finder'),
+		'topic' => esc_html__('Answer Submitted', 'service-finder'),
 		'notice' => esc_html__('You have received answer of your question.', 'service-finder'),
 		);
 service_finder_add_notices($noticedata);
@@ -537,7 +534,7 @@ $user_email = service_finder_getCustomerEmail($question_author);
 if($service_finder_options['answer-submit-to-user-subject'] != ""){
 	$subject = $service_finder_options['answer-submit-to-user-subject'];
 }else{
-	$subject = esc_html__('Answer Submitted', 'service-finder');
+	$subject = esc_html__('Question Submiited', 'service-finder');
 }
 
 if(!empty($service_finder_options['answer-submit-to-user'])){
@@ -1114,6 +1111,7 @@ if (!function_exists('service_finder_allow_uploads_to_provider')) {
 add_action('init', 'service_finder_allow_uploads_to_provider');
 
 function service_finder_allow_uploads_to_provider() {
+echo 'test';die;
 	if (is_admin() && !current_user_can('administrator')) {
 		wp_redirect(home_url('/'));
 	}
@@ -1403,10 +1401,10 @@ add_action('service_finder_login_after_signup', 'service_finder_login_after_sign
 /* Display services on provider public profile page */
 function service_finder_display_services($author){
 $services = service_finder_getServices($author);
-$allservices = service_finder_getAllServices($author);
+
 	if(service_finder_themestyle() == 'style-3')
 	{
-		if(!empty($allservices)){
+		if(!empty($services)){
 		echo '<ul>';
 		}
 		
@@ -1431,7 +1429,7 @@ $allservices = service_finder_getAllServices($author);
 			}
 		}
 		
-		if(!empty($allservices)){
+		if(!empty($services)){
 		echo '</ul>';
 		}
 		
@@ -1529,7 +1527,7 @@ $cost = '<a class="sf-requestquote-icon" href="javascript:void(0);" data-provide
 	<div id="popover-content-offers-<?php echo $service->id; ?>" class="hide">
 		<ul class="list-unstyled margin-0 booking-payment-data">
 			<li><strong><?php echo esc_html($service->offer_title); ?></strong></li>
-			<li><?php print($service->discount_description); ?></li>
+			<li><?php printf($service->discount_description); ?></li>
 		</ul>
 	</div>
 	<?php } ?>
@@ -1725,41 +1723,8 @@ function service_finder_fn_after_social_login($user_id){
 			$adminapproval = 'approved';
 		}
 		
-		$defaultpackage = service_finder_get_data($service_finder_options,'default-social-signup-package');
-		if($defaultpackage != '')
-		{
-			$defaultrolenum = intval(substr($defaultpackage, 8));
-			$rolePrice = $service_finder_options['package'.$defaultrolenum.'-price'];
-			$roleName = $service_finder_options['package'.$defaultrolenum.'-name'];
-			$expire_limit = $service_finder_options['package'.$defaultrolenum.'-expday'];
-			
-			update_user_meta( $user_id, 'provider_activation_time', array( 'role' => $defaultrolenum, 'time' => time()) );
-			update_user_meta( $user_id, 'provider_role', $defaultrolenum );
-			if($expire_limit > 0){
-				update_user_meta($user_id, 'expire_limit', $expire_limit);
-			}else{
-				delete_user_meta($user_id, 'expire_limit');
-			}
-			update_user_meta($user_id, 'profile_amt',$rolePrice);
-		}
-		
 		$fname = get_user_meta($user_id, 'first_name', true);
 		$lname = get_user_meta($user_id, 'last_name', true);
-		
-		$fullname = $fname.' '.$lname;
-		
-		if($fullname != "" && $fullname != " "){
-			$user_id = wp_update_user( array( 'ID' => $user_id, 'user_nicename' => $fullname ) );
-			
-			$comment_post = array(
-				'post_title' => $fullname,
-				'post_status' => 'publish',
-				'post_type' => 'sf_comment_rating',
-				'comment_status' => 'open',
-			);
-			
-			$postid = wp_insert_post( $comment_post );
-		}
 		
 		$data = array(
 					'wp_user_id' => $user_id,

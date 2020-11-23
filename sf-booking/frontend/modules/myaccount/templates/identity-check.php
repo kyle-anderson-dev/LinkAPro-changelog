@@ -96,7 +96,7 @@ $identityapproved = $userInfo['identity'];
             <div class="col-md-12">
                   <div class="form-group">
                     <input type="hidden" name="user_id" value="<?php echo esc_attr($globalproviderid); ?>" />
-                    <input type="submit" class="btn btn-primary" value="<?php esc_html_e('Upload','service-finder'); ?>">
+                    <input type="submit" class="btn btn-primary" value="<?php esc_html_e('Upload','servide-finder'); ?>">
                   </div>
                 </div>
             <?php } ?>    

@@ -279,7 +279,7 @@ class SERVICE_FINDER_sedateBookingManager extends SERVICE_FINDER_sedateManager{
 				}elseif(($result->type == 'bacs' || $result->type == 'cheque') && $result->payment_to == 'admin' && $result->payment_type == 'woocommerce'){
 				$nestedData['payviabanktransfer'] = '<button data-toggle="tooltip" type="button" data-bookingid="'.esc_attr($result->id).'" class="btn btn-table yellow statuspaytoprovider" title="'.esc_html__('Change Payment Status to Paid', 'service-finder').'">'.esc_html__('Change Status', 'service-finder').'</button>';
 				}else{
-					$nestedData['payviabanktransfer'] = '<button data-toggle="tooltip" type="button" data-bookingid="'.esc_attr($result->id).'" class="btn btn-table yellow statuspaytoprovider" title="'.esc_html__('Change Payment Status to Paid', 'service-finder').'">'.esc_html__('Change Status', 'service-finder').'</button>';
+					$nestedData['payviabanktransfer'] = 'N/A';
 				}
 				
 			}elseif($result->paid_to_provider == 'paid'){
@@ -289,21 +289,24 @@ class SERVICE_FINDER_sedateBookingManager extends SERVICE_FINDER_sedateManager{
 			}
 			
 			if($result->status == 'Completed'){
-			$woopayment = (isset($service_finder_options['woocommerce-payment'])) ? esc_html($service_finder_options['woocommerce-payment']) : false;
-			if($result->paid_to_provider == 'pending' && ($result->type == "paypal" || ($woopayment && $result->type != "mangopay"))){
+			if($result->paid_to_provider == 'pending' && $result->type == "paypal"){
 				$nestedData['payviabankpaypal'] = '<button data-toggle="tooltip" type="button" data-bookingid="'.esc_attr($result->id).'" data-providerid="'.esc_attr($result->wp_user_id).'" class="btn btn-table paytoprovider btn-status green" data-amount="'.esc_attr($bookingamount).'" title="'.esc_html__('Pay Now', 'service-finder').'">'.esc_html__('Pay Now', 'service-finder').'</button>';
 			}elseif($result->paid_to_provider == 'pending' && $result->stripe_token != "" && $payment_methods['stripe']){
 			
 				$stripeconnecttype = (!empty($service_finder_options['stripe-connect-type'])) ? esc_html($service_finder_options['stripe-connect-type']) : '';
 			
-				$acct_id = service_finder_get_stripe_connect_id($result->wp_user_id);
+				if($stripeconnecttype == 'custom'){
+				
+				$acct_id = get_user_meta($result->wp_user_id,'stripe_connect_custom_account_id',true);
+				}else{
+				
+				$acct_id = get_user_meta($result->wp_user_id,'stripe_connect_id',true);
+				
+				}
 				
 				if($acct_id != '')
 				{
-				if(service_finder_get_stripe_connect_avl_balance($result->wp_user_id) >= $bookingamount && get_user_meta($result->wp_user_id,'stripe_connect_custom_account_id',true) != '')
-				{
-				$nestedData['payviabankpaypal'] = '<button data-toggle="tooltip" type="button" data-bookingid="'.esc_attr($result->id).'" data-providerid="'.esc_attr($result->wp_user_id).'" data-amount="'.esc_attr($bookingamount).'" class="btn btn-table btn-status green paytoproviderviastripe" title="'.esc_html__('Pay Now', 'service-finder').'">'.esc_html__('Pay Now', 'service-finder').'</button>';
-				}elseif(service_finder_get_stripe_avl_balance() >= $bookingamount && get_user_meta($result->wp_user_id,'stripe_connect_id',true) != '')
+				if(service_finder_get_stripe_connect_avl_balance($result->wp_user_id) >= $bookingamount)
 				{
 				$nestedData['payviabankpaypal'] = '<button data-toggle="tooltip" type="button" data-bookingid="'.esc_attr($result->id).'" data-providerid="'.esc_attr($result->wp_user_id).'" data-amount="'.esc_attr($bookingamount).'" class="btn btn-table btn-status green paytoproviderviastripe" title="'.esc_html__('Pay Now', 'service-finder').'">'.esc_html__('Pay Now', 'service-finder').'</button>';
 				}else
@@ -324,8 +327,6 @@ class SERVICE_FINDER_sedateBookingManager extends SERVICE_FINDER_sedateManager{
 				$nestedData['payviabankpaypal'] = esc_html__('Paid', 'service-finder');
 			}elseif($result->paid_to_provider == 'in-process'){
 				$nestedData['payviabankpaypal'] = esc_html__('In-process', 'service-finder');
-			}elseif($result->paid_to_provider == 'pending'){
-				$nestedData['payviabankpaypal'] = esc_html__('Pending', 'service-finder');
 			}else{
 				$nestedData['payviabankpaypal'] = $result->paid_to_provider;
 			}
@@ -411,8 +412,7 @@ class SERVICE_FINDER_sedateBookingManager extends SERVICE_FINDER_sedateManager{
 			$noticedata = array(
 						'customer_id' => $row->ID,
 						'target_id' => $bookingid, 
-						'topic' => 'Approve Booking',
-						'title' => esc_html__('Approve Booking', 'service-finder'),
+						'topic' => esc_html__('Approve Booking', 'service-finder'),
 						'notice' => esc_html__('Booking have been approved after wired bank transffer', 'service-finder')
 						);
 				service_finder_add_notices($noticedata);
@@ -798,8 +798,7 @@ Pay Via: %PAYMENTMETHOD%
 				$noticedata = array(
 						'provider_id' => $providerid,
 						'target_id' => $bookingid, 
-						'topic' => 'Booking Payment',
-						'title' => esc_html__('Booking Payment', 'service-finder'),
+						'topic' => esc_html__('Booking Payment', 'service-finder'),
 						'notice' => esc_html__('Site administrator paid you for your service via paypal masspay', 'service-finder')
 						);
 				service_finder_add_notices($noticedata);
@@ -844,7 +843,7 @@ Pay Via: %PAYMENTMETHOD%
             
 			$stripeconnecttype = (!empty($service_finder_options['stripe-connect-type'])) ? esc_html($service_finder_options['stripe-connect-type']) : '';
 			
-			if(get_user_meta($providerid,'stripe_connect_custom_account_id',true) != ''){
+			if($stripeconnecttype == 'custom'){
 			
 			$stripe_connect_id = get_user_meta($providerid,'stripe_connect_custom_account_id',true);
 			
@@ -904,8 +903,7 @@ Pay Via: %PAYMENTMETHOD%
 				$noticedata = array(
 						'provider_id' => $row->provider_id,
 						'target_id' => $row->id, 
-						'topic' => 'Booking Payment',
-						'title' => esc_html__('Booking Payment', 'service-finder'),
+						'topic' => esc_html__('Booking Payment', 'service-finder'),
 						'notice' => sprintf(esc_html__('Site administrator release payout. It will take some time to reflect in your account. Booking Ref id is #%d', 'service-finder'),$bookingid)
 						);
 				service_finder_add_notices($noticedata);
@@ -1043,8 +1041,7 @@ Pay Via: %PAYMENTMETHOD%
 				$noticedata = array(
 						'provider_id' => $row->provider_id,
 						'target_id' => $row->id, 
-						'topic' => 'Booking Payment',
-						'title' => esc_html__('Booking Payment', 'service-finder'),
+						'topic' => esc_html__('Booking Payment', 'service-finder'),
 						'notice' => $noticemsg
 						);
 				service_finder_add_notices($noticedata);
@@ -1104,8 +1101,7 @@ Pay Via: %PAYMENTMETHOD%
 				$noticedata = array(
 						'provider_id' => $row->provider_id,
 						'target_id' => $row->id, 
-						'topic' => 'Booking Payment',
-						'title' => esc_html__('Booking Payment', 'service-finder'),
+						'topic' => esc_html__('Booking Payment', 'service-finder'),
 						'notice' => esc_html__('Site administrator paid you for your service via bank transfer', 'service-finder')
 						);
 				service_finder_add_notices($noticedata);

@@ -404,7 +404,6 @@
 								.find('[name="member_phone"]').val(data['member_phone']).end();
 							
 								var str = data['service_area'];
-								var x;
 								if(str != "" && str != null){
 								var areas = str.split(",");
 								for(x in areas){
@@ -413,7 +412,6 @@
 								}
 								
 								var str = data['selected_regions'];
-								var x;
 								if(str != "" && str != null){
 								var regions = str.split("%%%");
 								for(x in regions){

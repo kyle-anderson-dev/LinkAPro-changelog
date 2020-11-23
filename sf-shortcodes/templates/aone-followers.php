@@ -24,8 +24,6 @@ $videourl = (!empty($service_finder_options['shortcode-followers-youtube-url']))
 $buttontext = (!empty($service_finder_options['shortcode-followers-button-text'])) ? esc_html($service_finder_options['shortcode-followers-button-text']) : '';
 $buttonlink = (!empty($service_finder_options['shortcode-followers-button-link'])) ? esc_html($service_finder_options['shortcode-followers-button-link']) : '';
 
-$followerstextcolor = (!empty($service_finder_options['shortcode-followers-text-color'])) ? $service_finder_options['shortcode-followers-text-color'] : '';
-
 $imgurl = (!empty($service_finder_options['follow-us-bg-image']['url'])) ? $service_finder_options['follow-us-bg-image']['url'] : '';
 $bgattachment = (isset($service_finder_options['follow-us-background-attachment'])) ? esc_html($service_finder_options['follow-us-background-attachment']) : '';
 $bgcolor = (!empty($service_finder_options['follow-us-bg-color'])) ? $service_finder_options['follow-us-bg-color'] : '';
@@ -37,12 +35,7 @@ $curverightcolor = (!empty($service_finder_options['follow-us-right-curve-color'
 ?>
 <!--  Providers Follow us -->
 <?php
-if(function_exists('service_finder_totalProviders'))
-{
-	$total = service_finder_totalProviders();
-}else{
-	$total = 0;
-}
+$total = service_finder_totalProviders();
 
 if(service_finder_themestyle_for_plugin() == 'style-3'){
 ob_start();
@@ -62,7 +55,7 @@ $videothumb = '';
                     <div class="row">
                         <div class="col-md-6">
                             <div class="sf-providers-follow-left <?php echo (($imagevideo == 'image' && $followimageurl == '') || ($imagevideo == 'video' && $videourl == '')) ? 'followers-placeholder' : ''; ?>">
-                                <div class="sf-providers-follow-title"><h2 style="color:<?php echo esc_attr($followerstextcolor); ?>"><?php echo str_replace("%TOTAL-PROVIDERS%",'<span>'.$total.'</span>',$title); ?></h2></div>
+                                <div class="sf-providers-follow-title"><h2><?php echo str_replace("%TOTAL-PROVIDERS%",'<span>'.$total.'</span>',$a['title']); ?></h2></div>
                                 <div class="sf-providers-follow-text">
                                 <?php $content = str_replace("%TOTAL-PROVIDERS%",'<span>'.$total.'</span>',$content); ?>
 								<?php echo apply_filters('the_content', $content); ?>
@@ -119,8 +112,8 @@ $html = ob_get_clean();
 }else{
 $html = '<div class="section-full sf-overlay-wrapper text-center providers-follow" style="background:url('.esc_url($imgurl).') center '.$bgattachment.' no-repeat;">
   <div class="container">
-    <div class="w-t-element"> <strong class="sf-title" style="color:'.esc_attr($followerstextcolor).'">'.str_replace("%TOTAL-PROVIDERS%",'<span>'.$total.'</span>',$title).'</strong>
-      <div class="sf-follow-text" style="color:'.esc_attr($followerstextcolor).'">'.$content.'</div>
+    <div class="w-t-element"> <strong class="sf-title">'.str_replace("%TOTAL-PROVIDERS%",'<span>'.$total.'</span>',$title).'</strong>
+      <div class="sf-follow-text">'.$content.'</div>
     </div>
   </div>
   <div class="sf-overlay-main" style="opacity:'.$bgopacity.'; background-color:'.$bgcolor.'">

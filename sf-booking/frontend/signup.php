@@ -35,27 +35,16 @@ if($twocheckouttype == 'live'){
 
 $signupautosuggestion = (!empty($service_finder_options['signup-auto-suggestion'])) ? esc_html($service_finder_options['signup-auto-suggestion']) : '';
 $show_signup_otp = (!empty($service_finder_options['show-signup-otp'])) ? esc_html($service_finder_options['show-signup-otp']) : '';
-$show_customer_signup_otp = (!empty($service_finder_options['show-customer-signup-otp'])) ? esc_html($service_finder_options['show-customer-signup-otp']) : '';
 
 $packagenumber = (isset($_GET['package'])) ? esc_html($_GET['package']) : '';
 
 $selectedpackage = '';
-if($packagenumber != ''){
-$selectedpackage = 'package_'.$packagenumber;
+if($packagenumber > 0){
+$selectedpackage = 'package_'.($packagenumber - 1);
 }
 
 $countryarr = (!empty($service_finder_options['allowed-country'])) ? $service_finder_options['allowed-country'] : '';
-if(is_array($countryarr))
-{
-	$totalcountry = count($countryarr);
-}else{
-	if($countryarr != '')
-	{
-		$totalcountry = 1;
-	}else{
-		$totalcountry = 0;
-	}
-}
+$totalcountry = count($countryarr);
 
 wp_add_inline_script( 'service_finder-js-registration', '/*Declare global variable*/
 var twocheckoutaccountid = "'.$twocheckoutaccountid.'";
@@ -122,7 +111,7 @@ var formtype = "signup"; var userrole = "'.$role.'";', 'after' );
                 '.esc_html($providerreplacestring).'
                 </a></li>';
             }
-			if(($a['role'] == 'customer' || $a['role'] == 'both' || $a['role'] == '') && $packagenumber == ''){
+			if($a['role'] == 'customer' || $a['role'] == 'both' || $a['role'] == ''){
               echo '<li class="'.$active.'"><a data-toggle="tab" href="#customertab">
                 '.esc_html($customerreplacestring).'
                 </a></li>';
@@ -662,25 +651,8 @@ $label = '<img src="'.SERVICE_FINDER_BOOKING_IMAGE_URL.'/payment/paypal.jpg" tit
 				<?php
               echo '</div>';
               }
-		  	 if(($a['role'] == 'customer' || $a['role'] == 'both' || $a['role'] == '') && $packagenumber == '' ){
+		  	 if($a['role'] == 'customer' || $a['role'] == 'both' || $a['role'] == ''){
 			 $proactive = ($a['role'] == 'customer') ? 'in active' : '';
-			 $showcustomerotpsection = '';
-			 if($show_customer_signup_otp){ 
-                    $showcustomerotpsection = '<div class="col-md-12">
-                      <div class="form-group signupotp-section-bx-customer">
-                        <label>
-                        '.esc_html__('One Time Password', 'service-finder').'
-                        </label>
-                        <div class="input-group"> <i class="input-group-addon fa fa-lock"></i>
-                          <input name="fillsignupotp_customer" id="fillsignupotp-bx-customer" type="text" class="form-control" value="">
-                        </div>
-                        <a href="javascript:;" class="signupotp_bx_customer">
-                        '.esc_html__('Generate One time Password to Confirm Email', 'service-finder').'
-                        </a> </div>
-                    </div>';
-             }
-			 
-			 
               echo '<div id="customertab" class="tab-pane fade '.$proactive.'">
                 <form class="customer_registration_page" method="post">
                   <div class="customer-bx clearfix row">
@@ -701,10 +673,9 @@ $label = '<img src="'.SERVICE_FINDER_BOOKING_IMAGE_URL.'/payment/paypal.jpg" tit
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <input name="signup_user_email" id="signup_customer_user_email_bx" type="text" class="form-control" placeholder="'.esc_html__('Email', 'service-finder').'">
+                        <input name="signup_user_email" type="text" class="form-control" placeholder="'.esc_html__('Email', 'service-finder').'">
                       </div>
                     </div>
-					'.$showcustomerotpsection.'
                     <div class="col-md-6">
                       <div class="form-group">
                         <input name="signup_password" type="password" class="form-control" placeholder="'.esc_html__('Password', 'service-finder').'">

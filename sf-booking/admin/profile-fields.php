@@ -147,7 +147,7 @@ if($allcountry){
 <?php if($signupautosuggestion){ ?>
 <input type="text" <?php echo esc_attr($disable); ?> class="form-control" name="signup_city" id="signup_city" placeholder="<?php echo esc_attr($placeholder); ?>" autocomplete="off" value="<?php echo (!empty($userInfo['city'])) ? esc_html($userInfo['city']) : ''; ?>"> 
 <?php }else{ ?>
-<select <?php echo $disable; ?> class="form-control sf-form-control sf-select-box" name="signup_city" data-live-search="true" title="<?php echo $placeholder; ?>" id="signup_city" data-selectedcity="<?php echo (!empty($userInfo['city'])) ? esc_html($userInfo['city']) : ''; ?>">
+<select <?php echo $readonly; ?> <?php echo $disabled; ?> class="form-control sf-form-control sf-select-box" name="signup_city" data-live-search="true" title="<?php echo $placeholder; ?>" id="signup_city" data-selectedcity="<?php echo (!empty($userInfo['city'])) ? esc_html($userInfo['city']) : ''; ?>">
   <option value="">
     <?php esc_html_e('Select City', 'service-finder'); ?>
     </option>
@@ -164,9 +164,32 @@ if($allcountry){
 </td>
 </tr>
 <tr class="form-field">
-<th><label for="state"><?php esc_html_e('State', 'service-finder'); ?></label></th>
+<th><label for="state"><?php esc_html_e('Provinces', 'service-finder'); ?></label></th>
 <td>
-<input type="text" class="form-control" name="signup_state" id="signup_state" value="<?php echo (!empty($userInfo['state'])) ? esc_html($userInfo['state']) : ''; ?>">
+	<div class="input-group"> <i style="min-width: 50px;" class="input-group-addon fixed-w fa fa-map-marker"></i>
+		<?php 
+
+		$user = wp_get_current_user();
+
+		$id = $user->ID;
+
+		$sql = "select * from service_finder_providers where wp_user_id = '$id' ";
+		$res = $wpdb->get_results($sql);
+		foreach($res as $test):
+			$options = $test->state;
+		endforeach; ?>
+		<select name="state" id="state" class="form-control sf-form-control province-select">
+			<option value="Eastern Cape" <?php if($options == "Eastern Cape" || !empty($options) ) echo 'selected="selected"'; ?>>Eastern Cape</option>
+			<option value="Free State" <?php if($options == "Free State") echo 'selected="selected"'; ?>>Free State</option>
+			<option value="Gauteng" <?php if($options == "Gauteng") echo 'selected="selected"'; ?>>Gauteng</option>
+			<option value="KwaZulu-Natal" <?php if($options == "Kwazulu-Natal") echo 'selected="selected"'; ?>>KwaZulu-Natal</option>
+			<option value="Limpopo" <?php if($options == "Limpopo") echo 'selected="selected"'; ?>>Limpopo</option>
+			<option value="Mpumalanga" <?php if($options == "Mpumalanga") echo 'selected="selected"'; ?>>Mpumalanga</option>
+			<option value="Northern Cape" <?php if($options == "Northern Cape") echo 'selected="selected"'; ?>>Northern Cape</option>
+			<option value="North West" <?php if($options == "North West") echo 'selected="selected"'; ?>>North West</option>
+			<option value="Western Cape" <?php if($options == "Western Cape") echo 'selected="selected"'; ?>>Western Cape</option>
+		</select>
+	</div>
 </td>
 </tr>
 <tr class="form-field">

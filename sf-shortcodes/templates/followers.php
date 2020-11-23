@@ -22,12 +22,7 @@ $curverightcolor = (!empty($service_finder_options['follow-us-right-curve-color'
 ?>
 <!--  Providers Follow us -->
 <?php
-if(function_exists('service_finder_totalProviders'))
-{
-	$total = service_finder_totalProviders();
-}else{
-	$total = 0;
-}
+$total = service_finder_totalProviders();
 
 if(service_finder_themestyle_for_plugin() == 'style-3'){
 ob_start();

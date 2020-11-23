@@ -482,8 +482,7 @@
 				
 				jQuery('.invoicedueDatePicker').datepicker({
 					format: 'yyyy/mm/dd',													
-					startDate: date,
-					language: langcode
+					startDate: date
 				})
 				.on('changeDate', function(evt) {
 					// Revalidate the date field

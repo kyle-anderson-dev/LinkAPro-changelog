@@ -2481,15 +2481,9 @@ jQuery('body').on('click', '.closeDetails', function(){
 							}else{
 
 							jQuery('#booking-details').addClass('hidden fade in');
-							
-							jQuery('#pastbooking-details').addClass('hidden fade in');
 
 							jQuery('#upcomingbookings-customer-grid_wrapper').removeClass('hidden');
-							
-							jQuery('#pastbookings-customer-grid_wrapper').removeClass('hidden');
 
-							CustomerPastdataTable.ajax.reload(null, false);
-							
 							CustomerUpcomingdataTable.ajax.reload(null, false);
 							
 							jQuery('.sf-select-box').selectpicker('refresh');
@@ -2520,23 +2514,11 @@ jQuery('body').on('click', '.closeDetails', function(){
 	jQuery('body').on('click', '.change_service_status', function(){
 	var currentclass = jQuery('body').hasClass('modal-open');
 	
-	var $this = jQuery(this);
-	
 	var bsid = jQuery(this).data('bsid');
 
 	var currentstatus = jQuery(this).data('currentstatus');
-	
-	if(currentstatus == 'completed')
-	{
-		var suremsg = param.change_incomplete_status;	
-		var updatedstatus = 'pending';
-	}else if(currentstatus == 'pending')
-	{
-		var suremsg = param.change_complete_status;
-		var updatedstatus = 'completed';
-	}
 
-	bootbox.confirm(suremsg, function(result) {
+	bootbox.confirm(param.change_complete_status, function(result) {
 
 		  if(result){
 
@@ -2595,8 +2577,6 @@ jQuery('body').on('click', '.closeDetails', function(){
 							jQuery( "<div class='alert alert-success'>"+data['suc_message']+"</div>" ).insertBefore( "#booking-details" );	
 
 							jQuery('#service-'+bsid+' .servicestatus').html(data['servicestatus']);
-							
-							$this.data('currentstatus',updatedstatus);
 
 							}
 
@@ -2704,15 +2684,9 @@ jQuery('body').on('click', '.closeDetails', function(){
 							}else{
 
 							jQuery('#booking-details').addClass('hidden fade in');
-							
-							jQuery('#pastbooking-details').addClass('hidden fade in');
 
 							jQuery('#upcomingbookings-customer-grid_wrapper').removeClass('hidden');
-							
-							jQuery('#pastbookings-customer-grid_wrapper').removeClass('hidden');
 
-							CustomerPastdataTable.ajax.reload(null, false);
-							
 							CustomerUpcomingdataTable.ajax.reload(null, false);
 							
 							jQuery('.sf-select-box').selectpicker('refresh');
@@ -2835,15 +2809,9 @@ jQuery('body').on('click', '.closeDetails', function(){
 							}else{
 
 							jQuery('#booking-details').addClass('hidden fade in');
-							
-							jQuery('#pastbooking-details').addClass('hidden fade in');
 
 							jQuery('#upcomingbookings-customer-grid_wrapper').removeClass('hidden');
-							
-							jQuery('#pastbookings-customer-grid_wrapper').removeClass('hidden');
 
-							CustomerPastdataTable.ajax.reload(null, false);
-							
 							CustomerUpcomingdataTable.ajax.reload(null, false);
 							
 							jQuery('.sf-select-box').selectpicker('refresh');
@@ -4253,9 +4221,7 @@ jQuery('#bookings-grid').on('draw.dt', function() {
 
 					 format: 'yyyy/mm/dd',													
 
-					 startDate: date,
-					 
-					 language: langcode
+					 startDate: date
 
 				})
 

@@ -55,7 +55,7 @@ function service_finder_contactform(){
 
 	}
 
-	$admin_email = (!empty($service_finder_options['email'])) ? $service_finder_options['email'] : get_option( 'admin_email' );
+	$admin_email = (!empty($service_finder_options['email'])) ? $service_finder_options['email'] : '';
 
 	if(!empty($service_finder_options['contactus-to-admin'])){
 		$message = $service_finder_options['contactus-to-admin'];
@@ -173,7 +173,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-how-it-works.php';
 			}else{
@@ -227,7 +227,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-why-choose-us.php';
 			}else{
@@ -279,7 +279,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-statistics.php';
 			}else{
@@ -338,7 +338,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-jobs-outer.php';
 			}else{
@@ -374,13 +374,7 @@ function service_finder_register_shortcodes() {
 			   
 			), $atts );
 			
-			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
-			{
-				require plugin_dir_path(__FILE__) . '/aone-bio.php';
-			}else{
-				require plugin_dir_path(__FILE__) . '/bio.php';
-			}
+			require plugin_dir_path(__FILE__) . '/bio.php';
 			
 			print_r($html);
 			return ob_get_clean();
@@ -407,13 +401,7 @@ function service_finder_register_shortcodes() {
 			   
 			), $atts );
 			
-			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
-			{
-				require plugin_dir_path(__FILE__) . '/aone-features.php';
-			}else{
-				require plugin_dir_path(__FILE__) . '/features-outer.php';
-			}
+			require plugin_dir_path(__FILE__) . '/features-outer.php';
 			
 			print_r($html);
 			return ob_get_clean();
@@ -459,7 +447,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-testimonials.php';
 			}else{
@@ -518,7 +506,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-latest-blogs.php';
 			}else{
@@ -560,7 +548,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-featured-providers.php';
 			}else{
@@ -598,7 +586,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-categories.php';
 			}else{
@@ -635,7 +623,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-cities.php';
 			}else{
@@ -677,7 +665,7 @@ function service_finder_register_shortcodes() {
 			
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-categories-v2.php';
 			}else{
@@ -715,8 +703,6 @@ function service_finder_register_shortcodes() {
 			
 			if($a['style'] == 2){
 			require plugin_dir_path(__FILE__) . '/allcategories-v2.php';
-			}elseif($a['style'] == 3){
-			require plugin_dir_path(__FILE__) . '/allcategories-v3.php';
 			}else{
 			require plugin_dir_path(__FILE__) . '/allcategories-v1.php';
 			}
@@ -747,7 +733,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-followers.php';
 			}else{
@@ -817,7 +803,7 @@ function service_finder_register_shortcodes() {
 			), $atts );
 			
 			$fromthemeoption = service_finder_manage_shortcode();
-			if($fromthemeoption == 'yes' || service_finder_check_new_client_for_shortcode())
+			if($fromthemeoption == 'yes' || service_finder_check_new_client())
 			{
 				require plugin_dir_path(__FILE__) . '/aone-pricing-table.php';
 			}else{

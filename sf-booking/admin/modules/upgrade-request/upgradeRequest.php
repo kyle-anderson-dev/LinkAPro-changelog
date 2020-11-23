@@ -61,7 +61,7 @@ class SERVICE_FINDER_upgradeRequest extends SERVICE_FINDER_sedateManager{
 			
 			$nestedData['requestid'] = $result->umeta_id;
 			$nestedData['providername'] = service_finder_getProviderFullName($userid);
-			$nestedData['requestdate'] = service_finder_date_format(date('Y-m-d',$requestdata['time']));
+			$nestedData['requestdate'] = service_finder_date_format($requestdata['time']);
 			
 			if($requestdata['current_package'] != ""){
 	   	    $roleNum = intval(substr($requestdata['current_package'], 8));

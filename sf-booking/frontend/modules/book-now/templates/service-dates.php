@@ -42,8 +42,6 @@ $service_finder_options = get_option('service_finder_options');
                   </div>
                 
             </div>
-            <div id="sf-bookingmember-image" style="display:none">
-            </div>
             </div>
             <div id="numberofhours" style="display:none">
             <div class="col-md-12">

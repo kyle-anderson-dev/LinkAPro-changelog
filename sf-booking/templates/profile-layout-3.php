@@ -186,20 +186,6 @@ if($coverbanner == ""){
     <?php } ?>
     <!-- inner page banner END -->       
     
-    <?php
-    if($providerInfo->account_blocked == 'yes' || !service_finder_check_profile_after_trial_expire($author) || $providerInfo->admin_moderation == 'pending' || ($restrictuserarea && $identitycheck && $providerInfo->identity != 'approved')){
-	  if(is_user_logged_in()){
-			if(($providerInfo->account_blocked == 'yes' || !service_finder_check_profile_after_trial_expire($author) || $providerInfo->admin_moderation == 'pending' || ($restrictuserarea && $identitycheck && $providerInfo->identity != 'approved')) && service_finder_getUserRole($current_user->ID) != 'administrator'){
-				require SERVICE_FINDER_BOOKING_FRONTEND_DIR . '/blocked-profile.php';
-			}
-	  }else{
-			if($providerInfo->account_blocked == 'yes' || !service_finder_check_profile_after_trial_expire($author) || $providerInfo->admin_moderation == 'pending' || ($restrictuserarea && $identitycheck && $providerInfo->identity != 'approved')){
-				require SERVICE_FINDER_BOOKING_FRONTEND_DIR . '/blocked-profile.php';
-			}
-	  }
-	}else{
-	?>
-    
     <!-- Page Scroll Nav -->
     <section class="sf-page-scroll-wrap">
         <div class="container">
@@ -233,11 +219,7 @@ if($coverbanner == ""){
 					?>
                     <li><a href="#book-now-section"><?php echo service_finder_get_data($service_finder_options,'label-booking-form',esc_html__('Booking', 'service-finder')); ?></a></li>
                     <?php } } ?>
-                    <?php
-					if(service_finder_get_data($service_finder_options,'review-system')){
-					?>
                     <li><a href="#sf-provider-review"><?php echo service_finder_get_data($service_finder_options,'label-review',esc_html__('Review', 'service-finder')); ?></a></li>
-                    <?php } ?>
                 </ul>
             </div>                
         </div>
@@ -288,16 +270,8 @@ if($coverbanner == ""){
                                 </div>
                                 
                                 <div class="sf-feaProgrid-iconwrap">
-                                    <?php
-									if(service_finder_get_data($service_finder_options,'my-services-menu')){
-									?>
                                     <span class="sf-feaProgrid-icon sfp-yellow sf-services-slider-btn" data-providerid="<?php echo esc_attr($author); ?>"><span class="sf-feaPro-tooltip"><?php echo esc_html__('Display Services','service-finder'); ?></span><i class="sl-icon-settings"></i></span>
-                                    <?php } ?>
-                                    <?php
-									if(service_finder_get_data($service_finder_options,'review-system')){
-									?>
                                     <span class="sf-feaProgrid-icon sfp-perple"><span class="sf-feaPro-tooltip"><?php echo sprintf(_n( '%d Comment', '%d Comments', service_finder_get_total_reviews($author), 'service-finder' ),service_finder_get_total_reviews($author)); ?></span><i class="sl-icon-speech"></i></span>
-                                    <?php } ?>
                                     <?php
                                     $requestquote = service_finder_get_data($service_finder_options,'requestquote-replace-string');
                             
@@ -322,39 +296,10 @@ if($coverbanner == ""){
                                 </div>
                                 </div>
                             </div>
-                            	<?php if($service_finder_options['enable-social-shares']){ ?>
-                                <ul class="share-social-bx">
-                                  <?php if($service_finder_options['facebook']){ ?>
-                                  <li class="fb"><a onclick="javascript:window.open('https://www.facebook.com/sharer/sharer.php?u=<?php echo service_finder_get_author_url($author) ?>', '_blank', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" href="javascript:;"> <i class="fa fa-facebook"></i>
-                                    <?php esc_html_e('Share', 'service-finder'); ?>
-                                    </a></li>
-                                  <?php } ?>
-                                  <?php if($service_finder_options['twitter']){ ?>
-                                  <li class="tw"><a onclick="javascript:window.open('https://twitter.com/intent/tweet?text=<?php the_author_meta( 'first_name', $author ); ?> <?php the_author_meta( 'last_name', $author ); ?>&url=<?php echo service_finder_get_author_url($author) ?>', '_blank', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" href="javascript:;"> <i class="fa fa-twitter"></i>
-                                    <?php esc_html_e('Share', 'service-finder'); ?>
-                                    </a></li>
-                                  <?php } ?>
-                                  <?php if($service_finder_options['linkedin']){ ?>
-                                  <li class="lin"><a onclick="javascript:window.open('http://www.linkedin.com/shareArticle?mini=true&url=<?php echo service_finder_get_author_url($author) ?>', '_blank', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" href="javascript:;"> <i class="fa fa-linkedin"></i>
-                                    <?php esc_html_e('Share', 'service-finder'); ?>
-                                    </a></li>
-                                  <?php } ?>
-                                  <?php if($service_finder_options['pinterest']){ ?>
-                                  <li class="pin"><a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','<?php echo get_bloginfo( 'charset' ) ?>');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());"> <i class="fa fa-pinterest"></i>
-                                    <?php esc_html_e('Share', 'service-finder'); ?>
-                                    </a></li>
-                                  <?php } ?>
-                                  <?php if($service_finder_options['digg']){ ?>
-                                  <li class="dig"><a onclick="javascript:window.open('http://www.digg.com/submit?url=<?php echo service_finder_get_author_url($author) ?>', '_blank', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" href="javascript:;"> <i class="fa fa-digg"></i>
-                                    <?php esc_html_e('Share', 'service-finder'); ?>
-                                    </a></li>
-                                  <?php } ?>
-                                </ul>
-                                <?php } ?>
                             <h2><?php echo service_finder_getCompanyName($providerInfo->wp_user_id) ?></h2>   
                             <div class="sf-company-about-table sf-comAbou-two">
                                 <div class="sf-company-about-cell"><?php echo esc_html($providerInfo->tagline); ?></div>
-                                <div class="sf-company-about-cell"><strong><?php esc_html_e('Categories', 'service-finder'); ?> :</strong>
+                                <div class="sf-company-about-cell"><strong><?php esc_html_e('Categories', 'service-finder'); ?>:</strong>
                                 <?php
 								$primarycatid = get_user_meta($providerInfo->wp_user_id,'primary_category',true);
 								$categories = $providerInfo->category_id;
@@ -365,14 +310,14 @@ if($coverbanner == ""){
 								if(!empty($cats)){
 									foreach($cats as $catid){
 										if($primarycatid == $catid){
-										$displaycat[] = '<a class="sf-pre-cat" href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>';	
+										$displaycat[] = '<strong><a href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a></strong>';	
 										}else{
 										$displaycat[] = '<a href="'.esc_url(service_finder_getCategoryLink($catid)).'">'.service_finder_getCategoryName($catid).'</a>';	
 										}
 										
 									}
 								} 
-								echo implode(', ',$displaycat);		
+								echo implode(',',$displaycat);		
 								}
 								?>
                                 </div>
@@ -384,7 +329,6 @@ if($coverbanner == ""){
 							}
 							?>
                             </div>  
-                            
                             <?php if($providerInfo->facebook != "" || $providerInfo->twitter != "" || $providerInfo->linkedin != "" || $providerInfo->digg != "" || $providerInfo->pinterest != "" || $providerInfo->instagram != ""){ ?>
                             <div class="social-share-icon">
                                 <div class="social-share-cell">
@@ -459,9 +403,8 @@ if($coverbanner == ""){
             <?php 
 			$images = service_finder_getProviderAttachments($providerInfo->wp_user_id,'gallery'); 
 			if(!empty($images)){
-			$custombgcolor = (service_finder_theme_get_data($service_finder_options,'pprofile-gallery-bg-color') != '') ? 'background-color:'.service_finder_theme_get_data($service_finder_options,'profile-gallery-bg-color').'; ' : '';
 			?>
-            <div class="sf-vender-parts-area clearfix bg-primary profile-gallery-third" id="sf-provider-gallery" style=" <?php echo esc_attr($custombgcolor);?>">
+            <div class="sf-vender-parts-area clearfix bg-primary profile-gallery-third" id="sf-provider-gallery">
                 <div class="section-head text-center">
                     <h2 class="text-white"><?php echo service_finder_get_data($service_finder_options,'label-photo-gallery',esc_html__('Photo Gallery', 'service-finder'));  ?></h2>
                 </div>
@@ -665,7 +608,7 @@ if($coverbanner == ""){
                                 <div class="sf-border-icon">
                                     <div class="sf-icon-sm "><i class="sl-icon-calender sf-icon-purple"></i></div>
                                 </div>
-                                <ul class="list-unstyled sf-bh-wrapper">
+                                <ul class="list-unstyled">
                                     <?php
                                     $weekdays = service_finder_get_weekdays();
 									$time_format = service_finder_get_data($service_finder_options,'time-format');
@@ -689,32 +632,7 @@ if($coverbanner == ""){
 												$endtime = date('h:i a',strtotime(esc_html($item[1])));
 											}
 											
-											$breakhtml = '';
-					
-											if(!empty($breaktimes[$i])){
-											$breaktime = $breaktimes[$i];	
-											
-											if(!empty($breaktime)){
-												$breakhtml .= '<li>'.esc_html__('Break Time','service-finder').'</li>';
-												foreach($breaktime as $bktime){
-													$bkitem = explode('-',$bktime);	
-													
-													if($time_format){
-														$bhstarttime = date('H:i',strtotime(esc_html($bkitem[0])));
-														$bhendtime = date('H:i',strtotime(esc_html($bkitem[1])));
-													}else{
-														$bhstarttime = date('h:i a',strtotime(esc_html($bkitem[0])));
-														$bhendtime = date('h:i a',strtotime(esc_html($bkitem[1])));
-													}
-													
-													$breakhtml .= '<li>'.$bhstarttime.' <b>'.esc_html__('to','service-finder').'</b> '.$bhendtime.'</li>';
-												}
-											}else{
-												$breakhtml .= '<li>-</li>';
-											}
-											}
-											
-											echo '<li><span>'.service_finder_day_translate($weekday).'<b>:</b></span><span>'.$starttime.' '.esc_html__('to','service-finder').' '.$endtime.'</span><ul class="sf-bh-breaktime">'.$breakhtml.'</ul></li>';
+											echo '<li><span>'.service_finder_day_translate($weekday).'<b>:</b></span><span>'.$starttime.' '.esc_html__('to','service-finder').' '.$endtime.'</span></li>';
 										}
 									}
 									$i++;
@@ -843,19 +761,8 @@ if($coverbanner == ""){
 								$fileicon = new SERVICE_FINDER_ImageSpace();
 								foreach($certificates as $certificate)
 								{
-								if($certificate->attachment_id != '' && $certificate->attachment_id > 0)
-								{
 								$arr  = $fileicon->get_icon_for_attachment($certificate->attachment_id);
-							
-								$src = (!empty($arr['src'])) ? $arr['src'] : '';
-								
-								if($src == ''){
-								$arr  = service_finder_get_icon_for_attachment($certificate->attachment_id);
-								$src  = $arr['src'];
-								}
-								}else{
-								$src  = '';
-								}
+								$src = service_finder_get_data($arr,'src');
 								?>
                                 <li>
                                     <?php if($src != ''){ ?>
@@ -973,7 +880,7 @@ if($coverbanner == ""){
             if(is_serialized($providerInfo->embeded_code)){
 			$embeded_codes = unserialize($providerInfo->embeded_code);
 			$totalvideos = count($embeded_codes);
-			if($totalvideos > 0){
+			if($totalvideos > 1){
 			?>
             <div class="sf-vender-parts-area clearfix" id="sf-provider-video">
                 <div class="section-head text-center">
@@ -1023,6 +930,23 @@ if($coverbanner == ""){
                 </div>
             </div>
             <?php
+			}else
+			{
+			?>
+			<div class="sf-vender-parts-area clearfix" id="sf-provider-video">
+                <div class="section-head text-center">
+                    <h2><?php echo service_finder_get_data($service_finder_options,'label-our-video',esc_html__( 'Our Video', 'service-finder' )); ?></h2>
+                </div>
+                <div class="section-content">
+					<div class="embed-responsive embed-responsive-16by9">
+					<?php 
+					$oembed = new ClassOEmbed();
+					echo $oembed->getembededcode($providerInfo->embeded_code); 
+					?>                
+                    </div>
+                </div>
+            </div>
+			<?php
 			}
 			}else
 			{
@@ -1047,11 +971,10 @@ if($coverbanner == ""){
             
             <?php
             $attachmentIDs = service_finder_getDocuments($providerInfo->wp_user_id);
-			$services = service_finder_getAllServices($author);
+			$services = service_finder_getServices($author);
 			if((!empty($services) && service_finder_get_data($service_finder_options,'my-services-menu')) || !empty($attachmentIDs)){
-			$custombgcolor = (service_finder_theme_get_data($service_finder_options,'profile-document-services-bg-color') != '') ? 'background-color:'.service_finder_theme_get_data($service_finder_options,'profile-document-services-bg-color').'; ' : '';
 			?>
-            <div class="sf-vender-parts-area clearfix bg-secondary profile-services-third" id="sf-provider-services" style=" <?php echo esc_attr($custombgcolor);?>">
+            <div class="sf-vender-parts-area clearfix bg-secondary profile-services-third" id="sf-provider-services">
                 <div class="sf-custom-tabs">
                     <ul class="nav nav-tabs nav-table-cell text-center font-20">                                        
                         <?php if(!empty($services) && service_finder_get_data($service_finder_options,'my-services-menu')){ ?>
@@ -1071,7 +994,7 @@ if($coverbanner == ""){
                         <?php } ?>
                         
                         <?php if(!empty($attachmentIDs)){ ?>
-                        <div id="tab-222" class="tab-pane <?php echo (!service_finder_get_data($service_finder_options,'my-services-menu') || empty($services)) ? 'active' : ''; ?>">
+                        <div id="tab-222" class="tab-pane <?php echo (!service_finder_get_data($service_finder_options,'my-services-menu')) ? 'active' : ''; ?>">
                             <div class="sf-document-tab">
                                 <table class="table borderless margin-0">
                                     <tbody>
@@ -1305,7 +1228,7 @@ if($coverbanner == ""){
                     
     </div>
     <!-- page left right section start End -->           
-    <?php } ?>     
+         
     </div>
 <?php
 if(is_user_logged_in()){

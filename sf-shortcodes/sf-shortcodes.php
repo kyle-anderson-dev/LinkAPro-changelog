@@ -3,7 +3,7 @@
 Plugin Name: Service Finder Shortcodes
 Plugin URI: http://aonetheme.com/
 Description: This is a plugin for WordPress that adds shortcodes for home page and others.
-Version: 3.5
+Version: 3.4
 Author: Aonetheme
 Author URI: http://aonetheme.com/
 */

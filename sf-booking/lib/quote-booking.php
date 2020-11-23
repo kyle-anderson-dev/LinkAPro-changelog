@@ -249,7 +249,7 @@ wp_add_inline_script('service-finder-quote-applications', $jsdata, 'before');
 					</div>
 				</div>
 			</div>
-			<div class="panel" id="quotebooking-paid-panel">
+			<div class="panel">
 				<div class="acod-head">
 				 <h5 class="acod-title">
 					<a data-toggle="collapse"  href="#paymentbox" data-parent="#jobbookingaccordion" aria-expanded="false" id="paymentheader">
@@ -268,7 +268,7 @@ wp_add_inline_script('service-finder-quote-applications', $jsdata, 'before');
                             <div class="col-md-12">
                               <div class="form-group form-inline">
                                 <div class="col-md-12">
-                                  <div class="form-group form-inline sf-card-group" id="sf-payment-options">
+                                  <div class="form-group form-inline sf-card-group">
                                     <?php
 									$payflag = 0;
                                     if(service_finder_get_payment_goes_to() == 'admin')
@@ -292,6 +292,9 @@ wp_add_inline_script('service-finder-quote-applications', $jsdata, 'before');
 											}
 										}
 										
+									}elseif($pay_booking_amount_to == 'provider')
+									{
+									
 									}
 									?>
                                     <?php 
@@ -506,8 +509,8 @@ wp_add_inline_script('service-finder-quote-applications', $jsdata, 'before');
                                     ?>
                                 </div>
                               </div>
-                            <?php if($payflag == 1 || service_finder_check_wallet_system() || service_finder_get_payment_goes_to() == 'provider'){ ?>  
-                            <div class="col-md-12" id="sf-bookform-submitarea">
+                            <?php if($payflag == 1 || service_finder_check_wallet_system()){ ?>  
+                            <div class="col-md-12">
                               <div class="form-group">
                                 <input name="book-now" id="save-booking" type="submit" value="<?php esc_html_e('Pay Now', 'service-finder'); ?>" class="btn btn-primary center-block">
                               </div>

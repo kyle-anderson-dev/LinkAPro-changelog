@@ -32,7 +32,7 @@ class SERVICE_FINDER_Bookings{
 		
 		
 		if(!empty($row)){
-		$categoryid = get_user_meta($row->provider_id,'primary_category',true);
+		$categoryid = get_user_meta($row->wp_user_id,'primary_category',true);
 		
 		$labels = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->rating_labels.' where category_id = %d',$categoryid));
 		$totallevel = count($labels);
@@ -234,8 +234,7 @@ class SERVICE_FINDER_Bookings{
 			$noticedata = array(
 						'customer_id' => $row->ID,
 						'target_id' => $bookingid, 
-						'topic' => 'Approve Booking',
-						'title' => esc_html__('Approve Booking', 'service-finder'),
+						'topic' => esc_html__('Approve Booking', 'service-finder'),
 						'notice' => esc_html__('Booking have been approved after wired bank transffer', 'service-finder')
 						);
 				service_finder_add_notices($noticedata);
@@ -755,7 +754,7 @@ Services: %SERVICES%';
 		}
 		$query=$wpdb->get_results($sql);
 		$totalFiltered = count($query); // when there is a search parameter then we have to modify total number filtered rows as per search result. 
-		$sql.=" ORDER BY bookings.id ".$requestData['order'][0]['dir']." LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
+		$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]." ".$requestData['order'][0]['dir']." LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
 		$query=$wpdb->get_results($sql);
 		
 		$data = array();
@@ -817,11 +816,11 @@ Services: %SERVICES%';
 
 			if($time_format){
 
-				$showtime = $result->start_time.' TO '.service_finder_get_booking_end_time($result->end_time,$result->end_time_no_buffer);
+				$showtime = $result->start_time.' TO '.$result->end_time;
 
 			}else{
 
-				$showtime = date('h:i a',strtotime($result->start_time)).' TO '.date('h:i a',strtotime(service_finder_get_booking_end_time($result->end_time,$result->end_time_no_buffer)));
+				$showtime = date('h:i a',strtotime($result->start_time)).' TO '.date('h:i a',strtotime($result->end_time));
 
 			}
 			
@@ -1012,11 +1011,9 @@ Services: %SERVICES%';
 				$flag = 0;
 			}
 			
-			if($row->multi_date != 'yes' && $flag == 1 && $row->status != "Cancel" && $row->status != "Completed")
-			{
+			if($flag == 1 && $row->status != "Cancel" && $row->status != "Completed"){
 			$cancel = '<button type="button" class="btn btn-danger cancelbooking" data-id="'.esc_attr($bookingid).'">'.esc_html__('Cancel Booking', 'service-finder').'</button>';
-			}elseif($row->multi_date == 'yes' && $row->status != "Cancel" && $row->status != "Completed"){
-			$cancel = '<button type="button" class="btn btn-danger cancelbooking" data-id="'.esc_attr($bookingid).'">'.esc_html__('Cancel Booking', 'service-finder').'</button>';
+			
 			}else{
 			$cancel = '';
 			}
@@ -1366,13 +1363,11 @@ $html .= '<tr>
 			$sql.=" OR providers.email LIKE '".$requestData['search']['value']."%' ";
 			$sql.=" OR bookings.status LIKE '".$requestData['search']['value']."%' )";
 		}
-		
-		$sql.=" ORDER BY bookings.id DESC";
-		
 		$query=$wpdb->get_results($sql);
-		
 		$totalFiltered = count($query); // when there is a search parameter then we have to modify total number filtered rows as per search result. 
 
+		$query=$wpdb->get_results($sql);
+		
 		$data = array();
 		
 		foreach($query as $result){
@@ -1392,13 +1387,13 @@ $html .= '<tr>
 	
 			if($time_format){
 				if($result->end_time != Null){
-				$showtime = $result->start_time.' TO '.service_finder_get_booking_end_time($result->end_time,$result->end_time_no_buffer);
+				$showtime = $result->start_time.' TO '.$result->end_time;
 				}else{
 				$showtime = $result->start_time;
 				}
 			}else{
 				if($result->end_time != Null){
-				$showtime = date('h:i a',strtotime($result->start_time)).' TO '.date('h:i a',strtotime(service_finder_get_booking_end_time($result->end_time,$result->end_time_no_buffer)));
+				$showtime = date('h:i a',strtotime($result->start_time)).' TO '.date('h:i a',strtotime($result->end_time));
 				}else{
 				$showtime = date('h:i a',strtotime($result->start_time));
 				}
@@ -1673,10 +1668,12 @@ $html .= '<tr>
 			$sql.=" OR providers.email LIKE '".$requestData['search']['value']."%' ";
 			$sql.=" OR bookings.status LIKE '".$requestData['search']['value']."%' )";
 		}
-		$sql.=" ORDER BY bookings.id DESC";
+
 		$query=$wpdb->get_results($sql);
 		$totalFiltered = count($query); // when there is a search parameter then we have to modify total number filtered rows as per search result. 
 
+		$query=$wpdb->get_results($sql);
+		
 		$data = array();
 		
 		foreach($query as $result){
@@ -1730,13 +1727,13 @@ $html .= '<tr>
 			
 			if($time_format){
 				if($result->end_time != Null){
-				$showtime = $result->start_time.' TO '.service_finder_get_booking_end_time($result->end_time,$result->end_time_no_buffer);
+				$showtime = $result->start_time.' TO '.$result->end_time;
 				}else{
 				$showtime = $result->start_time;
 				}
 			}else{
 				if($result->end_time != Null){
-				$showtime = date('h:i a',strtotime($result->start_time)).' TO '.date('h:i a',strtotime(service_finder_get_booking_end_time($result->end_time,$result->end_time_no_buffer)));
+				$showtime = date('h:i a',strtotime($result->start_time)).' TO '.date('h:i a',strtotime($result->end_time));
 				}else{
 				$showtime = date('h:i a',strtotime($result->start_time));
 				}
@@ -1964,8 +1961,7 @@ $html .= '<tr>
 					$noticedata = array(
 							'customer_id' => $row->ID,
 							'target_id' => $invoice_id, 
-							'topic' => 'Generate Invoice',
-							'title' => esc_html__('Generate Invoice', 'service-finder'),
+							'topic' => esc_html__('Generate Invoice', 'service-finder'),
 							'notice' => sprintf( esc_html__('New Invoice generated by %s. Please pay it soon. Invoice Ref id is #%d', 'service-finder'), ucfirst(service_finder_getProviderName($user_id)), $arg['refno'] )
 							);
 					service_finder_add_notices($noticedata);
@@ -2064,7 +2060,7 @@ Reference No: %REFERENCENO%
 							
 							Tax: %TAX%
 							
-							Description: %DESCRIPTION%
+							Description: %DISCRIPTION%
 							
 							Total: %TOTAL%
 							
@@ -2077,10 +2073,9 @@ Reference No: %REFERENCENO%
 <a href="'.esc_url($userLink).'">'.esc_html__('Pay Now','service-finder').'</a>';
 			}
 			$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE `wp_user_id` = %d',$maildata['provider_id']));
-			$customerInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->customers.' WHERE `email` = "%s" GROUP BY email',$maildata['customer_email']));
 			
-			$tokens = array('%REFERENCENO%','%DUEDATE%','%PROVIDERNAME%','%DISCOUNTTYPE%','%DISCOUNT%','%TAX%','%DESCRIPTION%','%TOTAL%','%GRANDTOTAL%','%CUSTOMERNAME%','%CUSTOMEREMAIL%','%CUSTOMERPHONE%','%CUSTOMERPHONE2%','%ADDRESS%','%APT%','%CITY%','%STATE%','%ZIPCODE%','%COUNTRY%');
-			$replacements = array($maildata['reference_no'],service_finder_date_format($maildata['duedate']),service_finder_get_providername_with_link($row->wp_user_id),$maildata['discount_type'],$maildata['discount'],$maildata['tax'],$maildata['description'],service_finder_money_format($maildata['total']),service_finder_money_format($maildata['grand_total']),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country);
+			$tokens = array('%REFERENCENO%','%DUEDATE%','%PROVIDERNAME%','%DISCOUNTTYPE%','%DISCOUNT%','%TAX%','%DISCRIPTION%','%TOTAL%','%GRANDTOTAL%');
+			$replacements = array($maildata['reference_no'],service_finder_date_format($maildata['duedate']),service_finder_get_providername_with_link($row->wp_user_id),$maildata['discount_type'],$maildata['discount'],$maildata['tax'],$maildata['description'],$maildata['total'],$maildata['grand_total']);
 			$msg_body = str_replace($tokens,$replacements,$message);
 			
 			if($service_finder_options['invoice-to-customer-subject'] != ""){
@@ -2331,8 +2326,7 @@ Reference No: %REFERENCENO%
 			$noticedata = array(
 						'provider_id' => $bookingdata['provider_id'],
 						'target_id' => $arg['bookingid'], 
-						'topic' => 'Cancel Booking',
-						'title' => esc_html__('Cancel Booking', 'service-finder'),
+						'topic' => esc_html__('Cancel Booking', 'service-finder'),
 						'notice' => sprintf( esc_html__('Booking have been canceled by %s', 'service-finder'), $customerreplacestring ),
 						);
 			service_finder_add_notices($noticedata);
@@ -2340,8 +2334,7 @@ Reference No: %REFERENCENO%
 			$noticedata = array(
 						'customer_id' => $customerInfo->wp_user_id,
 						'target_id' => $arg['bookingid'], 
-						'topic' => 'Cancel Booking',
-						'title' => esc_html__('Cancel Booking', 'service-finder'),
+						'topic' => esc_html__('Cancel Booking', 'service-finder'),
 						'notice' => sprintf( esc_html__('Booking have been canceled by %s', 'service-finder'), $providerreplacestring ),
 						);
 			service_finder_add_notices($noticedata);
@@ -2395,8 +2388,7 @@ Reference No: %REFERENCENO%
 			$noticedata = array(
 						'provider_id' => $bookingdata['provider_id'],
 						'target_id' => $arg['bookingid'], 
-						'topic' => 'Booking Completed',
-						'title' => esc_html__('Booking Completed', 'service-finder'),
+						'topic' => esc_html__('Booking Complete', 'service-finder'),
 						'notice' => sprintf( esc_html__('Booking have been completed by %s', 'service-finder'), $customerreplacestring ),
 						);
 			service_finder_add_notices($noticedata);
@@ -2404,8 +2396,7 @@ Reference No: %REFERENCENO%
 			$noticedata = array(
 						'customer_id' => $customerInfo->wp_user_id,
 						'target_id' => $arg['bookingid'], 
-						'topic' => 'Booking Completed',
-						'title' => esc_html__('Booking Completed', 'service-finder'),
+						'topic' => esc_html__('Booking Complete', 'service-finder'),
 						'notice' => sprintf( esc_html__('Booking have been completed by %s', 'service-finder'), $providerreplacestring ),
 						);
 			service_finder_add_notices($noticedata);
@@ -2434,14 +2425,8 @@ Reference No: %REFERENCENO%
 		
 		if($currentstatus == 'pending'){
 			$updatedstatus = 'completed';
-			$topic = 'Service Complete';
-			$title = esc_html__('Service Complete', 'service-finder');
-			$noticestatus = esc_html__('completed', 'service-finder');
 		}elseif($currentstatus == 'completed'){
 			$updatedstatus = 'pending';
-			$topic = 'Service Incomplete';
-			$title = esc_html__('Service Incomplete', 'service-finder');
-			$noticestatus = esc_html__('incompleted', 'service-finder');
 		}
 		
 		$data = array(
@@ -2468,28 +2453,25 @@ Reference No: %REFERENCENO%
 			if($role == 'Customer'){
 			$noticedata = array(
 						'provider_id' => $bookingdata['provider_id'],
-						'target_id' => $bookingdata['id'], 
-						'topic' => $topic,
-						'title' => $title,
-						'notice' => sprintf( esc_html__('Service (%s) status have been changed to %s by %s. Booking Ref id is #%d', 'service-finder'), service_finder_getServiceName($bookedservicedata->service_id),$noticestatus,$customerreplacestring,$arg['bookingid'] ),
+						'target_id' => $arg['bookingid'], 
+						'topic' => esc_html__('Service Incomplete', 'service-finder'),
+						'notice' => sprintf( esc_html__('Service (%s) status have been changed to incompleted by %s. Booking Ref id is #%d', 'service-finder'), service_finder_getServiceName($bookedservicedata->service_id),$customerreplacestring,$arg['bookingid'] ),
 						);
 			service_finder_add_notices($noticedata);
 			}elseif($role == 'Provider'){
 			$noticedata = array(
 						'customer_id' => $customerInfo->wp_user_id,
-						'target_id' => $bookingdata['id'], 
-						'topic' => $topic,
-						'title' => $title,
-						'notice' => sprintf( esc_html__('Service (%s) status have been changed to %s by %s. Booking Ref id is #%d', 'service-finder'), service_finder_getServiceName($bookedservicedata->service_id),$noticestatus,$providerreplacestring,$arg['bookingid'] ),
+						'target_id' => $arg['bookingid'], 
+						'topic' => esc_html__('Service Incomplete', 'service-finder'),
+						'notice' => sprintf( esc_html__('Service (%s) status have been changed to incompleted by %s. Booking Ref id is #%d', 'service-finder'), service_finder_getServiceName($bookedservicedata->service_id),$providerreplacestring,$arg['bookingid'] ),
 						);
 			service_finder_add_notices($noticedata);
 			}else{
 			$noticedata = array(
 						'customer_id' => $customerInfo->wp_user_id,
-						'target_id' => $bookingdata['id'], 
-						'topic' => $topic,
-						'title' => $title,
-						'notice' => sprintf( esc_html__('Service (%s) status have been changed to %s by admin. Booking Ref id is #%d', 'service-finder'), service_finder_getServiceName($bookedservicedata->service_id),$noticestatus,$arg['bookingid'] ),
+						'target_id' => $arg['bookingid'], 
+						'topic' => esc_html__('Service Complete', 'service-finder'),
+						'notice' => sprintf( esc_html__('Service (%s) status have been changed to incompleted by admin. Booking Ref id is #%d', 'service-finder'), service_finder_getServiceName($bookedservicedata->service_id),$arg['bookingid'] ),
 						);
 			service_finder_add_notices($noticedata);
 			}
@@ -2554,8 +2536,7 @@ Reference No: %REFERENCENO%
 			$noticedata = array(
 						'provider_id' => $providerid,
 						'target_id' => $bookingid, 
-						'topic' => 'Booking Completed',
-						'title' => esc_html__('Booking Completed', 'service-finder'),
+						'topic' => esc_html__('Booking Complete', 'service-finder'),
 						'notice' => sprintf( esc_html__('Booking have been completed by %s', 'service-finder'), $customerreplacestring ),
 						);
 			service_finder_add_notices($noticedata);
@@ -2563,8 +2544,7 @@ Reference No: %REFERENCENO%
 			$noticedata = array(
 						'customer_id' => $customerInfo->wp_user_id,
 						'target_id' => $bookingid, 
-						'topic' => 'Booking Completed',
-						'title' => esc_html__('Booking Completed', 'service-finder'),
+						'topic' => esc_html__('Booking Complete', 'service-finder'),
 						'notice' => sprintf( esc_html__('Booking have been completed by %s', 'service-finder'), $providerreplacestring ),
 						);
 			service_finder_add_notices($noticedata);
@@ -2618,7 +2598,7 @@ Reference No: %REFERENCENO%
             
 			$stripeconnecttype = (!empty($service_finder_options['stripe-connect-type'])) ? esc_html($service_finder_options['stripe-connect-type']) : '';
 			
-			if(get_user_meta($providerid,'stripe_connect_custom_account_id',true) != ''){
+			if($stripeconnecttype == 'custom'){
 			
 			$stripe_connect_id = get_user_meta($providerid,'stripe_connect_custom_account_id',true);
 			
@@ -2681,8 +2661,7 @@ Reference No: %REFERENCENO%
 				$noticedata = array(
 							'provider_id' => $bookingdata['provider_id'],
 							'target_id' => $arg['bookingid'], 
-							'topic' => 'Booking Completed',
-							'title' => esc_html__('Booking Completed', 'service-finder'),
+							'topic' => esc_html__('Booking Complete', 'service-finder'),
 							'notice' => sprintf( esc_html__('Booking have been completed by %s', 'service-finder'), $customerreplacestring ),
 							);
 				service_finder_add_notices($noticedata);
@@ -2690,8 +2669,7 @@ Reference No: %REFERENCENO%
 				$noticedata = array(
 							'customer_id' => $customerInfo->wp_user_id,
 							'target_id' => $arg['bookingid'], 
-							'topic' => 'Booking Completed',
-							'title' => esc_html__('Booking Completed', 'service-finder'),
+							'topic' => esc_html__('Booking Complete', 'service-finder'),
 							'notice' => sprintf( esc_html__('Booking have been completed by %s', 'service-finder'), $providerreplacestring ),
 							);
 				service_finder_add_notices($noticedata);
@@ -3193,7 +3171,7 @@ Pay Via: %PAYMENTMETHOD%
 			
 			$smsbody = str_replace($tokens,$smsreplacements,$smsbody);
 			
-			aonesms_send_sms_notifications($providerInfo->phone,$smsbody);
+			aonesms_send_sms_notifications($providerInfo->mobile,$smsbody);
 			}
 			}
 			}
@@ -3434,7 +3412,7 @@ Pay Via: %PAYMENTMETHOD%
 	/*Booking Completed*/
 	public function service_finder_changeStatus($arg){
 		
-		global $wpdb, $service_finder_Tables, $service_finder_Params, $service_finder_options;
+		global $wpdb, $service_finder_Tables, $service_finder_Params;
 		
 		$data = array(
 					'status' => 'Completed'
@@ -3453,13 +3431,12 @@ Pay Via: %PAYMENTMETHOD%
 		$users = $wpdb->prefix . 'users';
 		$row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$users.' WHERE `user_email` = "%s"',$res['email']));
 		
-		$providerreplacestring = (!empty($service_finder_options['provider-replace-string'])) ? $service_finder_options['provider-replace-string'] : esc_html__('provider', 'service-finder');	
+		
 		$noticedata = array(
 					'customer_id' => $row->ID,
 					'target_id' => $arg['bookingid'], 
-					'topic' => 'Booking Completed',
-					'title' => esc_html__('Booking Completed', 'service-finder'),
-					'notice' => sprintf( esc_html__('Booking have been completed by %s', 'service-finder'), $providerreplacestring )
+					'topic' => esc_html__('Booking Completed', 'service-finder'),
+					'notice' => esc_html__('Booking have been completed by service provider', 'service-finder')
 					);
 		service_finder_add_notices($noticedata);
 		
@@ -3978,8 +3955,7 @@ Services: %SERVICES%';
 			$noticedata = array(
 					'provider_id' => $arg['provider'],
 					'target_id' => $arg['booking_id'], 
-					'topic' => 'Booking Edited',
-					'title' => esc_html__('Booking Edited', 'service-finder'),
+					'topic' => esc_html__('Booking Edited', 'service-finder'),
 					'notice' => sprintf( esc_html__('Booking Edited by %s', 'service-finder'), $row->name ),
 					);
 			service_finder_add_notices($noticedata);
@@ -4113,8 +4089,7 @@ Services: %SERVICES%';
 			$noticedata = array(
 					'provider_id' => $providerid,
 					'target_id' => $bookingid, 
-					'topic' => 'Booking Edited',
-					'title' => esc_html__('Booking Edited', 'service-finder'),
+					'topic' => esc_html__('Booking Edited', 'service-finder'),
 					'notice' => sprintf( esc_html__('Booking Edited by %s', 'service-finder'), $row->name ),
 					);
 			service_finder_add_notices($noticedata);
@@ -4129,9 +4104,9 @@ Services: %SERVICES%';
 		}
 		
 		
-		$this->service_finder_SendEditBookingMailToProvider($bookingid,$serviceid);
-		$this->service_finder_SendEditBookingMailToCustomer($bookingid,$serviceid);
-		$this->service_finder_SendEditBookingMailToAdmin($bookingid,$serviceid);
+		$this->service_finder_SendEditBookingMailToProvider($bookingid);
+		$this->service_finder_SendEditBookingMailToCustomer($bookingid);
+		$this->service_finder_SendEditBookingMailToAdmin($bookingid);
 		
 		$success = array(
 				'status' => 'success',
@@ -4142,7 +4117,7 @@ Services: %SERVICES%';
 	}	
 	
 	/*Send Edit Booking mail to provider*/
-	public function service_finder_SendEditBookingMailToProvider($bookingid = '',$serviceid = 0){
+	public function service_finder_SendEditBookingMailToProvider($bookingid = ''){
 		global $service_finder_options, $service_finder_Tables, $wpdb;
 		
 		$bookingInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `id` = %d',$bookingid));
@@ -4194,20 +4169,6 @@ Pay Via: %PAYMENTMETHOD%
 			
 			$tokens = array('%DATE%','%STARTTIME%','%ENDTIME%','%MEMBERNAME%','%PROVIDERNAME%','%PROVIDEREMAIL%','%PROVIDERPHONE%','%CUSTOMERNAME%','%CUSTOMEREMAIL%','%CUSTOMERPHONE%','%CUSTOMERPHONE2%','%ADDRESS%','%APT%','%CITY%','%STATE%','%ZIPCODE%','%COUNTRY%','%PAYMENTMETHOD%','%AMOUNT%');
 			
-			if($serviceid > 0)
-			{
-			$serviceinfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->booked_services.' WHERE `booking_id` = %d AND service_id = %d',$bookingid,$serviceid));
-			
-			if($serviceinfo->member_id > 0){
-			$membername = service_finder_getMemberName($serviceinfo->member_id);
-			}else{
-			$membername = '-';
-			}
-			
-			$replacements = array(service_finder_date_format($serviceinfo->date),$serviceinfo->start_time,$serviceinfo->end_time,$membername,service_finder_get_providername_with_link($providerInfo->wp_user_id),$providerInfo->email,service_finder_get_contact_info($providerInfo->phone,$providerInfo->mobile),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country,ucfirst($bookingInfo->type),service_finder_money_format($bookingInfo->total));
-			
-			}else{
-			
 			if($bookingInfo->member_id > 0){
 			$membername = service_finder_getMemberName($bookingInfo->member_id);
 			}else{
@@ -4215,7 +4176,6 @@ Pay Via: %PAYMENTMETHOD%
 			}
 			
 			$replacements = array(service_finder_date_format($bookingInfo->date),$bookingInfo->start_time,$bookingInfo->end_time,$membername,service_finder_get_providername_with_link($providerInfo->wp_user_id),$providerInfo->email,service_finder_get_contact_info($providerInfo->phone,$providerInfo->mobile),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country,ucfirst($bookingInfo->type),service_finder_money_format($bookingInfo->total));
-			}
 			
 			$customerreplacestring = (!empty($service_finder_options['customer-replace-string'])) ? $service_finder_options['customer-replace-string'] : esc_html__('Customer', 'service-finder');	
 			
@@ -4250,7 +4210,7 @@ Pay Via: %PAYMENTMETHOD%
 	}
 	
 	/*Send Edit Booking mail to customer*/
-	public function service_finder_SendEditBookingMailToCustomer($bookingid = '',$serviceid = 0){
+	public function service_finder_SendEditBookingMailToCustomer($bookingid = ''){
 		global $service_finder_options, $service_finder_Tables, $wpdb;
 		
 		$bookingInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `id` = %d',$bookingid));
@@ -4302,20 +4262,6 @@ Pay Via: %PAYMENTMETHOD%
 			
 			$tokens = array('%DATE%','%STARTTIME%','%ENDTIME%','%MEMBERNAME%','%PROVIDERNAME%','%PROVIDEREMAIL%','%PROVIDERPHONE%','%CUSTOMERNAME%','%CUSTOMEREMAIL%','%CUSTOMERPHONE%','%CUSTOMERPHONE2%','%ADDRESS%','%APT%','%CITY%','%STATE%','%ZIPCODE%','%COUNTRY%','%PAYMENTMETHOD%','%AMOUNT%');
 			
-			if($serviceid > 0)
-			{
-			$serviceinfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->booked_services.' WHERE `booking_id` = %d AND service_id = %d',$bookingid,$serviceid));
-			
-			if($serviceinfo->member_id > 0){
-			$membername = service_finder_getMemberName($serviceinfo->member_id);
-			}else{
-			$membername = '-';
-			}
-			
-			$replacements = array(service_finder_date_format($serviceinfo->date),$serviceinfo->start_time,$serviceinfo->end_time,$membername,service_finder_get_providername_with_link($providerInfo->wp_user_id),$providerInfo->email,service_finder_get_contact_info($providerInfo->phone,$providerInfo->mobile),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country,ucfirst($bookingInfo->type),service_finder_money_format($bookingInfo->total));
-			
-			}else{
-			
 			if($bookingInfo->member_id > 0){
 			$membername = service_finder_getMemberName($bookingInfo->member_id);
 			}else{
@@ -4323,8 +4269,6 @@ Pay Via: %PAYMENTMETHOD%
 			}
 			
 			$replacements = array(service_finder_date_format($bookingInfo->date),$bookingInfo->start_time,$bookingInfo->end_time,$membername,service_finder_get_providername_with_link($providerInfo->wp_user_id),$providerInfo->email,service_finder_get_contact_info($providerInfo->phone,$providerInfo->mobile),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country,ucfirst($bookingInfo->type),service_finder_money_format($bookingInfo->total));
-			}
-			
 			$customerreplacestring = (!empty($service_finder_options['customer-replace-string'])) ? $service_finder_options['customer-replace-string'] : esc_html__('Customer', 'service-finder');	
 			
 			$msg_body = str_replace($tokens,$replacements,$message);
@@ -4358,7 +4302,7 @@ Pay Via: %PAYMENTMETHOD%
 	}
 	
 	/*Send Edit Booking mail to admin*/
-	public function service_finder_SendEditBookingMailToAdmin($bookingid = '',$serviceid = 0){
+	public function service_finder_SendEditBookingMailToAdmin($bookingid = ''){
 		global $service_finder_options, $service_finder_Tables, $wpdb;
 		
 		$bookingInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->bookings.' WHERE `id` = %d',$bookingid));
@@ -4410,20 +4354,6 @@ Pay Via: %PAYMENTMETHOD%
 			
 			$tokens = array('%DATE%','%STARTTIME%','%ENDTIME%','%MEMBERNAME%','%PROVIDERNAME%','%PROVIDEREMAIL%','%PROVIDERPHONE%','%CUSTOMERNAME%','%CUSTOMEREMAIL%','%CUSTOMERPHONE%','%CUSTOMERPHONE2%','%ADDRESS%','%APT%','%CITY%','%STATE%','%ZIPCODE%','%COUNTRY%','%PAYMENTMETHOD%','%AMOUNT%');
 			
-			if($serviceid > 0)
-			{
-			$serviceinfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->booked_services.' WHERE `booking_id` = %d AND service_id = %d',$bookingid,$serviceid));
-			
-			if($serviceinfo->member_id > 0){
-			$membername = service_finder_getMemberName($serviceinfo->member_id);
-			}else{
-			$membername = '-';
-			}
-			
-			$replacements = array(service_finder_date_format($serviceinfo->date),$serviceinfo->start_time,$serviceinfo->end_time,$membername,service_finder_get_providername_with_link($providerInfo->wp_user_id),$providerInfo->email,service_finder_get_contact_info($providerInfo->phone,$providerInfo->mobile),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country,ucfirst($bookingInfo->type),service_finder_money_format($bookingInfo->total));
-			
-			}else{
-			
 			if($bookingInfo->member_id > 0){
 			$membername = service_finder_getMemberName($bookingInfo->member_id);
 			}else{
@@ -4431,7 +4361,6 @@ Pay Via: %PAYMENTMETHOD%
 			}
 			
 			$replacements = array(service_finder_date_format($bookingInfo->date),$bookingInfo->start_time,$bookingInfo->end_time,$membername,service_finder_get_providername_with_link($providerInfo->wp_user_id),$providerInfo->email,service_finder_get_contact_info($providerInfo->phone,$providerInfo->mobile),$customerInfo->name,$customerInfo->email,$customerInfo->phone,$customerInfo->phone2,$customerInfo->address,$customerInfo->apt,$customerInfo->city,$customerInfo->state,$customerInfo->zipcode,$customerInfo->country,ucfirst($bookingInfo->type),service_finder_money_format($bookingInfo->total));
-			}
 			
 			$customerreplacestring = (!empty($service_finder_options['customer-replace-string'])) ? $service_finder_options['customer-replace-string'] : esc_html__('Customer', 'service-finder');	
 			
@@ -4706,68 +4635,6 @@ Pay Via: %PAYMENTMETHOD%
 		
 			global $wpdb, $service_finder_Tables, $service_finder_Params, $service_finder_options;
 			
-			$provider_id = (!empty($data['provider_id'])) ? $data['provider_id'] : '';
-			$member_id = (!empty($data['member_id'])) ? $data['member_id'] : 0; 
-			
-			if($member_id > 0)
-			{
-			$time_format = (!empty($service_finder_options['time-format'])) ? $service_finder_options['time-format'] : '';
-			
-			$wpdb->show_errors();
-			$dayname = date('l', strtotime( $data['seldate']));
-			$results = $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->timeslots.' AS timeslots WHERE (SELECT COUNT(*) FROM '.$service_finder_Tables->bookings.' AS bookings WHERE `bookings`.`status` != "Cancel" AND `bookings`.`date` = "%s" AND `bookings`.`start_time` = `timeslots`.`start_time` AND `bookings`.`end_time` = `timeslots`.`end_time`) < `timeslots`.`max_bookings` AND (SELECT COUNT(*) FROM '.$service_finder_Tables->unavailability.' AS unavl WHERE `unavl`.`date` = "%s" AND  `unavl`.availability_method = "timeslots" AND `unavl`.`start_time` = `timeslots`.`start_time` AND `unavl`.`end_time` = `timeslots`.`end_time`) = 0 AND `timeslots`.`provider_id` = %d AND `timeslots`.`day` = "%s"',$data['seldate'],$data['seldate'],$data['provider_id'],strtolower($dayname)));
-			
-			
-			
-			$res = '';
-			if(!empty($results)){
-				foreach($results as $slot){
-				
-				$qry = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->unavailability.' WHERE `date` = "%s" AND availability_method = "timeslots" AND start_time = "%s" AND end_time = "%s" AND provider_id = %d',$data['seldate'],$slot->start_time,$slot->end_time,$data['provider_id']));
-				
-				if(empty($qry)){
-				
-				$member_timeslots = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->member_timeslots.' where day = %s and provider_id = %d AND `member_id` = %d AND start_time = %s AND end_time = %s',strtolower($dayname),$provider_id,$member_id,$slot->start_time,$slot->end_time));
-				
-				if(!empty($member_timeslots)){
-				
-				$editbooking = (!empty($data['editbooking'])) ? $data['editbooking'] : '';
-				if($editbooking == 'yes'){
-					if($data['start_time'] == $slot->start_time && $data['end_time'] == $slot->end_time){
-						$active = 'class="active"';
-					}else{
-						$active = '';
-					}
-				}else{
-					$active = '';
-				}
-				if($time_format){
-					$showtime = $slot->start_time.'-'.$slot->end_time;
-				}else{
-					$showtime = date('h:i a',strtotime($slot->start_time)).'-'.date('h:i a',strtotime($slot->end_time));
-				}
-				
-				$slottimestamp = strtotime($data['seldate'].' '.$slot->start_time);
-				
-				if($slottimestamp > current_time( 'timestamp' )){
-				$res .= '<li '.$active.' data-source="'.esc_attr($slot->start_time).'-'.esc_attr($slot->end_time).'"><span>'.$showtime.'</span></li>';
-				}else{
-				$res .= '';
-				}
-				
-				}
-				
-				}
-				}
-			}else{
-				$res .= '<div class="notavail">'.esc_html__('There are no time slot available.', 'service-finder').'</div>';
-			}
-			
-			if($res == ''){
-				$res .= '<div class="notavail">'.esc_html__('There are no time slot available.', 'service-finder').'</div>';
-			}
-			}else{
-			
 			$time_format = (!empty($service_finder_options['time-format'])) ? $service_finder_options['time-format'] : '';
 			
 			$wpdb->show_errors();
@@ -4814,7 +4681,6 @@ Pay Via: %PAYMENTMETHOD%
 			
 			if($res == ''){
 				$res .= '<div class="notavail">'.esc_html__('There are no time slot available.', 'service-finder').'</div>';
-			}
 			}
 			
 			return $res;

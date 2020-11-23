@@ -41,7 +41,7 @@ wp_add_inline_script( 'service_finder-js-schedule-form', 'jQuery(function () {
   <h3 class="panel-tittle m-a0"><span class="fa fa-clock-o"></span> <?php echo (!empty($service_finder_options['label-schedule'])) ? esc_html($service_finder_options['label-schedule']) : esc_html__('Schedule', 'service-finder'); ?> </h3>
 </div>
 <div class="panel-body sf-panel-body padding-30">
-  <div class="profile-form-bx sf-calview-custum">
+  <div class="profile-form-bx">
   <div class="scheduledata-bx clearfix">
     <div class="tabbable">
       <!--Load Members Tabs-->

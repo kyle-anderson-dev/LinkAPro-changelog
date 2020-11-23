@@ -2162,8 +2162,7 @@ display: inline-block;
 
 
 
-.provider-loading-image,
-.category-loading-image {
+.provider-loading-image {
 
 
 
@@ -2195,8 +2194,7 @@ height:60px;
 
 
 
-.provider-form-overlay,
-.category-form-overlay {
+.provider-form-overlay {
 
 
 
@@ -2228,8 +2226,7 @@ background-color:rgba(255,255,255,0.9);
 
 
 
-.provider-loading-image img,
-.category-loading-image img {
+.provider-loading-image img {
 
 
 
@@ -3417,3 +3414,9 @@ input[type=radio]:checked::before { margin: 4px;}
 
 input[type=checkbox]:checked::before { margin:0px; }
 
+.jobqa-result-wrapper li { display:table; width:100%; margin-bottom:25px; }
+.jobqa-result-wrapper li:last-child  { margin-bottom:0px; }
+.jobqa-result-wrapper li span { display:table-cell; color:#555; }
+.jobqa-result-wrapper li span:last-child { text-align:right; color:#0073aa; font-weight:600; width:50px; }
+
+.job-result-notfound { border:1px solid #e9e8e8; padding:20px;  border-radius:5px; -webkit-border-radius:5px; text-align:center;  color:#777;}

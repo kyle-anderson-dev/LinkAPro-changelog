@@ -110,23 +110,18 @@ ob_start();
 						$packagebillingperiod = (!empty($service_finder_options['package'.$i.'-billing-period'])) ? $service_finder_options['package'.$i.'-billing-period'] : '';
 						switch ($packagebillingperiod) {
 							case 'Year':
-								$billingperiod = esc_html__('Year','service-finder');
+								$billingperiod = esc_html__('/ Year','service-finder');
 								break;
 							case 'Month':
-								$billingperiod = esc_html__('Month','service-finder');
+								$billingperiod = esc_html__('/ Month','service-finder');
 								break;
 							case 'Week':
-								$billingperiod = esc_html__('Week','service-finder');
+								$billingperiod = esc_html__('/ Week','service-finder');
 								break;
 							case 'Day':
-								$billingperiod = esc_html__('Day','service-finder');
+								$billingperiod = esc_html__('/ Day','service-finder');
 								break;
 						}
-					}
-					
-					$packageexpday = '';
-					if (isset($service_finder_options['payment-type']) && $service_finder_options['payment-type'] == 'single') {
-						$packageexpday = (!empty($service_finder_options['package'.$i.'-expday'])) ? $service_finder_options['package'.$i.'-expday'] : '';
 					}
 					?>
 					<div class="col-md-3 col-sm-6 equal-col pricingtable-cell">
@@ -135,12 +130,7 @@ ob_start();
                                 <div class="pricing-tables-name"><?php echo esc_html($packagename); ?></div>
                                 <div class="pricing-tables-money" style="background-color:<?php echo esc_attr($packagecolor); ?>">
                                     <strong><?php echo service_finder_money_format($packageprice); ?></strong>
-                                    <?php if($billingperiod != ''){ ?>
-                                    <span class="sf-billing-period"><?php echo esc_html($billingperiod); ?></span>
-                                    <?php } ?>
-                                    <?php if($packageexpday != ''){ ?>
-                                    <span class="sf-exp-period"><?php echo esc_html($packageexpday).' '.esc_html__('Days','service-finder'); ?></span>
-                                    <?php } ?>
+                                    <span><?php echo esc_html($billingperiod); ?></span>
                                 </div>
                                 <?php if($highlight == $i){ ?>
                                 <div class="sf-package-highlight"><span><?php echo esc_html__('Best Value','service-finder'); ?></span></div>
@@ -165,24 +155,11 @@ ob_start();
 										}
 										$availableclass = ($available == 'yes') ? 'check' : 'times';
 										$notavailableclass = ($available == 'no') ? 'sf-featued-no-provide' : '';
-										$featuretitle = service_finder_get_data($service_finder_options,'shortcode-pricing-feature-'.$key,$cap_field);
 										?>
-										<li class="<?php echo sanitize_html_class($notavailableclass); ?>"><i class="fa fa-<?php echo sanitize_html_class($availableclass); ?>"></i> <?php echo esc_html($featuretitle); ?></li>
+										<li class="<?php echo sanitize_html_class($notavailableclass); ?>"><i class="fa fa-<?php echo sanitize_html_class($availableclass); ?>"></i> <?php echo esc_html($cap_field); ?></li>
 										<?php	
 										}
 									}
-									}
-									
-									$subcaps = (!empty($service_finder_options['package'.$i.'-subcapabilities'])) ? $service_finder_options['package'.$i.'-subcapabilities'] : '';
-									if(!empty($subcaps)){
-										foreach($subcaps as $key => $value){
-											$featuretitle = service_finder_get_data($service_finder_options,'shortcode-pricing-feature-'.$key,service_finder_get_capability_name_by_key($key));
-											if($value){
-											echo '<li><i class="fa fa-check"></i> '.strtoupper($featuretitle).'</li>';
-											}else{
-											echo '<li class="sf-featued-no-provide"><i class="fa fa-times"></i> '.strtoupper($featuretitle).'</li>';
-											}
-										}
 									}
 									?>
                                     
@@ -304,11 +281,6 @@ ob_start();
 								break;
 						}
 					}
-					
-					$packageexpday = '';
-					if (isset($service_finder_options['payment-type']) && $service_finder_options['payment-type'] == 'single') {
-						$packageexpday = (!empty($service_finder_options['package'.$i.'-expday'])) ? $service_finder_options['package'.$i.'-expday'] : '';
-					}
 					?>
                     <div class="col-sm-6 col-md-3 col-lg-3 equal-col pricingtable-cell">
                     <div class="pricingtable-wrapper <?php echo sanitize_html_class($class).' '.sanitize_html_class($highlightclass) ?>">
@@ -318,9 +290,6 @@ ob_start();
                                 <span class="pricingtable-bx"><?php echo service_finder_money_format($packageprice); ?></span>
                                 <?php if($billingperiod != ''){ ?>
                                 <span class="pricingtable-type"><?php echo esc_html($billingperiod); ?></span>
-                                <?php } ?>
-                                <?php if($packageexpday != ''){ ?>
-                                <span class="pricingtable-type"><?php echo esc_html($packageexpday).' '.esc_html__('Days','service-finder'); ?></span>
                                 <?php } ?>
                             </div>
                             
@@ -346,24 +315,11 @@ ob_start();
 									}
 									$availableclass = ($available == 'yes') ? 'check' : 'times';
 									$notavailableclass = ($available == 'no') ? 'sf-featued-no-provide' : '';
-									$featuretitle = service_finder_get_data($service_finder_options,'shortcode-pricing-feature-'.$key,$cap_field);
 									?>
-									<li class="<?php echo sanitize_html_class($notavailableclass); ?>"><i class="fa fa-<?php echo sanitize_html_class($availableclass); ?>"></i> <?php echo esc_html($featuretitle); ?></li>
+									<li class="<?php echo sanitize_html_class($notavailableclass); ?>"><i class="fa fa-<?php echo sanitize_html_class($availableclass); ?>"></i> <?php echo esc_html($cap_field); ?></li>
 									<?php	
 									}
 								}
-								}
-								
-								$subcaps = (!empty($service_finder_options['package'.$i.'-subcapabilities'])) ? $service_finder_options['package'.$i.'-subcapabilities'] : '';
-								if(!empty($subcaps)){
-									foreach($subcaps as $key => $value){
-										$featuretitle = service_finder_get_data($service_finder_options,'shortcode-pricing-feature-'.$key,service_finder_get_capability_name_by_key($key));
-										if($value){
-										echo '<li><i class="fa fa-check"></i> '.strtoupper($featuretitle).'</li>';
-										}else{
-										echo '<li class="sf-featued-no-provide"><i class="fa fa-times"></i> '.strtoupper($featuretitle).'</li>';
-										}
-									}
 								}
 								?>    
                             </ul>
