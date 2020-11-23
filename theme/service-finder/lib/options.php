@@ -514,7 +514,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'type'     => 'color',
     'title'    => esc_html__('Banner BG Color', 'service-finder'),
     'subtitle' => '',
-    'default'  => '#000000',
+    'default'  => '#000',
     'validate' => 'color',
     ),
 	array(
@@ -615,6 +615,16 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     ),
     ),
     'default'  => 'classic'
+    ),
+    array(
+    'id'       => 'favicon-icon',
+    'type'     => 'media',
+	'customizer'           => false,
+    'url'      => true,
+    'title'    => esc_html__( 'Upload Favicon', 'service-finder' ),
+    'compiler' => 'true',
+    'desc'     => '',
+    'subtitle' => esc_html__( '(.ico file)', 'service-finder' ),
     ),
     )
     ) );
@@ -793,134 +803,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'default'  => '#3396D1',
     'validate' => 'color',
     ),
-	array(
-    'id'       => 'navigation-button-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Text Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'navigation-button-border-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Border Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'sticky-navigation-button-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Text Color (Sticky)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#FFFFFF',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'sticky-navigation-button-border-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Border Color (Sticky)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#FFFFFF',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-navigation-bg-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Background Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#ffffff',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-navigation-bg-hover-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Background Hover Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-navigation-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Text Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-navigation-text-hover-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Text Hover/Active Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#3396d1',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-navigation-dropdown-bg',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown BG (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#ffffff',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-navigation-dropdown-hover-bg',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown Hover BG (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#ebebeb',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-navigation-dropdown-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown Text Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-navigation-dropdown-text-hover',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown Text Hover (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#3396D1',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-navigation-button-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Text Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-navigation-button-border-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Border Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-menu-button-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Menu Button Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#666666',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-menu-button-color-sticky',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Sticky Menu Button Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#666666',
-    'validate' => 'color',
-    ),
     )
     ) );
 	Redux::setSection( $opt_name, array(
@@ -981,30 +863,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'default'  => 'normal'
     ),
 	array(
-    'id'       => 'inner-navigation-bg-color-sticky',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Sticky Background Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#ffffff',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'inner-navigation-text-color-sticky',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Sticky Text Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'inner-navigation-bg-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Background Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#ffffff',
-    'validate' => 'color',
-    ),
-	array(
     'id'       => 'inner-navigation-text-color',
     'type'     => 'color',
     'title'    => esc_html__( 'Navigation Text Color', 'service-finder' ),
@@ -1015,7 +873,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     array(
     'id'       => 'inner-navigation-text-hover-color',
     'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Text Hover/Active Color', 'service-finder' ),
+    'title'    => esc_html__( 'Navigation Text Hover Color', 'service-finder' ),
     'subtitle' => '',
     'default'  => '#3396d1',
     'validate' => 'color',
@@ -1050,118 +908,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'title'    => esc_html__( 'Navigation Dropdown Text Hover', 'service-finder' ),
     'subtitle' => '',
     'default'  => '#3396D1',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'inner-navigation-button-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Text Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'inner-navigation-button-border-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button border Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'sticky-inner-navigation-button-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Text Color (Sticky)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#FFFFFF',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'sticky-inner-navigation-button-border-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button border Color (Sticky)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#FFFFFF',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-inner-navigation-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Text Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-inner-navigation-text-hover-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Text Hover Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#3396d1',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-inner-navigation-dropdown-bg',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown BG (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#ffffff',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-inner-navigation-dropdown-hover-bg',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown Hover BG (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#ebebeb',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-inner-navigation-dropdown-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown Text Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-    array(
-    'id'       => 'mobile-inner-navigation-dropdown-text-hover',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Dropdown Text Hover (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#3396D1',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-inner-navigation-button-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button Text Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-inner-navigation-button-border-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Navigation Button border Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#555555',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-inner-menu-button-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Menu Button Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#666666',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'mobile-inner-menu-button-color-sticky',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Sticky Menu Button Color (Mobile)', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#666666',
     'validate' => 'color',
     ),
     )
@@ -1260,6 +1006,14 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'title'    => esc_html__( 'Button Secondary Background Color', 'service-finder' ),
     'subtitle' => '',
     'default'  => '#3396d1',
+    'validate' => 'color',
+    ),
+    array(
+    'id'       => 'button-secondary-border-color',
+    'type'     => 'color',
+    'title'    => esc_html__( 'Button Secondary Border Color', 'service-finder' ),
+    'subtitle' => '',
+    'default'  => '#1f82bd',
     'validate' => 'color',
     ),
     array(
@@ -1595,7 +1349,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'type'     => 'color',
     'title'    => esc_html__('Inner Banner BG Color', 'service-finder'),
     'subtitle' => '',
-    'default'  => '#000000',
+    'default'  => '#000',
     'validate' => 'color',
     ),
     )
@@ -1624,6 +1378,66 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
 	'desc'     => esc_html__( 'It will toggle left and right curve on theme style 3 for home page', 'service-finder' ),
     'subtitle' => '',
     'default'  => true,
+    ),
+	array(
+    'id'       => 'partners-logo-left-curve-color',
+    'type'     => 'color',
+    'title'    => esc_html__( 'Partners Logo Left Curve Color', 'service-finder' ),
+    'subtitle' => '',
+    'default'  => '#7754f4',
+	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
+    'validate' => 'color',
+    ),
+	array(
+    'id'       => 'partners-logo-right-curve-color',
+    'type'     => 'color',
+    'title'    => esc_html__( 'Partners Logo Right Curve Color', 'service-finder' ),
+    'subtitle' => '',
+    'default'  => '#62b815',
+	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
+    'validate' => 'color',
+    ),
+	array(
+    'id'       => 'partners-logo-bg-image',
+    'type'     => 'media',
+    'url'      => true,
+    'title'    => esc_html__( 'Partners Logo BG Image', 'service-finder' ),
+    'compiler' => 'true',
+    'desc'     => esc_html__( '2000 x 1200 px', 'service-finder' ),
+    'subtitle' => esc_html__( 'For Home Page', 'service-finder' ),
+    ),
+	array(
+    'id'       => 'partners-logo-background-attachment',
+    'type'     => 'button_set',
+    'title'    => esc_html__( 'Partners Logo Background Attachment', 'service-finder' ),
+    'subtitle' => '',
+    'desc'     => '',
+    'options'  => array(
+    'scroll' => esc_html__( 'Scroll', 'service-finder' ),
+    'fixed' => esc_html__( 'Fixed', 'service-finder' ),
+    ),
+	'default'  => 'fixed',
+    ),
+	array(
+    'id'            => 'partners-logo-bg-opacity',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Partners Logo BG Opacity', 'service-finder' ),
+    'subtitle'      => '',
+    'desc'          => '',
+    'default'       => .8,
+    'min'           => 0,
+    'step'          => .1,
+    'max'           => 1,
+    'resolution'    => 0.1,
+    'display_value' => 'text'
+    ),
+	array(
+    'id'       => 'partners-logo-bg-color',
+    'type'     => 'color',
+    'title'    => esc_html__( 'Partners Logo BG Color', 'service-finder' ),
+    'subtitle' => '',
+    'default'  => '',
+    'validate' => 'color',
     ),
 	array(
     'id'       => 'how-works-left-curve-color',
@@ -2301,24 +2115,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'desc'     => esc_html__( '25 x 25 px', 'service-finder' ),
     ),
     array(
-    'id'       => 'bio-left-curve-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Bio Left Curve Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#7754f4',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'bio-right-curve-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Bio Right Curve Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#62b815',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
     'id'       => 'bio-bg-image',
     'type'     => 'media',
     'url'      => true,
@@ -2356,66 +2152,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'       => 'bio-bg-color',
     'type'     => 'color',
     'title'    => esc_html__( 'Bio BG Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '',
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'features-left-curve-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Features Left Curve Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#7754f4',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'features-right-curve-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Features Right Curve Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#62b815',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'features-bg-image',
-    'type'     => 'media',
-    'url'      => true,
-    'title'    => esc_html__( 'Features BG Image', 'service-finder' ),
-    'compiler' => 'true',
-    'desc'     => esc_html__( '1920 x 1200 px', 'service-finder' ),
-    'subtitle' => esc_html__( 'For Who\'s on service finder.com section on home page', 'service-finder' ),
-    ),
-	array(
-    'id'       => 'features-background-attachment',
-    'type'     => 'button_set',
-    'title'    => esc_html__( 'Features Background Attachment', 'service-finder' ),
-    'subtitle' => '',
-    'desc'     => '',
-    'options'  => array(
-    'scroll' => esc_html__( 'Scroll', 'service-finder' ),
-    'fixed' => esc_html__( 'Fixed', 'service-finder' ),
-    ),
-	'default'  => 'fixed',
-    ),
-	array(
-    'id'            => 'features-bg-opacity',
-    'type'          => 'slider',
-    'title'         => esc_html__( 'Features BG Opacity', 'service-finder' ),
-    'subtitle'      => '',
-    'desc'          => '',
-    'default'       => .8,
-    'min'           => 0,
-    'step'          => .1,
-    'max'           => 1,
-    'resolution'    => 0.1,
-    'display_value' => 'text'
-    ),
-	array(
-    'id'       => 'features-bg-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Features BG Color', 'service-finder' ),
     'subtitle' => '',
     'default'  => '',
     'validate' => 'color',
@@ -3399,6 +3135,25 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
 		'icon'             => 'el el-cogs'
     ) );
 	
+	/*Shortcode - service finder partners logo settings*/
+	Redux::setSection( $opt_name, array(
+        'title'            => esc_html__( 'Partners Logo', 'service-finder' ),
+		'id'               => 'shortcodes-partners-logo-settings',
+		'customizer'       => false,
+		'icon' 			   => 'el-icon-tasks',
+		'subsection'       => true,
+		'customizer_width' => '450px',
+		'desc'             => '',
+        'fields'           => array(
+			array(
+				'id'        => 'shortcode-partners-logos',
+				'type'      => 'gallery',
+				'title'    => esc_html__( 'Upload Partners Logo', 'service-finder' ),
+				'library_filter'  => array('gif','jpg','png'),
+			)
+        )
+    ) );
+	
 	/*Shortcode - service finder cities settings*/
 	$allcountry = (!empty($service_finder_options['all-countries'])) ? $service_finder_options['all-countries'] : '';
 	$countryarr[] = '';
@@ -3412,8 +3167,8 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
 		}
 	  }
 	}else{
-	 $countryarr = (!empty($service_finder_options['allowed-country'])) ? $service_finder_options['allowed-country'] : array();
-	 if(!empty($countryarr)){
+	 $countryarr = (!empty($service_finder_options['allowed-country'])) ? $service_finder_options['allowed-country'] : '';
+	 if($countryarr){
 		foreach($countryarr as $key){
 			$countryarr[$countries[$key]] = $countries[$key];
 		}
@@ -3529,14 +3284,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
 				'validate' => 'color',
 			),
 			array(
-			'id'       => 'category-top-bg-color',
-			'type'     => 'color',
-			'title'    => esc_html__( 'Top Background Color', 'service-finder' ),
-			'subtitle' => '',
-			'default'  => '#0e1215',
-			'validate' => 'color',
-			),
-			array(
                 'id'       => 'shortcode-categories-limit',
                 'type'     => 'text',
                 'title'    => esc_html__( 'Number of Categories', 'service-finder' ),
@@ -3607,7 +3354,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
 			array(
 				'id'       => 'shortcode-how-works-tagline-color',
 				'type'     => 'color',
-				'title'    => esc_html__('Text Color', 'service-finder'),
+				'title'    => esc_html__('Tagline Color', 'service-finder'),
 				'subtitle' => '',
 				'default'  => '',
 				'validate' => 'color',
@@ -3627,12 +3374,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'subtitle' => esc_html__( 'Step 1 Fields', 'service-finder' ),
                 'indent'   => true,
             ),
-			array(
-				'id'       => 'shortcode-how-works-step1-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
 			array(
                 'id'       => 'shortcode-how-works-step1-number',
                 'type'     => 'text',
@@ -3663,12 +3404,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'indent'   => true,
             ),
 			array(
-				'id'       => 'shortcode-how-works-step2-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
                 'id'       => 'shortcode-how-works-step2-number',
                 'type'     => 'text',
                 'title'    => esc_html__( 'Step Number', 'service-finder' ),
@@ -3697,12 +3432,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'subtitle' => esc_html__( 'Step 3 Fields', 'service-finder' ),
                 'indent'   => true,
             ),
-			array(
-				'id'       => 'shortcode-how-works-step3-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
 			array(
                 'id'       => 'shortcode-how-works-step3-number',
                 'type'     => 'text',
@@ -3744,14 +3473,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'title'    => esc_html__( 'Title', 'service-finder' ),
 				'desc'     => '%TOTAL-PROVIDERS%',
             ),
-			array(
-				'id'       => 'shortcode-followers-text-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Text Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '#FFFFFF',
-				'validate' => 'color',
-			),
 			array(
 				'id'      => 'shortcode-followers-content',
 				'type'    => 'editor',
@@ -3948,26 +3669,12 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
 				'validate' => 'color',
 			),
 			array(
-				'id'       => 'shortcode-statistics-text-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Text Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '#767676',
-				'validate' => 'color',
-			),
-			array(
                 'id'       => 'shortcode-statistics-box1',
                 'type'     => 'section',
                 'title'    => esc_html__( 'Box 1', 'service-finder' ),
                 'subtitle' => esc_html__( 'Box 1 Fields', 'service-finder' ),
                 'indent'   => true,
             ),
-			array(
-				'id'       => 'shortcode-statistics-step1-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
 			array(
                 'id'       => 'shortcode-statistics-box1-type',
                 'type'     => 'select',
@@ -3985,13 +3692,11 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'id'       => 'shortcode-statistics-box1-title',
                 'type'     => 'text',
                 'title'    => esc_html__( 'Title', 'service-finder' ),
-				'required' => array( 'shortcode-statistics-box1-type', '=', 'other' ),
             ),
 			array(
                 'id'       => 'shortcode-statistics-box1-number',
                 'type'     => 'text',
                 'title'    => esc_html__( 'Number', 'service-finder' ),
-				'required' => array( 'shortcode-statistics-box1-type', '=', 'other' ),
             ),
 			array(
 				'id'       => 'shortcode-statistics-box1-color',
@@ -4014,12 +3719,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'subtitle' => esc_html__( 'Box 2 Fields', 'service-finder' ),
                 'indent'   => true,
             ),
-			array(
-				'id'       => 'shortcode-statistics-step2-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
 			array(
                 'id'       => 'shortcode-statistics-box2-type',
                 'type'     => 'select',
@@ -4067,12 +3766,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'indent'   => true,
             ),
 			array(
-				'id'       => 'shortcode-statistics-step3-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
                 'id'       => 'shortcode-statistics-box3-type',
                 'type'     => 'select',
                 'title'    => esc_html__( 'Box Type', 'service-finder' ),
@@ -4118,12 +3811,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'subtitle' => esc_html__( 'Box 4 Fields', 'service-finder' ),
                 'indent'   => true,
             ),
-			array(
-				'id'       => 'shortcode-statistics-step4-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
 			array(
                 'id'       => 'shortcode-statistics-box4-type',
                 'type'     => 'select',
@@ -4264,7 +3951,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
 			array(
 				'id'       => 'shortcode-why-choose-tagline-color',
 				'type'     => 'color',
-				'title'    => esc_html__('Text Color', 'service-finder'),
+				'title'    => esc_html__('Tagline Color', 'service-finder'),
 				'subtitle' => '',
 				'default'  => '',
 				'validate' => 'color',
@@ -4284,12 +3971,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'subtitle' => esc_html__( 'Box 1 Fields', 'service-finder' ),
                 'indent'   => true,
             ),
-			array(
-				'id'       => 'shortcode-why-choose-step1-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
 			array(
                 'id'       => 'shortcode-why-choose-box1-title',
                 'type'     => 'text',
@@ -4315,12 +3996,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'indent'   => true,
             ),
 			array(
-				'id'       => 'shortcode-why-choose-step2-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
                 'id'       => 'shortcode-why-choose-box2-title',
                 'type'     => 'text',
                 'title'    => esc_html__( 'Title', 'service-finder' ),
@@ -4344,12 +4019,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                 'subtitle' => esc_html__( 'Box 3 Fields', 'service-finder' ),
                 'indent'   => true,
             ),
-			array(
-				'id'       => 'shortcode-why-choose-step3-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
 			array(
                 'id'       => 'shortcode-why-choose-box3-title',
                 'type'     => 'text',
@@ -4484,316 +4153,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
         )
     ) );
 	
-	/*Shortcode - service finder bio settings*/
-	Redux::setSection( $opt_name, array(
-        'title'            => esc_html__( 'Bio', 'service-finder' ),
-		'id'               => 'shortcodes-bio-settings',
-		'customizer'       => false,
-		'icon' 			   => 'el-icon-tasks',
-		'subsection'       => true,
-		'customizer_width' => '450px',
-		'desc'             => '',
-        'fields'           => array(
-			array(
-                'id'       => 'shortcode-bio-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-				'id'      => 'shortcode-bio-tagline',
-				'type'    => 'editor',
-				'title'   => esc_html__( 'Tagline', 'service-finder' ),
-				'args'    => array(
-					'wpautop'       => false,
-					'media_buttons' => false,
-					'textarea_rows' => 5,
-					'teeny'         => false,
-					'quicktags'     => true,
-				)
-			),
-			array(
-				'id'      => 'shortcode-bio-content',
-				'type'    => 'editor',
-				'title'   => esc_html__( 'Content', 'service-finder' ),
-				'args'    => array(
-					'wpautop'       => false,
-					'media_buttons' => false,
-					'textarea_rows' => 5,
-					'teeny'         => false,
-					'quicktags'     => true,
-				)
-			),
-			array(
-				'id'       => 'shortcode-bio-title-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Title Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '',
-				'validate' => 'color',
-			),
-			array(
-				'id'       => 'shortcode-bio-tagline-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Text Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '',
-				'validate' => 'color',
-			),
-			array(
-				'id'       => 'shortcode-bio-divider-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Divider Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '#a7a7a7',
-				'validate' => 'color',
-			),
-			array(
-                'id'       => 'shortcode-bio-button-text',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Button Text', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-bio-button-link',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Button Link', 'service-finder' ),
-            ),
-        )
-    ) );
-	
-	/*Shortcode - service finder features settings*/
-	Redux::setSection( $opt_name, array(
-        'title'            => esc_html__( 'Features', 'service-finder' ),
-		'id'               => 'shortcodes-features-settings',
-		'customizer'       => false,
-		'icon' 			   => 'el-icon-tasks',
-		'subsection'       => true,
-		'customizer_width' => '450px',
-		'desc'             => '',
-        'fields'           => array(
-			array(
-                'id'       => 'shortcode-features-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-				'id'      => 'shortcode-features-tagline',
-				'type'    => 'editor',
-				'title'   => esc_html__( 'Tagline', 'service-finder' ),
-				'args'    => array(
-					'wpautop'       => false,
-					'media_buttons' => false,
-					'textarea_rows' => 5,
-					'teeny'         => false,
-					'quicktags'     => true,
-				)
-			),
-			array(
-				'id'       => 'shortcode-features-title-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Title Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '',
-				'validate' => 'color',
-			),
-			array(
-				'id'       => 'shortcode-features-tagline-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Text Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '',
-				'validate' => 'color',
-			),
-			array(
-				'id'       => 'shortcode-features-divider-color',
-				'type'     => 'color',
-				'title'    => esc_html__('Divider Color', 'service-finder'),
-				'subtitle' => '',
-				'default'  => '#a7a7a7',
-				'validate' => 'color',
-			),
-			array(
-                'id'       => 'shortcode-features-box1',
-                'type'     => 'section',
-                'title'    => esc_html__( 'Box 1', 'service-finder' ),
-                'subtitle' => esc_html__( 'Box 1 Fields', 'service-finder' ),
-                'indent'   => true,
-            ),
-			array(
-				'id'       => 'shortcode-features-box1-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
-                'id'       => 'shortcode-features-box1-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box1-content',
-                'type'     => 'textarea',
-                'title'    => esc_html__( 'Content', 'service-finder' ),
-                'validate' => 'no_html',
-            ),
-			array(
-                'id'       => 'shortcode-features-box1-icon',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Fa Icon', 'service-finder' ),
-				'desc'    => esc_html__( 'eg. fa-clock-o', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box2',
-                'type'     => 'section',
-                'title'    => esc_html__( 'Box 2', 'service-finder' ),
-                'subtitle' => esc_html__( 'Box 2 Fields', 'service-finder' ),
-                'indent'   => true,
-            ),
-			array(
-				'id'       => 'shortcode-features-box2-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
-                'id'       => 'shortcode-features-box2-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box2-content',
-                'type'     => 'textarea',
-                'title'    => esc_html__( 'Content', 'service-finder' ),
-                'validate' => 'no_html',
-            ),
-			array(
-                'id'       => 'shortcode-features-box2-icon',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Fa Icon', 'service-finder' ),
-				'desc'    => esc_html__( 'eg. fa-clock-o', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box3',
-                'type'     => 'section',
-                'title'    => esc_html__( 'Box 3', 'service-finder' ),
-                'subtitle' => esc_html__( 'Box 3 Fields', 'service-finder' ),
-                'indent'   => true,
-            ),
-			array(
-				'id'       => 'shortcode-features-box3-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
-                'id'       => 'shortcode-features-box3-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box3-content',
-                'type'     => 'textarea',
-                'title'    => esc_html__( 'Content', 'service-finder' ),
-                'validate' => 'no_html',
-            ),
-			array(
-                'id'       => 'shortcode-features-box3-icon',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Fa Icon', 'service-finder' ),
-				'desc'    => esc_html__( 'eg. fa-clock-o', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box4',
-                'type'     => 'section',
-                'title'    => esc_html__( 'Box 4', 'service-finder' ),
-                'subtitle' => esc_html__( 'Box 4 Fields', 'service-finder' ),
-                'indent'   => true,
-            ),
-			array(
-				'id'       => 'shortcode-features-box4-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
-                'id'       => 'shortcode-features-box4-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box4-content',
-                'type'     => 'textarea',
-                'title'    => esc_html__( 'Content', 'service-finder' ),
-                'validate' => 'no_html',
-            ),
-			array(
-                'id'       => 'shortcode-features-box4-icon',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Fa Icon', 'service-finder' ),
-				'desc'    => esc_html__( 'eg. fa-clock-o', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box5',
-                'type'     => 'section',
-                'title'    => esc_html__( 'Box 5', 'service-finder' ),
-                'subtitle' => esc_html__( 'Box 5 Fields', 'service-finder' ),
-                'indent'   => true,
-            ),
-			array(
-				'id'       => 'shortcode-features-box5-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
-                'id'       => 'shortcode-features-box5-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box5-content',
-                'type'     => 'textarea',
-                'title'    => esc_html__( 'Content', 'service-finder' ),
-                'validate' => 'no_html',
-            ),
-			array(
-                'id'       => 'shortcode-features-box5-icon',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Fa Icon', 'service-finder' ),
-				'desc'    => esc_html__( 'eg. fa-clock-o', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box6',
-                'type'     => 'section',
-                'title'    => esc_html__( 'Box 6', 'service-finder' ),
-                'subtitle' => esc_html__( 'Box 6 Fields', 'service-finder' ),
-                'indent'   => true,
-            ),
-			array(
-				'id'       => 'shortcode-features-box6-show',
-				'type'     => 'switch',
-				'title'    => esc_html__( 'Show/Hide', 'service-finder' ),
-				'default'  => true,
-			),
-			array(
-                'id'       => 'shortcode-features-box6-title',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Title', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-features-box6-content',
-                'type'     => 'textarea',
-                'title'    => esc_html__( 'Content', 'service-finder' ),
-                'validate' => 'no_html',
-            ),
-			array(
-                'id'       => 'shortcode-features-box6-icon',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Fa Icon', 'service-finder' ),
-				'desc'    => esc_html__( 'eg. fa-clock-o', 'service-finder' ),
-            ),
-        )
-    ) );
-	
 	$allpackages = service_finder_get_active_packages();
     if(!empty($allpackages)){
     foreach($allpackages as $key => $value){
@@ -4914,78 +4273,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
                     'no' => 'No',
                 ),
                 'default'  => 'yes'
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-booking',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Booking', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-cover-image',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Cover Image', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-gallery-images',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Gallery Images', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-multiple-categories',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Multiple Categories', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-apply-for-job',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Apply for Job', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-job-alerts',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Job Alerts', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-branches',
-                'type'     => 'text',
-                'title'    => esc_html__( 'More Locations (Branches)', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-google-calendar',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Google Calendar', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-crop',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Crop Profile Image', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-contact-numbers',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Contact Numbers', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-message-system',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Message System', 'service-finder' ),
-				'desc'     => esc_html__( 'It will work only "Service Finder Messaging System" addon is installed.', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-invoice',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Invoice', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-availability',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Availability', 'service-finder' ),
-            ),
-			array(
-                'id'       => 'shortcode-pricing-feature-staff-members',
-                'type'     => 'text',
-                'title'    => esc_html__( 'Staff Members', 'service-finder' ),
-            ),
+            )
         )
     ) );
 	
@@ -5075,14 +4363,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'type'     => 'text',
     'title'    => esc_html__( 'Instagram URL', 'service-finder' ),
     'subtitle' => esc_html__( 'Enter Instagram URL', 'service-finder' ),
-    'desc'     => '',
-    'validate' => 'url',
-    ),
-	array(
-    'id'       => 'youtube-link',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Youtube URL', 'service-finder' ),
-    'subtitle' => esc_html__( 'Enter Youtube URL', 'service-finder' ),
     'desc'     => '',
     'validate' => 'url',
     ),
@@ -5481,20 +4761,15 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'BDT' => esc_html__( 'Bangladeshi Taka (&#2547;&nbsp;)', 'service-finder' ),
     'BRL' => esc_html__( 'Brazilian Real (&#82;&#36;)', 'service-finder' ),
     'BGN' => esc_html__( 'Bulgarian Lev (&#1083;&#1074;.)', 'service-finder' ),
-	'BZD' => esc_html__( 'Belize Dollar (BZ&#36;)', 'service-finder' ),
-	'BHD' => esc_html__( 'Bahraini dinar (BD)', 'service-finder' ),
     'CAD' => esc_html__( 'Canadian Dollars (&#36;)', 'service-finder' ),
     'CLP' => esc_html__( 'Chilean Peso (&#36;)', 'service-finder' ),
     'CNY' => esc_html__( 'Chinese Yuan (&yen;)', 'service-finder' ),
     'COP' => esc_html__( 'Colombian Peso (&#36;)', 'service-finder' ),
     'CZK' => esc_html__( 'Czech Koruna (&#75;&#269;)', 'service-finder' ),
-	'DZD' => esc_html__( 'Algerian Dinar', 'service-finder' ),
     'DKK' => esc_html__( 'Danish Krone (kr.)', 'service-finder' ),
     'DOP' => esc_html__( 'Dominican Peso (RD&#36;)', 'service-finder' ),
     'EUR' => esc_html__( 'Euros (&euro;)', 'service-finder' ),
-    'GYD' => esc_html__( 'Guyanese dollar (GY$)', 'service-finder' ),
-	'GHS' => esc_html__( 'Ghanaian cedi (GH&#8373;)', 'service-finder' ),
-	'HKD' => esc_html__( 'Hong Kong Dollar (&#36;)', 'service-finder' ),
+    'HKD' => esc_html__( 'Hong Kong Dollar (&#36;)', 'service-finder' ),
     'HRK' => esc_html__( 'Croatia kuna (Kn)', 'service-finder' ),
     'HUF' => esc_html__( 'Hungarian Forint (&#70;&#116;)', 'service-finder' ),
     'ISK' => esc_html__( 'Icelandic krona (Kr.)', 'service-finder' ),
@@ -6013,20 +5288,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'default'  => 'package_0'
     ),
 	array(
-    'id'       => 'default-social-signup-package',
-    'type'     => 'select',
-    'title'    => esc_html__( 'Default Social Signup Package', 'service-finder' ),
-    'subtitle' => '',
-    'desc'     => esc_html__( 'This will be default package for social signup and make sure it should be active. Other packages will be show in upgrade account.', 'service-finder' ),
-    'options'  => array(
-		'package_0' => esc_html__( 'Trial Package', 'service-finder' ),
-		'package_1' => esc_html__( 'Package 1', 'service-finder' ),
-		'package_2' => esc_html__( 'Package 2', 'service-finder' ),
-		'package_3' => esc_html__( 'Package 3', 'service-finder' )
-	),
-    'default'  => ''
-    ),
-	array(
     'id'       => 'enable-package0',
     'type'     => 'checkbox',
     'title'    => esc_html__( 'Trial Package', 'service-finder' ),
@@ -6495,24 +5756,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'       => 'woo-invoice-redirect',
     'type'     => 'select',
     'title'    => esc_html__('Redirect after Invoice Payment', 'service-finder'),
-    'subtitle' => '',
-    'desc'     => '',
-    'options'  => $pagearr,
-    'default'  => 'no'
-    ),
-	array(
-    'id'       => 'woo-provider-wallet-redirect',
-    'type'     => 'select',
-    'title'    => esc_html__('Redirect after Provider Add to Wallet Payment', 'service-finder'),
-    'subtitle' => '',
-    'desc'     => '',
-    'options'  => $pagearr,
-    'default'  => 'no'
-    ),
-	array(
-    'id'       => 'woo-customer-wallet-redirect',
-    'type'     => 'select',
-    'title'    => esc_html__('Redirect after Customer Add to Wallet Payment', 'service-finder'),
     'subtitle' => '',
     'desc'     => '',
     'options'  => $pagearr,
@@ -7111,86 +6354,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'default'  => 'style-1'
     ),
 	array(
-    'id'         => 'profile-left-right-curve-preview',
-    'type'       => 'raw',
-    'full_width' => false,
-    'title'      => esc_html__( 'Preview for Left and Right Curve', 'service-finder' ),
-    'subtitle'   => '',
-    'desc'       => '',
-    'content'    => '<img src="'.get_template_directory_uri().'/inc/images/redux/profile-left-right-curve.jpg">',
-    ),
-	array(
-    'id'       => 'profile-left-right-curve',
-    'type'     => 'switch',
-    'title'    => esc_html__( 'Profile Left Right Curve', 'service-finder' ),
-	'desc'     => esc_html__( 'It will toggle left and right curve on theme style 3 for profile page style 2', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => true,
-    ),
-	array(
-    'id'       => 'profile-left-curve-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Profile Left Curve Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#7754f4',
-	'desc'     => esc_html__( 'It works only for theme style 3 for profile page style 2', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'profile-right-curve-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Profile Right Curve Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#62b815',
-	'desc'     => esc_html__( 'It works only for theme style 3 for profile page style 2', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'profile-gallery-bg-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Profile Gallery BG Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'profile-gallery-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Profile Gallery Text Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#fff',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'profile-document-services-bg-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Profile Document/Services BG Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'profile-document-services-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Profile Document/Services Text Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#fff',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
-    'id'       => 'profile-document-services-active-text-color',
-    'type'     => 'color',
-    'title'    => esc_html__( 'Profile Document/Services Active Text Color', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => '#fff',
-	'desc'     => esc_html__( 'It works only for theme style 3', 'service-finder' ),
-    'validate' => 'color',
-    ),
-	array(
     'id'       => 'job-notification',
     'type'     => 'button_set',
     'title'    => esc_html__( 'Job Notification', 'service-finder' ),
@@ -7348,7 +6511,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'       => 'floating-menu-desktop',
     'type'     => 'switch',
     'title'    => sprintf( esc_html__( 'Show Floating Menu on %s Profile for Desktop', 'service-finder' ), $providerreplacestring ),
-	'desc'     => esc_html__( 'It will work only for provider profile style 2', 'service-finder' ),
+	'desc'     => '',
     'subtitle' => '',
     'default'  => true,
     ),
@@ -7356,8 +6519,8 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'       => 'floating-menu-mobile',
     'type'     => 'switch',
     'title'    => sprintf( esc_html__( 'Show Floating Menu on %s Profile for Mobile', 'service-finder' ), $providerreplacestring ),
-	'desc'     => esc_html__( 'Show Floating Menu on %s Profile for Desktop', 'service-finder' ),
-    'subtitle' => esc_html__( 'It will work only for provider profile style 2', 'service-finder' ),
+	'desc'     => '',
+    'subtitle' => '',
     'default'  => true,
     ),
 	array(
@@ -7987,29 +7150,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     )
     ) );
 	Redux::setSection( $opt_name, array(
-    'title'            => esc_html__( 'Google Calendar', 'service-finder' ),
-    'id'               => 'google-calendar-settings',
-    'subsection'       => true,
-	'customizer'           => false,
-    'customizer_width' => '450px',
-    'desc'             => '',
-    'fields'           => array(
-	array(
-    'id'       => 'google-calendar-client-id',
-    'type'     => 'text',
-    'title'    => esc_html__('Client ID', 'service-finder'),
-    'subtitle' => '',
-	'description'     => esc_html__( 'Authorized redirect URIs: ', 'service-finder' ).home_url().'?action=googleoauth-callback',
-    ),
-	array(
-    'id'       => 'google-calendar-client-secret',
-    'type'     => 'text',
-    'title'    => esc_html__('Client Secret', 'service-finder'),
-    'subtitle' => '',
-    )
-    )
-    ) );
-	Redux::setSection( $opt_name, array(
     'title'            => esc_html__( 'Claim Business', 'service-finder' ),
     'id'               => 'claim-business',
     'subsection'       => true,
@@ -8333,13 +7473,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'default'  => false,
     ),
 	array(
-    'id'       => 'show-customer-signup-otp',
-    'type'     => 'switch',
-    'title'    => sprintf( esc_html__( 'Show OTP in %s Signup', 'service-finder' ), $customerreplacestring ),
-    'subtitle' => '',
-    'default'  => false,
-    ),
-	array(
 		'id'       => 'social-signup-with',
 		'type'     => 'button_set',
 		'title'    => esc_html__( 'Social Signup With', 'service-finder' ),
@@ -8643,6 +7776,78 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'max'           => 500,
     'display_value' => 'text'
     ),
+	array(
+    'id'       => 'purchase-credit-limit-period',
+    'type'     => 'button_set',
+    'title'    => esc_html__( 'Job Apply Period', 'service-finder' ),
+    'subtitle' => '',
+    'desc'     => '',
+    'options'  => array(
+    'weekly' => 'Weekly',
+    'monthly' => 'Monthly',
+    ),
+    'default'  => 'monthly'
+    ),
+	array(
+    'id'            => 'purchase-credit-number-of-week-month',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Job Apply Limit For', 'service-finder' ),
+    'subtitle'      => esc_html__( 'Number of week/month for job apply limit', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 1,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 48,
+    'display_value' => 'text'
+    ),
+	array(
+    'id'            => 'package0-purchase-credit',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Purchase Credit for Trial Package', 'service-finder' ),
+    'subtitle'      => esc_html__( 'Please set number of purchase credit for Trial Package', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 10,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 500,
+    'display_value' => 'text'
+    ),
+	array(
+    'id'            => 'package1-purchase-credit',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Purchase Credit for Package 1', 'service-finder' ),
+    'subtitle'      => esc_html__( 'Please set number of purchase credit for Package 1', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 10,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 500,
+    'display_value' => 'text'
+    ),
+    array(
+    'id'            => 'package2-purchase-credit',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Purchase Credit for Package 2', 'service-finder' ),
+    'subtitle'      => esc_html__( 'Please set number of purchase credit for Package 2', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 10,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 500,
+    'display_value' => 'text'
+    ),
+    array(
+    'id'            => 'package3-purchase-credit',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Purchase Credit for Package 3', 'service-finder' ),
+    'subtitle'      => esc_html__( 'Please set number of purchase credit for Package 3', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 10,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 500,
+    'display_value' => 'text'
+    ),
     )
     ) );
 	Redux::setSection( $opt_name, array(
@@ -8771,6 +7976,131 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'max'           => 5000,
     'display_value' => 'text',
 	'required' => array( 'plan3', '=', true )
+    ),
+    )
+    ) );
+	
+	Redux::setSection( $opt_name, array(
+    'title'            => esc_html__( 'Purchase Credit Plans', 'service-finder' ),
+    'id'               => 'purchase-credit-plans',
+	'customizer'           => false,
+    'subsection'       => true,
+    'customizer_width' => '450px',
+    'desc'             => '',
+    'fields'           => array(
+	array(
+    'id'       => 'default-purchased-request',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Default Purchased Request', 'service-finder' ),
+    'default'  => '1',
+    ),
+	array(
+    'id'       => 'append-purchase-credit',
+    'type'     => 'switch',
+    'title'    => esc_html__( 'Add Remaining Purchase Credit to Next Month/Week', 'service-finder' ),
+	'desc'     => '',
+    'subtitle' => '',
+    'default'  => false,
+	'required' => array( 'increase-limit-plans', '=', true ),
+    ),
+	array(
+    'id'       => 'purchase-credit-package1',
+    'type'     => 'switch',
+    'title'    => esc_html__( 'Package 1', 'service-finder' ),
+	'desc'     => '',
+    'subtitle' => '',
+    'default'  => true,
+    ),
+    array(
+    'id'       => 'purchase-credit-package1-name',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Name', 'service-finder' ),
+	'required' => array( 'purchase-credit-package1', '=', true ),
+    ),
+    array(
+    'id'       => 'purchase-credit-package1-price',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Price', 'service-finder' ),
+    'default'  => '0',
+	'required' => array( 'purchase-credit-package1', '=', true ),
+    ),
+    array(
+    'id'            => 'purchase-credit-package1-limit',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Limit', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 1,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 5000,
+    'display_value' => 'text',
+	'required' => array( 'purchase-credit-package1', '=', true )
+    ),
+    array(
+    'id'       => 'purchase-credit-package2',
+    'type'     => 'switch',
+    'title'    => esc_html__( 'Package 2', 'service-finder' ),
+	'desc'     => '',
+    'subtitle' => '',
+    'default'  => true,
+    ),
+    array(
+    'id'       => 'purchase-credit-package2-name',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Name', 'service-finder' ),
+	'required' => array( 'purchase-credit-package2', '=', true )
+    ),
+    array(
+    'id'       => 'purchase-credit-package2-price',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Price', 'service-finder' ),
+    'default'  => '0',
+	'required' => array( 'purchase-credit-package2', '=', true )
+    ),
+    array(
+    'id'            => 'purchase-credit-package2-limit',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Limit', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 1,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 5000,
+    'display_value' => 'text',
+	'required' => array( 'purchase-credit-package2', '=', true )
+    ),
+	array(
+    'id'       => 'purchase-credit-package3',
+    'type'     => 'switch',
+    'title'    => esc_html__( 'Package 3', 'service-finder' ),
+	'desc'     => '',
+    'subtitle' => '',
+    'default'  => true,
+    ),
+    array(
+    'id'       => 'purchase-credit-package3-name',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Name', 'service-finder' ),
+	'required' => array( 'purchase-credit-package3', '=', true )
+    ),
+    array(
+    'id'       => 'purchase-credit-package3-price',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Price', 'service-finder' ),
+    'default'  => '0',
+	'required' => array( 'purchase-credit-package3', '=', true )
+    ),
+    array(
+    'id'            => 'purchase-credit-package3-limit',
+    'type'          => 'slider',
+    'title'         => esc_html__( 'Limit', 'service-finder' ),
+    'desc'          => '',
+    'default'       => 1,
+    'min'           => 1,
+    'step'          => 1,
+    'max'           => 5000,
+    'display_value' => 'text',
+	'required' => array( 'purchase-credit-package3', '=', true )
     ),
     )
     ) );
@@ -8966,128 +8296,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     )
     ) );
 	
-	Redux::setSection( $opt_name, array(
-    'title'            => esc_html__( 'Job Applicants Filters', 'service-finder' ),
-    'id'               => 'job-applicants-filters',
-	'customizer'           => false,
-    'subsection'       => true,
-    'customizer_width' => '450px',
-    'desc'             => '',
-    'fields'           => array(
-	array(
-    'id'       => 'job-show-filters',
-    'type'     => 'switch',
-    'title'    => esc_html__( 'Show Filters', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => true,
-    ),
-	array(
-    'id'       => 'job-location-filter',
-    'type'     => 'switch',
-    'title'    => esc_html__( 'Location Filter', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => true,
-    ),
-	array(
-    'id'       => 'job-type-filter',
-    'type'     => 'switch',
-    'title'    => esc_html__( 'Type Filter', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => true,
-    ),
-	array(
-    'id'       => 'job-quote-filter',
-    'type'     => 'switch',
-    'title'    => esc_html__( 'Filter by invitations/applicants', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => true,
-    ),
-	array(
-    'id'       => 'job-rating-filter',
-    'type'     => 'switch',
-    'title'    => esc_html__( 'Rating Filter', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => true,
-    ),
-	array(
-    'id'       => 'job-amenity-filter',
-    'type'     => 'switch',
-    'title'    => esc_html__( 'Amenity Filter', 'service-finder' ),
-    'subtitle' => '',
-    'default'  => true,
-    ),
-	array(
-    'id'       => 'job-text',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Job Text', 'service-finder' ),
-    'default'  => esc_html__( 'Job', 'service-finder' ),
-    ),
-	array(
-    'id'       => 'job-service-perform-text',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Service Perform At Text', 'service-finder' ),
-    'default'  => esc_html__( 'Service Perform At Text', 'service-finder' ),
-    ),
-	array(
-    'id'       => 'job-filter-radius-input-placeholder',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Radius Input Placeholder', 'service-finder' ),
-    'default'  => esc_html__( 'Enter Radius', 'service-finder' ),
-    ),
-	array(
-    'id'       => 'job-filter-by-location-text',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Filter by Location Text', 'service-finder' ),
-    'default'  => esc_html__( 'Filter by Location Text', 'service-finder' ),
-    ),
-	array(
-    'id'       => 'job-recommended-lession-text',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Recommended Provider Text', 'service-finder' ),
-    'default'  => esc_html__( 'Recommended Provider Text', 'service-finder' ),
-    ),
-	array(
-    'id'       => 'job-number-of-provider-have-applied-text',
-    'type'     => 'text',
-    'title'    => esc_html__( '%NUMBER% provider has applied to this job', 'service-finder' ),
-    'default'  => esc_html__( '%NUMBER% provider has applied to this job', 'service-finder' ),
-	'desc' => "Keywords: %NUMBER%",
-    ),
-	array(
-    'id'       => 'job-send-invitation-selected-lession-provider-text',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Send invitations to all selected providers', 'service-finder' ),
-    'default'  => esc_html__( 'Send invitations to all selected providers', 'service-finder' ),
-    ),
-	array(
-    'id'      => 'job-no-result-html-view-applicants',
-    'type'    => 'editor',
-    'title'   => esc_html__('No Result HTML (View applicants)', 'service-finder'),
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-	array(
-    'id'      => 'job-no-result-html-send-invitations',
-    'type'    => 'editor',
-    'title'   => esc_html__('No Result HTML (Send invitations)', 'service-finder'),
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-    )
-    ) );
-	
 	if(class_exists('aone_messaging')){
 	Redux::setSection( $opt_name, array(
     'title'            => esc_html__( 'Message System', 'service-finder' ),
@@ -9277,6 +8485,20 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'customizer_width' => '450px',
     'desc'             => '',
     'fields'           => array(
+	array(
+    'id'       => 'provider-featured-amount',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Featured Amount', 'service-finder' ),
+    'subtitle' => '',
+    'default'  => ''
+    ),
+	array(
+    'id'       => 'provider-featured-period',
+    'type'     => 'text',
+    'title'    => esc_html__( 'Featured Period', 'service-finder' ),
+	'subtitle' => esc_html__( 'Number of days', 'service-finder' ),
+    'default'  => 30
+    ),
 	array(
     'id'       => 'provider-feature',
     'type'     => 'switch',
@@ -10313,28 +9535,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     )
     ),
 	array(
-    'id'       => 'confirm-email-otp-to-provider-subject',
-    'type'     => 'text',
-    'title'    => sprintf( esc_html__('Subject for %s for OTP to Confirm Email', 'service-finder'), $providerreplacestring ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),  
-    array(
-    'id'      => 'confirm-email-otp-to-provider',
-    'type'    => 'editor',
-    'title'   => esc_html__( 'OTP to Confirm Email to', 'service-finder' ).' '.$providerreplacestring,
-    'desc' => "Keywords: %OTP%",
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-	array(
     'id'       => 'customer-to-admin-subject',
     'type'     => 'text',
     'title'    => sprintf( esc_html__('Subject for %s Signup Mail to Admin', 'service-finder'), $customerreplacestring ),
@@ -10419,27 +9619,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'quicktags'     => true,
     )
     ),
-	array(
-    'id'       => 'featured-expire-subject',
-    'type'     => 'text',
-    'title'    => sprintf( esc_html__('Subject for Featured Expired Mail', 'service-finder'), $providerreplacestring ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),
-	array(
-    'id'      => 'featured-expire-message',
-    'type'    => 'editor',
-    'title'   => sprintf( esc_html__('Mail Send to %s for Featured Expired', 'service-finder'), $providerreplacestring ),
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
     )
     ) );
 	Redux::setSection( $opt_name, array(
@@ -10462,28 +9641,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'send-to-subscription-expire-provider',
     'type'    => 'editor',
     'title'   => sprintf( esc_html__('Mail Send to %s for Subscription Expire', 'service-finder'), $providerreplacestring ),
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-	array(
-    'id'       => 'provider-subscription-expire-reminder-subject',
-    'type'     => 'text',
-    'title'    => sprintf( esc_html__('Subject for Mail Send to %s for Subscription Expire Reminder', 'service-finder'), $providerreplacestring ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),
-	array(
-    'id'      => 'send-to-subscription-expire-reminder-provider',
-    'type'    => 'editor',
-    'title'   => sprintf( esc_html__('Mail Send to %s for Subscription Expire Reminder', 'service-finder'), $providerreplacestring ),
-	'desc' => "Keywords: %NUMBEROFDAYS%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -10741,82 +9898,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     ),
 	array(
     'id'      => 'booking-to-admin',
-    'type'    => 'editor',
-    'title'   => esc_html__( 'Mail Send to Admin', 'service-finder' ),
-    'desc' => "Keywords: %BOOKINGREFID%,%DATE%, %STARTTIME%, %ENDTIME%, %MEMBERNAME%, %PROVIDERNAME%, %PROVIDEREMAIL%, %PROVIDERPHONE%, %CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%, %PAYMENTMETHOD%, %AMOUNT%, %ADMINFEE% %SERVICES%, %SHORTDESCRIPTION%,%SERVICELOCATION%",
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-    )
-    ) );
-	Redux::setSection( $opt_name, array(
-    'title'            => esc_html__( 'Booking Edit Mail', 'service-finder' ),
-    'id'               => 'booking-edit-mail-settings',
-	'customizer'           => false,
-    'subsection'       => true,
-    'customizer_width' => '450px',
-    'desc'             => '',
-    'fields'           => array(
-    array(
-    'id'       => 'edit-booking-to-customer-subject',
-    'type'     => 'text',
-    'title'    => sprintf( esc_html__('Subject for Mail Send to %s', 'service-finder'), $customerreplacestring ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),
-	array(
-    'id'      => 'edit-booking-to-customer',
-    'type'    => 'editor',
-    'title'   => sprintf( esc_html__('Mail Send to %s', 'service-finder'), $customerreplacestring ),
-    'desc' => "Keywords: %BOOKINGREFID%,%DATE%, %STARTTIME%, %ENDTIME%, %MEMBERNAME%, %PROVIDERNAME%, %PROVIDEREMAIL%, %PROVIDERPHONE%, %CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%, %PAYMENTMETHOD%, %AMOUNT%, %ADMINFEE%, %SERVICES%, %SHORTDESCRIPTION%,%SERVICELOCATION%",
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-   array(
-    'id'       => 'edit-booking-to-provider-subject',
-    'type'     => 'text',
-    'title'    => sprintf( esc_html__('Subject for Mail Send to %s', 'service-finder'), $providerreplacestring ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),
-    array(
-    'id'      => 'edit-booking-to-provider',
-    'type'    => 'editor',
-    'title'   => esc_html__( 'Mail Send to', 'service-finder' ).' '.esc_html($providerreplacestring),
-    'desc' => "Keywords: %BOOKINGREFID%,%DATE%, %STARTTIME%, %ENDTIME%, %MEMBERNAME%, %PROVIDERNAME%, %PROVIDEREMAIL%, %PROVIDERPHONE%, %CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%, %PAYMENTMETHOD%, %AMOUNT%, %ADMINFEE%, %SERVICES%, %SHORTDESCRIPTION%,%SERVICELOCATION%",
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-    array(
-    'id'       => 'edit-booking-to-admin-subject',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Subject for Mail Send to Admin', 'service-finder' ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),
-	array(
-    'id'      => 'edit-booking-to-admin',
     'type'    => 'editor',
     'title'   => esc_html__( 'Mail Send to Admin', 'service-finder' ),
     'desc' => "Keywords: %BOOKINGREFID%,%DATE%, %STARTTIME%, %ENDTIME%, %MEMBERNAME%, %PROVIDERNAME%, %PROVIDEREMAIL%, %PROVIDERPHONE%, %CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%, %PAYMENTMETHOD%, %AMOUNT%, %ADMINFEE% %SERVICES%, %SHORTDESCRIPTION%,%SERVICELOCATION%",
@@ -11356,7 +10437,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'invoice-to-customer',
     'type'    => 'editor',
     'title'   => esc_html__( 'Generate Invoice Mail Send to Customer', 'service-finder' ),
-    'desc' => "Keywords: %REFERENCENO%,%DUEDATE%,%PROVIDERNAME%,%DISCOUNTTYPE%,%DISCOUNT%,'%TAXTYPE%',%TAX%,%DESCRIPTION%,%TOTAL%,%GRANDTOTAL%,%CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%",
+    'desc' => "Keywords: %REFERENCENO%,%DUEDATE%,%PROVIDERNAME%,%DISCOUNTTYPE%,%DISCOUNT%,'%TAXTYPE%',%TAX%,%DISCRIPTION%,%TOTAL%,%GRANDTOTAL%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -11378,29 +10459,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'invoice-to-provider',
     'type'    => 'editor',
     'title'   => esc_html__( 'Invoice Paid Mail Send to', 'service-finder' ).' '.esc_html($providerreplacestring),
-    'desc' => "Keywords: %REFERENCENO%,%DUEDATE%,%CUSTOMEREMAIL%,%DISCOUNTTYPE%,%DISCOUNT%,'%TAXTYPE%',%TAX%,%DESCRIPTION%,%TOTAL%,%GRANDTOTAL%,%CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%",
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-	array(
-    'id'       => 'invoice-to-customer-paid-subject',
-    'type'     => 'text',
-    'title'    => sprintf( esc_html__('Subject for Invoice Paid Mail Send to %s', 'service-finder'), $customerreplacestring ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),   
-    array(
-    'id'      => 'invoice-to-customer-paid',
-    'type'    => 'editor',
-    'title'   => esc_html__( 'Invoice Paid Mail Send to', 'service-finder' ).' '.esc_html($customerreplacestring),
-    'desc' => "Keywords: %REFERENCENO%,%DUEDATE%,%CUSTOMEREMAIL%,%DISCOUNTTYPE%,%DISCOUNT%,'%TAXTYPE%',%TAX%,%DESCRIPTION%,%TOTAL%,%GRANDTOTAL%,%CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%",
+    'desc' => "Keywords: %REFERENCENO%,%DUEDATE%,%CUSTOMEREMAIL%,%DISCOUNTTYPE%,%DISCOUNT%,'%TAXTYPE%',%TAX%,%DISCRIPTION%,%TOTAL%,%GRANDTOTAL%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -11493,7 +10552,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'applyjob-to-customer',
     'type'    => 'editor',
     'title'   => sprintf( esc_html__('Apply for Job Mail Send to %s', 'service-finder'), $customerreplacestring ),
-    'desc' => "%JOBTITLE%,%FULLNAME%,%EMAIL%,%PHONE%,%COST%,%DESCRIPTION%",
+    'desc' => "%JOBTITLE%,%FULLNAME%,%EMAIL%,%PHONE%,%COST%,%DESCRIPTION%,%ISFEATURED%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -11557,7 +10616,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'job-published-mail-to-customer',
     'type'    => 'editor',
     'title'   => sprintf( esc_html__('Job Published Mail Send to %s', 'service-finder'), $customerreplacestring ),
-    'desc' => "%JOBTITLE%,%JOBLINK%,%RECOMMENDED_PROVIDERS_LINK%",
+    'desc' => "%REQUESTID%,%JOBTITLE%,%JOBLINK%,%RECOMMENDED_PROVIDERS_LINK%,%EMAILCONFIRMLINK%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -11579,7 +10638,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'job-published-mail-to-provider',
     'type'    => 'editor',
     'title'   => sprintf( esc_html__('Job Published Mail Send to %s', 'service-finder'), $providerreplacestring ),
-    'desc' => "%JOBTITLE%,%JOBLINK%",
+    'desc' => "%REQUESTID%,%JOBTITLE%,%JOBLINK%,%CUSTOMERNAME%,%ADDRESS%,%PHONE%,%EMAIL%,%CREDITSREQUIREDFORTHISJOB%,%AVAILABLECREDITS%,%MAP%,%CONTACTBUTTON%,%DESCRIPTION%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -11719,7 +10778,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'job-assign-to-member',
     'type'    => 'editor',
     'title'   => esc_html__( 'Mail Send to Member', 'service-finder' ),
-    'desc' => "Keywords: %DATE%, %STARTTIME%, %ENDTIME%, %MEMBERNAME%, %PROVIDERNAME%, %PROVIDEREMAIL%, %PROVIDERPHONE%, %CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%, %PAYMENTMETHOD%, %AMOUNT%, %SERVICES%",
+    'desc' => "Keywords: %DATE%, %STARTTIME%, %ENDTIME%, %MEMBERNAME%, %PROVIDERNAME%, %PROVIDEREMAIL%, %PROVIDERPHONE%, %CUSTOMERNAME%, %CUSTOMEREMAIL%, %CUSTOMERPHONE%, %CUSTOMERPHONE2%, %ADDRESS%, %APT%, %CITY%, %STATE%, %ZIPCODE%, %COUNTRY%, %PAYMENTMETHOD%, %AMOUNT%", '%SERVICES%',
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -11850,28 +10909,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'type'    => 'editor',
     'title'   => esc_html__( 'Request a Quote Mail Send to Admin', 'service-finder' ),
     'desc' => "Keywords: %PROVIDERNAME%,%PROVIDEREMAIL%,%CUSTOMERNAME%,%EMAIL%,%PHONE%,%DESCRIPTION%",
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-	array(
-    'id'       => 'quotation-reply-message-subject',
-    'type'     => 'text',
-    'title'    => sprintf( esc_html__('Subject for Quote Reply Mail Send to %s', 'service-finder'), $customerreplacestring ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ),
-	array(
-    'id'      => 'quotation-reply-message',
-    'type'    => 'editor',
-    'title'   => esc_html__( 'Quote Reply Mail Send to', 'service-finder' ).' '.esc_html($customerreplacestring),
-    'desc' => "Keywords: %PROVIDERNAME%,%QUOTEID%,%QUOTEPRICE%,%REPLY%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -12022,7 +11059,7 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'id'      => 'after-claimedpayment-message-user',
     'type'    => 'editor',
     'title'   => esc_html__( 'After Claimed Payment Mail Send to User', 'service-finder' ),
-    'desc' => "Keywords: %USERNAME%,%PASSWORD%",
+    'desc' => "Keywords: %PROVIDERNAME%,%PROVIDERPROFILELINK%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,
@@ -12099,38 +11136,6 @@ Used within different fields. Simply examples. Search for ACTUAL DECLARATION for
     'type'    => 'editor',
     'title'   => esc_html__( 'Password Reset Mail Send to', 'service-finder' ).' '.esc_html($customerreplacestring),
     'desc' => "Keywords: %USERNAME%,%PASSWORDRESETLINK%",
-    'default' => '',
-    'args'    => array(
-    'wpautop'       => false,
-    'media_buttons' => false,
-    'textarea_rows' => 5,
-    'teeny'         => false,
-    'quicktags'     => true,
-    )
-    ),
-    )
-    ) );
-	Redux::setSection( $opt_name, array(
-    'title'            => esc_html__( 'Password Reset Mail', 'service-finder' ),
-    'id'               => 'password-reset-settings',
-	'customizer'           => false,
-    'subsection'       => true,
-    'customizer_width' => '450px',
-    'desc'             => '',
-    'fields'           => array(
-    array(
-    'id'       => 'password-reset-subject',
-    'type'     => 'text',
-    'title'    => esc_html__( 'Subject for Password Reset Mail', 'service-finder' ),
-    'subtitle' => '',
-    'desc'     => '',
-    'default'  => ''
-    ), 
-	array(
-    'id'      => 'password-reset-mail',
-    'type'    => 'editor',
-    'title'   => esc_html__( 'Password Reset Mail', 'service-finder' ),
-    'desc' => "Keywords: %USERNAME%,%EMAIL%,%RESETLINK%",
     'default' => '',
     'args'    => array(
     'wpautop'       => false,

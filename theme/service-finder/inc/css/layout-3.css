@@ -14,12 +14,6 @@
 
 }
 
-.pricing-tables-name { padding-bottom:0px; }
-.pricing-tables-money { padding-top:10px; }
-.pricing-tables-money .sf-exp-period { padding-top:10px; display:block; }
-.pricing-tables-money .sf-billing-period {  position:relative; padding-left:10px; }
-.pricing-tables-money .sf-billing-period:before { content:"/"; position:absolute; left:0px; top:0px; font-size:15px; color:#555; }
-
 .wp-block-button .wp-block-button__link { border-radius:5px; -webkit-border-radius:5px; }
 .blog-post .post-date { border-radius:5px; -webkit-border-radius:5px; overflow: hidden; }
 .wp-block-cover, .wp-block-cover-image { -webkit-border-radius: 4px; -ms-border-radius: 4px; border-radius: 4px; }
@@ -466,14 +460,60 @@ ol.comment-list li.comment .comment-body { padding: 15px 0px;}
 
 
 @media only screen and (max-width:991px) {  
-.extra-nav{ margin-bottom:0px; }
+
+
+
+.extra-nav{ margin-bottom:15px; }
+
+
+
 .extra-nav .extra-cell { padding:10px;}
+
+
+
 }
 
 
+
+
+
+
+
+
+
+
+
 ol.comment-list .pixrating_title { color:#fff; padding: 0px 15px;}
+
+
+
+
+
+
+
 .sf-reviews-summary .sf-reviews-star-no { color:#fff;}
+
+
+
+
+
+
+
 .sf-customer-avgrage-rating .sf-customer-rating-row [class*="sf-customer-rating-"] { color: #fff; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .sf-stats-rating .sf-average-reviews { color: #fff; }
 

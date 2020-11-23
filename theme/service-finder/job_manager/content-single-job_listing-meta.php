@@ -21,6 +21,7 @@ do_action( 'single_job_listing_meta_before' ); ?>
 <ul class="job-listing-meta meta">
 	<?php do_action( 'single_job_listing_meta_start' ); ?>
 
+	<li class="location" itemprop="jobLocation"><span><?php echo esc_html__( 'Request ID', 'service-finder' ); ?>:</span> <span><?php echo '#100'.$post->ID; ?></span></li>
 	<?php if ( get_option( 'job_manager_enable_types' ) ) { ?>
 		<?php if ( function_exists( 'wpjm_get_the_job_types' ) ){ ?>
 		<?php $types = wpjm_get_the_job_types(); ?>
@@ -40,9 +41,7 @@ do_action( 'single_job_listing_meta_before' ); ?>
 	<li class="location" itemprop="jobLocation"><span><?php echo esc_html__( 'Categories', 'service-finder' ); ?>:</span> <span><?php echo implode(',', $catname ); ?></span></li>
     <?php } ?>
     
-    <li class="location" itemprop="jobLocation"><span><?php echo esc_html__( 'Location', 'service-finder' ); ?>:</span> <span><?php the_job_location(); ?></span></li>
-
-	<li class="date-posted" itemprop="datePosted"><span><?php echo esc_html__( 'Posted On', 'service-finder' ); ?>:</span> <span><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), current_time('timestamp')) ); ?></span></li>
+	<li class="date-posted" itemprop="datePosted"><span><?php echo esc_html__( 'Posted On', 'service-finder' ); ?>:</span> <span><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), time() ) ); ?></span></li>
 
 	<?php do_action( 'single_job_listing_meta_end' ); ?>
 </ul>

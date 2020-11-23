@@ -82,7 +82,7 @@ return;
 							foreach ( $answers as $answer ) {
 								?>
 								<div class="sf-anstext-body">
-                                    <div class="sf-answer-icon"><img src="<?php echo esc_url(get_template_directory_uri().'/inc/images/qapic.jpg'); ?>"></div>
+                                    <div class="sf-answer-icon"><img src="<?php echo get_template_directory_uri().'/inc/images/qapic.jpg'; ?>"></div>
                                     <?php printf($answer->post_content); ?>
                                     <div class="sf-quesans-meta">
                                         <?php echo service_finder_voting_layout($answer->ID); ?>

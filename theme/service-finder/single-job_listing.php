@@ -100,7 +100,7 @@ wp_enqueue_script('plupload', SERVICE_FINDER_ASSESTS_ADMINURL . '/load-scripts.p
 
                         <li class="sf-job-addresss"><a href="#"><i class="fa fa-map-marker"></i> <?php the_job_location(); ?></a></li>
 
-                        <li class="sf-job-dates"><i class="fa fa-calendar"></i> <?php echo esc_html__( 'Posted', 'service-finder' ); ?></span> <span><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), current_time('timestamp') ) ); ?></span></li>
+                        <li class="sf-job-dates"><i class="fa fa-calendar"></i> <?php echo esc_html__( 'Posted', 'service-finder' ); ?></span> <span><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), time() ) ); ?></span></li>
 
                         <li class="sf-job-dates"><i class="fa fa-trash"></i> <?php echo esc_html__( 'Expire Date', 'service-finder' ); ?></span> <span><?php echo date('F j, Y',strtotime(get_post_meta( $post->ID,'_job_expires',true ))); ?></span></li>
 
@@ -273,8 +273,79 @@ wp_enqueue_script('plupload', SERVICE_FINDER_ASSESTS_ADMINURL . '/load-scripts.p
 												?>
 
                                                 <span class="sf-job-customername"><?php esc_html_e( 'By', 'service-finder' ); ?>: <?php echo esc_html($authorname); ?></span>
-
                                             </div>
+                                            
+                                            <?php
+											if(is_user_logged_in()){
+
+											 $current_user = wp_get_current_user(); 
+			
+												 if(service_finder_getUserRole($current_user->ID) == 'Provider'){
+												 
+													$paid_for_contacts = get_post_meta($post->ID,'_paid_for_contact',true);
+													
+													if($paid_for_contacts != '')
+													{
+														$paid_for_contactids = explode(',',$paid_for_contacts);
+													}else{
+														$paid_for_contactids = array();
+													}
+													echo '<div id="pix-contact-info">';
+													if(in_array($current_user->ID,$paid_for_contactids))
+													{
+													$email = get_post_meta($post->ID,'_application',true);
+													$location = get_post_meta($post->ID,'_job_location',true);
+													$phone = get_post_meta($post->ID,'_phone',true);
+
+													//$jobauthorinfo = service_finder_getUserInfo($post->post_author);
+													
+													/*$phone = $jobauthorinfo['phone'];
+													$phone2 = $jobauthorinfo['phone2'];
+													
+													$contactnumbers = service_finder_get_contact_info($phone,$phone2);*/
+													?>
+													<table>
+														<tr>
+															<td><?php echo esc_html__( 'Email', 'service-finder' ); ?>:</td>
+															<td><?php echo esc_html($email); ?></td>
+														</tr>
+														<tr>
+															<td><?php echo esc_html__( 'Mobile', 'service-finder' ); ?>:</td>
+															<td><?php echo $phone; ?></td>
+														</tr>
+														<tr>
+															<td><?php echo esc_html__( 'Location', 'service-finder' ); ?>:</td>
+															<td><?php echo $location; ?></td>
+														</tr>
+													</table>
+													<?php
+													}
+													echo '</div>';
+													
+													$totalpurchased = (!empty($paid_for_contactids)) ? count($paid_for_contactids) : 0;
+													if(!in_array($current_user->ID,$paid_for_contactids))
+													{
+													if($totalpurchased < 5){
+													$avlcredit = service_finder_get_avl_purchase_credit($current_user->ID);
+													$contactcost = get_post_meta($post->ID,'job_contact_cost',true);
+													echo '<input type="button" class="btn btn-primary payforcontact" data-providerid="'.esc_attr($current_user->ID).'" data-walletamount="'.esc_attr($avlcredit).'" data-jobid="'.esc_attr($post->ID).'" data-contactcost="'.esc_attr($contactcost).'" value="'.esc_html__( 'Pay for Contact Details', 'service-finder' ).'">';
+													echo '<div class="jobavlcredits">';
+													echo esc_html__( 'Available Credits', 'service-finder' ).': ';
+													echo service_finder_get_avl_purchase_credit($current_user->ID);
+													echo '</div>';
+													}else{
+													echo '<div class="pix-jobclosed">'.esc_html__( 'Job has been closed', 'service-finder' ).'</div>';
+													}
+													}
+													$providerreplacestring = (!empty($service_finder_options['provider-replace-string'])) ? $service_finder_options['provider-replace-string'] : esc_html__('Provider', 'service-finder');
+													
+													echo '<div class="pix-total-purchased">';
+													echo sprintf('<span id="pix-purchased-contacts">%d</span> %s purchased the contact details',$totalpurchased,$providerreplacestring);
+													echo '</div>';
+			
+												 }	
+											}
+											?>
 
                                         </li>
 

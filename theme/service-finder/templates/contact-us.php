@@ -88,7 +88,7 @@ echo '<h4>'.esc_html__('Contact Info','service-finder').'</h4>';
   </li>
   <li> <i class="fa fa-envelope"></i>
 	<h6>
-	  <?php esc_html_e('EMAIL', 'service-finder'); ?>
+	  <?php esc_html_e('EMAIl', 'service-finder'); ?>
 	</h6>
 	<p><?php echo (!empty($service_finder_options['email'])) ? $service_finder_options['email'] : ''; ?></p>
   </li>

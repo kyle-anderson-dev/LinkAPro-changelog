@@ -191,7 +191,7 @@ var user_id = "'.$current_user->ID.'";', 'after' );
 	?>
     <div class="col-md-12">
       <div class="form-group">
-        <textarea name="comment" id="comment" class="form-control" rows="" cols="4" placeholder="<?php esc_attr_e('Enter Some Comments', 'service-finder'); ?>"></textarea>
+        <textarea name="comment" id="comment" class="form-control" rows="" cols="4" placeholder="<?php esc_html_e('Enter Some Comments', 'service-finder'); ?>"></textarea>
       </div>
     </div>
   </div>
@@ -199,7 +199,7 @@ var user_id = "'.$current_user->ID.'";', 'after' );
     <button type="button" class="btn btn-default" data-dismiss="modal">
     <?php esc_html_e('Cancel', 'service-finder'); ?>
     </button>
-    <input type="submit" class="btn btn-primary" name="add-feedback" value="<?php esc_attr_e('Submit', 'service-finder'); ?>" />
+    <input type="submit" class="btn btn-primary" name="add-feedback" value="<?php esc_html_e('Submit', 'service-finder'); ?>" />
   </div>
 </form>
 <!--View feedback for bookings-->

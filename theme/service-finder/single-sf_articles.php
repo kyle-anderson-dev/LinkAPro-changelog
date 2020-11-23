@@ -54,20 +54,7 @@ get_header();
 					  ?>
                     <li class="post-comment"><i class="fa fa-comments"></i><?php printf( wp_kses('<a href="%s">%d %s</a>', $allowedhtml ),esc_url(get_comments_link()), get_comments_number( get_the_id() ),esc_html__('Comments', 'service-finder') ); ?></li>
                     <li class="post-categories"><i class="fa fa-folder-open"></i>
-						<?php
-                        $terms = get_the_terms( get_the_id() , 'sf_article_category' );
-						$categories = array();
-						if(!empty($terms))
-						{
-							foreach($terms as $term)
-							{
-								$termlink = get_term_link($term,'sf_article_category');
-								$termname = $term->name;
-								$categories[] = '<a href="'.esc_url($termlink).'">'.esc_html($termname).'</a>';
-							}
-						}
-						echo implode(', ',$categories);
-						?>
+						<?php the_category(', '); ?>
                       </li>
                     <li class="post-tags"><i class="fa fa-tags"></i>
                       <?php the_tags(); ?>

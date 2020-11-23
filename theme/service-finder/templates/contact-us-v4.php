@@ -89,7 +89,7 @@ if($display_title){
   <div class="sf-element-bx padding-lr-30">
 	<div class="icon-bx-md rounded-bx"> <i class="fa fa-envelope"></i> </div>
 	<h6>
-	  <?php esc_html_e('EMAIL', 'service-finder'); ?>
+	  <?php esc_html_e('Email', 'service-finder'); ?>
 	</h6>
 	<p><?php echo (!empty($service_finder_options['email'])) ? $service_finder_options['email'] : ''; ?></p>
   </div>

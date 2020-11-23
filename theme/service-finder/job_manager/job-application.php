@@ -6,7 +6,7 @@ $service_finder_options = get_option('service_finder_options');
 
 
 
-if ( service_finder_UserRole($current_user->ID) == 'Provider' || !is_user_logged_in() ) :
+if ( $apply = get_the_job_application_method() && (service_finder_UserRole($current_user->ID) == 'Provider' || !is_user_logged_in()) ) :
 
 	$apply = get_the_job_application_method();
 
@@ -87,8 +87,8 @@ if ( service_finder_UserRole($current_user->ID) == 'Provider' || !is_user_logged
 				
 
 				if($availablelimit > 0){
-
-				echo '<div id="applybtn">';
+				$displaystyle = (service_finder_paid_for_contact($jobid)) ? '' : 'style="display:none"';
+				echo '<div id="applybtn" class="pixjobapplybtn" '.$displaystyle.'>';
 
 				echo '<input type="button" data-target="#job-apply-form" data-toggle="modal" class="btn btn-primary" value="' . esc_html__( 'Apply for job', 'service-finder' ) . '" />';
 
@@ -163,8 +163,8 @@ if ( service_finder_UserRole($current_user->ID) == 'Provider' || !is_user_logged
 				}
 
 				if($availablelimit > 0){
-
-				echo '<div id="applybtn">';
+				$displaystyle = (service_finder_paid_for_contact($jobid)) ? '' : 'style="display:none"';
+				echo '<div id="applybtn" class="pixjobapplybtn" '.$displaystyle.'>';
 
 				echo '<input type="button" data-target="#job-apply-form" data-toggle="modal" class="btn btn-primary" value="' . esc_html__( 'Apply for job', 'service-finder' ) . '" />';
 
@@ -234,9 +234,11 @@ if ( service_finder_UserRole($current_user->ID) == 'Provider' || !is_user_logged
 
 		?>
 
-        <?php }else{ ?>
-
-        <a href="javascript:;" class="btn btn-primary" data-action="login" data-redirect="no" data-source="jobapply" data-note="<?php echo sprintf(esc_html__( 'Please login as %s', 'service-finder' ),strtolower(service_finder_provider_replace_string())); ?>" data-toggle="modal" data-target="#login-Modal"><?php _e( 'Apply for job', 'service-finder' ); ?></a>
+        <?php }else{ 
+		$displaystyle = (service_finder_paid_for_contact($jobid)) ? '' : 'style="display:none"';
+		?>
+		
+        <a <?php echo $displaystyle; ?> href="javascript:;" class="btn btn-primary pixjobapplybtn" data-action="login" data-redirect="no" data-source="jobapply" data-note="<?php echo sprintf(esc_html__( 'Please login as %s', 'service-finder' ),strtolower(service_finder_provider_replace_string())); ?>" data-toggle="modal" data-target="#login-Modal"><?php _e( 'Apply for job', 'service-finder' ); ?></a>
 
         <?php } ?>
 

@@ -68,7 +68,7 @@ if(in_array('job-alerts',$userCap)){
 	<fieldset>
 		<label for="alert_job_type"><?php _e( 'Job Type', 'service-finder' ); ?></label>
 		<div class="field">
-			<select name="alert_job_type[]" data-placeholder="<?php _e( 'Any job type', 'service-finder' ); ?>" id="alert_job_type" multiple="multiple" class="job-manager-chosen-select">
+			<select name="alert_job_type[]" data-placeholder="<?php _e( 'Any job type', 'service-finder' ); ?>" id="alert_job_type" multiple="multiple" class="job-manager-chosen-select sf-select-box form-control sf-form-control">
 				<?php
 					$terms = get_job_listing_types();
 					foreach ( $terms as $term )

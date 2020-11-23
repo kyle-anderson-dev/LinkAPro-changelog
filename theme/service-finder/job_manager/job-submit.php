@@ -11,7 +11,7 @@ $availablelimit = '';
 if(class_exists('service_finder_booking_plugin')) {
 $availablelimit = service_finder_get_avl_job_limits($current_user->ID);
 }
-
+$jobqastring = service_finder_get_data($_POST,'jobqastring');
 $jobpostingtype = (!empty($service_finder_options['job-posting-type'])) ? esc_html($service_finder_options['job-posting-type']) : '';
 
 if(service_finder_UserRole($current_user->ID) == 'Customer' || service_finder_UserRole($current_user->ID) == 'administrator' || !is_user_logged_in()){
@@ -70,11 +70,14 @@ if($jobpostingtype == 'free' || ($jobpostingtype == 'paid' && $availablelimit > 
 		<?php do_action( 'submit_job_form_end' ); ?>
 
 		<p>
-			<input type="hidden" name="job_manager_form" value="<?php echo esc_attr($form); ?>" />
+			<input type="hidden" name="jobqastring" value="<?php echo esc_attr($jobqastring); ?>" />
+            <input type="hidden" name="job_manager_form" value="<?php echo esc_attr($form); ?>" />
 			<input type="hidden" name="job_id" value="<?php echo esc_attr( $job_id ); ?>" />
 			<input type="hidden" name="step" value="<?php echo esc_attr( $step ); ?>" />
 			<input type="submit" name="submit_job" class="button" value="<?php echo esc_attr( $submit_button_text ); ?>" />
 		</p>
+        
+        <div id="jobqaform"></div>
 
 	<?php else : ?>
 

@@ -119,7 +119,7 @@ jQuery(document).ready(function() {
 	var isPaused = false;
 	
 	//Open comment pagination
-	jQuery(document).on('click', '#ajaxpagination a', function(e) {
+	jQuery('#ajaxpagination a').live('click', function(e){
 	  e.preventDefault();
 	  var link = jQuery(this).attr('href');
 	  jQuery('.loading-area').show();
@@ -130,7 +130,7 @@ jQuery(document).ready(function() {
 	});
 	
 	//Booking commnet pagination
-    jQuery(document).on('click', '#bookingpagination li', function(e) {
+    jQuery("#bookingpagination li").live('click',function(e){
 		e.preventDefault();
 		jQuery("#bookingpagination li").removeClass('active');
 		jQuery(this).addClass('active');
@@ -814,15 +814,6 @@ jQuery(document).ready(function() {
             jQuery('.header-fixed header').removeClass("is-sticky");
         }
  });
-// Provider My Account form Submit Button Sticky  when scroll down function custom=============================== //  
-     jQuery(window).bind('scroll', function() {
-        var scroll = jQuery(window).scrollTop();
-        if (scroll >200) { 
-            jQuery('#submit-fixed').addClass("is-sticky");
-        } else {
-            jQuery('#submit-fixed').removeClass("is-sticky");
-        }
- 	}); 	
 // Mobile Nav  function =============================== //	
     jQuery(".open-nav").click(function() {
         jQuery(".single-page-nav ul").animate({

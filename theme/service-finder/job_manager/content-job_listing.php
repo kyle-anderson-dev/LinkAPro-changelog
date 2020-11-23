@@ -14,7 +14,7 @@ date_default_timezone_set(get_option('timezone_string'));
                 <div class="company">
                     <?php the_company_name( '<strong>', '</strong> ' ); ?>
                     <?php the_company_tagline( '<span class="tagline">', '</span>' ); ?>
-                    <?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), current_time('timestamp') ) ); ?>
+                    <?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), time() ) ); ?>
                 </div>
             </div>
             <div class="location">
@@ -63,7 +63,7 @@ date_default_timezone_set(get_option('timezone_string'));
                         <li class="job-type <?php echo esc_attr( sanitize_title( $type->slug ) ); ?>" itemprop="employmentType"><?php echo esc_html( $type->name ); ?></li>
                     <?php endforeach; endif; ?>
                 <?php } ?>
-                <li class="date"><date><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), current_time('timestamp') ) ); ?></date></li>
+                <li class="date"><date><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), time() ) ); ?></date></li>
     
                 <?php do_action( 'job_listing_meta_end' ); ?>
             </ul>

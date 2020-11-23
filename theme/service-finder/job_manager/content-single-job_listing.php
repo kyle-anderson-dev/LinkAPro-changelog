@@ -23,7 +23,7 @@ date_default_timezone_set(get_option('timezone_string'));
                 <?php } ?>
             <?php } ?>
             <li class="sf-job-addresss"><a href="#"><i class="fa fa-map-marker"></i> <?php the_job_location(); ?></a></li>
-            <li class="sf-job-dates"><i class="fa fa-calendar"></i> <?php echo esc_html__( 'Posted', 'service-finder' ); ?></span> <span><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), current_time('timestamp') ) ); ?></span></li>
+            <li class="sf-job-dates"><i class="fa fa-calendar"></i> <?php echo esc_html__( 'Posted', 'service-finder' ); ?></span> <span><?php printf( __( '%s ago', 'service-finder' ), human_time_diff( get_post_time( 'U' ), time() ) ); ?></span></li>
             <li class="sf-job-dates"><i class="fa fa-tasks"></i> <?php echo esc_html__( 'Job Status', 'service-finder' ); ?></span> <span>
             <?php 
 			if(class_exists('service_finder_booking_plugin')) {

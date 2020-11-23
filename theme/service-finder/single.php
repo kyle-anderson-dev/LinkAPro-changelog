@@ -61,7 +61,7 @@ get_header();
                     </li>
                   </ul>
                 </div>
-                <div class="post-date"> <strong><a href="<?php esc_url(the_permalink()) ?>"><?php echo get_the_date('d'); ?></a></strong> <span><?php echo get_the_date('M'); ?></span> </div>
+                <div class="post-date"> <strong><a href="<?php esc_url(the_permalink()) ?>"><?php echo date('d',strtotime(get_the_date())); ?></a></strong> <span><?php echo date('M',strtotime(get_the_date())); ?></span> </div>
                 <div class="post-text">
                   <h4 class="post-title">
                    <?php the_title(); ?>

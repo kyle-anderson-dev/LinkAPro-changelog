@@ -24,6 +24,7 @@ $service_finder_options = get_option('service_finder_options');
 <!--[if IE 8 ]>  <html class="isie ie8 oldie no-js" <?php language_attributes(); ?>> <![endif]-->
 <!--[if IE 9 ]>  <html class="isie ie9 no-js" <?php language_attributes(); ?>> <![endif]-->
 <!-- Favicons Icon -->
+<?php service_finder_fav_icon();//Favicon  ?>
 <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -39,11 +40,10 @@ $featured = (isset($_GET['featured'])) ? esc_html($_GET['featured']) : '';
 $created = (isset($_GET['created'])) ? esc_html($_GET['created']) : '';
 $signup = (isset($_GET['signup'])) ? esc_html($_GET['signup']) : '';
 $joblimitplanupdate = (isset($_GET['joblimitplanupdate'])) ? esc_html($_GET['joblimitplanupdate']) : '';
+$purchasecreditplanupdate = (isset($_GET['purchasecreditplanupdate'])) ? esc_html($_GET['purchasecreditplanupdate']) : '';
 $walletpaymentupdate = (isset($_GET['walletpaymentupdate'])) ? esc_html($_GET['walletpaymentupdate']) : '';
 $registration = (isset($_GET['registration'])) ? esc_html($_GET['registration']) : '';
 $cancel_membership_id = (isset($_GET['cancel_membership_id'])) ? esc_html($_GET['cancel_membership_id']) : 0;
-$gcalconnected = (isset($_GET['gcal'])) ? esc_html($_GET['gcal']) : '';
-$woocheckout = (isset($_GET['woocheckout'])) ? esc_html($_GET['woocheckout']) : '';
 $allowedhtml = array(
 	'div' => array(
 		'class' => array(),
@@ -95,6 +95,9 @@ $msg = (!empty($service_finder_options['pay-invoice'])) ? $service_finder_option
 }elseif($joblimitplanupdate == 'success'){
 	$msg = (!empty($service_finder_options['jobapply-limit-successfull'])) ? $service_finder_options['jobapply-limit-successfull'] : esc_html__('Your  plan updated succssfully', 'service-finder');
 	echo '<div class="alert text-center alert-success sf-success-top"><strong>'.esc_html($msg).'</strong></div>';
+}elseif($purchasecreditplanupdate == 'success'){
+	$msg = (!empty($service_finder_options['purchasecredit-successfull'])) ? $service_finder_options['purchasecredit-successfull'] : esc_html__('Your  plan updated succssfully', 'service-finder');
+	echo '<div class="alert text-center alert-success sf-success-top"><strong>'.esc_html($msg).'</strong></div>';
 }elseif($walletpaymentupdate == 'success'){
 	$msg = (!empty($service_finder_options['update-wallet-amount-successfull'])) ? $service_finder_options['update-wallet-amount-successfull'] : esc_html__('Amount has been added to wallet successfully', 'service-finder');
 }elseif($joblimitplanupdate == 'wired'){
@@ -111,10 +114,6 @@ $msg = (!empty($service_finder_options['pay-invoice'])) ? $service_finder_option
 	$msg = esc_html__('Your membership has been cancelled.', 'service-finder');
 	echo '<div class="alert text-center alert-danger sf-success-top"><strong>'.esc_html($msg).'</strong></div>';	
 	}
-}elseif($gcalconnected == 'connected'){
-	echo '<div class="alert text-center alert-success sf-success-top"><strong>'.esc_html__('Google calendar connected successfully.', 'service-finder').'</strong></div>';	
-}elseif($woocheckout == 'success'){
-	echo '<div class="alert text-center alert-success sf-success-top"><strong>'.esc_html__('Thank you. Your order has been received.', 'service-finder').'</strong></div>';	
 }
 ?>
 

@@ -23,7 +23,7 @@ switch ( $job->post_status ) :
 
 		if($jobapplicantspage != '')
 		{
-			$jobapplicantsurl = add_query_arg( array('jobid' => $job->ID,'sendinvitation' => 'yes' ),$jobapplicantspage );
+			$jobapplicantsurl = add_query_arg( array('jobid' => $job->ID ),$jobapplicantspage );
 			wp_redirect($jobapplicantsurl);
 			exit;
 		}else{

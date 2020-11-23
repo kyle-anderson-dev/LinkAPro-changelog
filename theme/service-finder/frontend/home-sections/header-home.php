@@ -84,7 +84,7 @@ if($headerstyle == 'map'){
        <?php } ?> 
       <?php $advanceclass = (service_finder_check_advance_search()) ? '' : 'sf-empty-radius'; ?>
       <div class="search-form <?php echo sanitize_html_class($advanceclass); ?>">
-        <?php echo do_shortcode('[service_finder_search_form]'); ?>
+        <?php //echo do_shortcode('[service_finder_search_form]'); ?>
       </div>
     </div>
   </div>
@@ -97,6 +97,7 @@ if($headerstyle == 'map'){
 }elseif($headerstyle == 'slider'){
 /*Home page header style in banner format*/
 service_finder_header_slider(); 
+echo do_shortcode('[service_finder_job_search_form]');
 }else{
 /*Home page header style in banner format*/
 service_finder_header_banner(); 

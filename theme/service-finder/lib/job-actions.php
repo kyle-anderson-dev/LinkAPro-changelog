@@ -105,6 +105,8 @@ Job Title: %JOBTITLE%
 
 Full Name: %FULLNAME%
 
+Featured: %ISFEATURED%
+
 Email: %EMAIL%
 
 Phone: %PHONE%
@@ -134,11 +136,18 @@ Description: %DESCRIPTION%
 ';
 	}
 			
-			$tokens = array('%JOBTITLE%','%FULLNAME%','%EMAIL%','%PHONE%','%COST%','%DESCRIPTION%');
+			$tokens = array('%JOBTITLE%','%FULLNAME%','%EMAIL%','%PHONE%','%COST%','%DESCRIPTION%','%ISFEATURED%');
+			
+			if(service_finder_is_featured($providerInfo->wp_user_id))
+			{
+				$isfeatured = 'Yes';
+			}else{
+				$isfeatured = 'No';
+			}
 			
 			$providerInfo = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$service_finder_Tables->providers.' WHERE `wp_user_id` = %d',$current_user->ID));
 			
-			$replacements = array($jobtitle,service_finder_get_providername_with_link($providerInfo->wp_user_id),esc_html($providerInfo->email),esc_html($providerInfo->phone),service_finder_money_format($costing),$description);
+			$replacements = array($jobtitle,service_finder_get_providername_with_link($providerInfo->wp_user_id),esc_html($providerInfo->email),esc_html($providerInfo->phone),service_finder_money_format($costing),$description,$isfeatured);
 			$msg_body = str_replace($tokens,$replacements,$message);
 			
 			if($service_finder_options['applyjob-to-customer-subject'] != ""){
@@ -182,8 +191,7 @@ Description: %DESCRIPTION%
 				$noticedata = array(
 						'customer_id' => $customerid,
 						'target_id' => $jobid, 
-						'topic' => 'Job Application',
-						'title' => esc_html__('Job Application', 'service-finder'),
+						'topic' => esc_html__('Job Application', 'service-finder'),
 						'notice' => sprintf( esc_html__('%s has applied for Job. Job title is %s', 'service-finder'), $providerreplacestring,$jobinfo->post_title ),
 						);
 				service_finder_add_notices($noticedata);
@@ -421,8 +429,7 @@ function service_finder_hire_if_booking_off(){
 		$noticedata = array(
 				'provider_id' => $providerid,
 				'target_id' => $jobid, 
-				'topic' => 'Hire for job',
-				'title' => esc_html__('Hire for job', 'service-finder'),
+				'topic' => esc_html__('Hire for job', 'service-finder'),
 				'notice' => sprintf( esc_html__('You have been hired for applied job by %s (%s).', 'service-finder'), $customername,$customeremail ),
 				);
 		service_finder_add_notices($noticedata);
@@ -613,11 +620,15 @@ function service_finder_job_listing_published_notification( $ID, $post ) {
 	}	
 	
 	$results = $wpdb->get_results($sql);
-	
+	$count = 1;
 	if(!empty($results)){
 		foreach($results as $row){
+			if($count <= 6)
+			{
 			$providerid = $row->wp_user_id;
 			service_finder_job_published_mail($providerid,$jobid);
+			}
+			$count++;
 		}
 	}
 	}
@@ -625,29 +636,89 @@ function service_finder_job_listing_published_notification( $ID, $post ) {
 add_action( 'publish_job_listing', 'service_finder_job_listing_published_notification', 10, 2 );
 
 function service_finder_job_published_mail($providerid,$jobid){
-	global $service_finder_options;
+	global $service_finder_options, $current_user;
 	if($service_finder_options['job-published-mail-to-provider-subject'] != ""){
 		$msg_subject = $service_finder_options['job-published-mail-to-provider-subject'];
 	}else{
 		$msg_subject = esc_html__('Job Published', 'service-finder');
 	}
 	
-	
+	$noticedata = array(
+			'provider_id' => $providerid,
+			'target_id' => $jobid, 
+			'topic' => esc_html__('Job Published', 'service-finder'),
+			'notice' => sprintf( esc_html__('Job published. Job title is %s', 'service-finder'), get_the_title( $jobid ) ),
+			);
+	service_finder_add_notices($noticedata);
+		
 	if(!empty($service_finder_options['job-published-mail-to-provider'])){
 		$message = $service_finder_options['job-published-mail-to-provider'];
 	}else{
 		$message = 'New job published. <br/><br/>
 		
+		Request ID: %REQUESTID%
+		
 		Job Title: %JOBTITLE% <br/>
 		
-		Job Link: %JOBLINK%';
+		Job Link: %JOBLINK%
+		
+		Address: %ADDRESS%
+		
+		Phone: %PHONE%
+		
+		Email: %EMAIL%
+		
+		Available Credits: %CREDITSREQUIREDFORTHISJOB%
+		
+		Map: %MAP%
+		
+		Contact Button: %CONTACTBUTTON%';
 	}
 	
-	$tokens = array('%JOBTITLE%','%JOBLINK%');
+	$tokens = array('%REQUESTID%','%JOBTITLE%','%JOBLINK%','%CUSTOMERNAME%','%ADDRESS%','%PHONE%','%EMAIL%','%CREDITSREQUIREDFORTHISJOB%','%AVAILABLECREDITS%','%MAP%','%CONTACTBUTTON%','%DESCRIPTION%');
 			
 	$jobtitle = get_the_title( $jobid );
 	$joblink = get_permalink( $jobid );		
-	$replacements = array($jobtitle,$joblink);
+	
+	$address = get_post_meta($jobid,'_job_location',true);
+	$location = get_post_meta($jobid,'_job_location',true);
+	$email = get_post_meta($jobid,'_application',true);
+	
+	$email = service_finder_hide_email($email);
+	
+	$phone = get_post_meta($jobid,'_phone',true);
+	if($phone != '')
+	{
+	$phone = substr($phone, 0, 3) . str_repeat("*", strlen($phone)-2);
+	}
+	
+	$jobauthor = get_post_field( 'post_author', $jobid );
+
+	$customername = service_finder_getCustomerName($jobauthor);
+
+	if(!empty($location)){
+	$contactbutton = '<a href="http://maps.google.com/maps?saddr=&daddr='.esc_attr($location).'" style="text-decoration:none !important; display:block !important;"><div style="width:100%; background:#48a8ff; text-align:center; padding:12px 0px; color:#fff; font-size:16px; text-decoration:none !important; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;">Contact '.$customername.' Now</div></a>';
+	}
+	$avlcredit = service_finder_get_avl_purchase_credit($providerid);
+	
+	$apikey = (!empty($service_finder_options['google-map-api-key'])) ? $service_finder_options['google-map-api-key'] : '';
+	
+	$location = str_replace(" ","+",$location);
+	$res = service_finder_getLatLong($location);
+	$latitude = $res['lat'];
+	$longitude = $res['lng'];
+	if($latitude != '' && $longitude != '')
+	{
+	$map = '<img src="https://maps.googleapis.com/maps/api/staticmap?center='.$location.'&zoom=12&size=250x250&markers=color:red%7C'.$latitude.','.$longitude.'&key='.$apikey.'"/>';
+	}else{
+	$map = '<img src="https://maps.googleapis.com/maps/api/staticmap?center='.$location.'&zoom=12&size=250x250&key='.$apikey.'"/>';
+	}
+	
+	$requestid = '#100'.$jobid;
+	
+	$requiredcredits = get_post_meta( $jobid,'job_contact_cost',true );
+	
+	$replacements = array($requestid,$jobtitle,$joblink,$customername,$address,$phone,$email,$requiredcredits,$avlcredit,$map,$contactbutton,get_the_excerpt($jobid));
 
 	$msg_body = str_replace($tokens,$replacements,$message);
 	
@@ -688,37 +759,51 @@ function service_finder_job_published_customer_mail($jobid){
 	if(!empty($service_finder_options['job-published-mail-to-customer'])){
 		$message = $service_finder_options['job-published-mail-to-customer'];
 	}else{
-		$message = 'Your job has been published. <br/><br/>
+		$message = 'You job has been published. <br/><br/>
+		
+		Request ID: %REQUESTID%
 		
 		Job Title: %JOBTITLE% <br/>
 		
 		Job Link: %JOBLINK%
 		
+		Email Confirm: %EMAILCONFIRMLINK%
+		
 		Recommended Providers: %RECOMMENDED_PROVIDERS_LINK%';
 	}
 	
-	$tokens = array('%JOBTITLE%','%JOBLINK%','%RECOMMENDED_PROVIDERS_LINK%');
+	$tokens = array('%REQUESTID%','%JOBTITLE%','%JOBLINK%','%RECOMMENDED_PROVIDERS_LINK%','%EMAILCONFIRMLINK%');
 			
 	$jobtitle = get_the_title( $jobid );
 	$joblink = get_permalink( $jobid );		
 	$jobapplicantspage = service_finder_get_url_by_shortcode('service_finder_job_applicants');
 	$jobapplicantsurl = add_query_arg( array('jobid' => $jobid ),$jobapplicantspage );
 	
-	$replacements = array($jobtitle,$joblink,$jobapplicantsurl);
+	$customeremail = service_finder_getCustomerEmail($jobauthor);
+	
+	$requestid = '#100'.$jobid;
+	
+	$pageurl = service_finder_get_url_by_shortcode( '[service_finder_confirm_email' );
+	$key = wp_generate_password( 20, false );
+	
+	update_option('_confirmemail_'.$customeremail,$key);
+	
+	$confirmemailurl = add_query_arg( array('confirmemail' => true,'key' => $key,'email' => rawurlencode( $customeremail )), $pageurl );
+			
+	$confirmemailurl = '<a href="' . esc_url($confirmemailurl) . '">' . $confirmemailurl . '</a>';
+	
+	$replacements = array($requestid,$jobtitle,$joblink,$jobapplicantsurl,$confirmemailurl);
 
 	$msg_body = str_replace($tokens,$replacements,$message);
 	
 	$jobauthor = get_post_field( 'post_author', $jobid );
-	
-	$customeremail = service_finder_getCustomerEmail($jobauthor);
 	
 	if(function_exists('service_finder_add_notices')) {
 		
 		$noticedata = array(
 				'customer_id' => $jobauthor,
 				'target_id' => $jobid, 
-				'topic' => 'Job Published',
-				'title' => esc_html__('Job Published', 'service-finder'),
+				'topic' => esc_html__('Job Published', 'service-finder'),
 				'notice' => sprintf( esc_html__('Job published. Job title is %s', 'service-finder'), get_the_title( $jobid ) ),
 				);
 		service_finder_add_notices($noticedata);
@@ -915,4 +1000,313 @@ if(!empty($location)){
 echo '<a class="btn btn-primary" href="http://maps.google.com/maps?saddr=&daddr='.esc_attr($location).'" target="_blank">'.esc_html__('Get Directions', 'service-finder').'</a>';
 }
 
+}
+
+/* Save job attachemnt */
+add_action('wp_ajax_save_job_attachment', 'service_finder_save_job_attachment');
+if ( !function_exists( 'service_finder_save_job_attachment' )){
+function service_finder_save_job_attachment(){
+	global $wpdb, $service_finder_options, $service_finder_Tables, $current_user;
+	
+	$jobid = (!empty($_POST['jobid'])) ? $_POST['jobid'] : '';
+	$jobupdateattachmentid = (!empty($_POST['jobupdateattachmentid'])) ? $_POST['jobupdateattachmentid'] : '';
+	update_post_meta($jobid,'_job_update_attachments',$jobupdateattachmentid);
+
+	$success = array(
+				'status' => 'success',
+				'suc_message' => esc_html__('Job attachments has been updated successfully.', 'service-finder'),
+				);
+	echo json_encode($success);
+	exit;
+}
+}	
+
+/* Pay for COntact */
+add_action('wp_ajax_pay_for_conatct', 'service_finder_pay_for_conatct');
+function service_finder_pay_for_conatct(){
+	global $wpdb, $service_finder_options, $service_finder_Tables, $current_user;
+	
+	$jobid = (!empty($_POST['jobid'])) ? $_POST['jobid'] : '';
+	$walletamount = (!empty($_POST['walletamount'])) ? $_POST['walletamount'] : '';
+	$providerid = (!empty($_POST['providerid'])) ? $_POST['providerid'] : '';
+	$contactcost = (!empty($_POST['contactcost'])) ? $_POST['contactcost'] : '';
+	
+	$paid_for_contacts = get_post_meta($jobid,'_paid_for_contact',true);
+													
+	if($paid_for_contacts != '')
+	{
+		$paid_for_contactids = explode(',',$paid_for_contacts);
+	}else{
+		$paid_for_contactids = array();
+	}
+	
+	$totalpurchased = count($paid_for_contactids);
+	
+	if($totalpurchased >= 5){
+		$error = array(
+				'status' => 'error',
+				'err_message' => esc_html__('Sorry, Job closed', 'service-finder'),
+				);
+		echo json_encode($error);
+		exit;
+	}
+	
+	$remaining_wallet_amount = $walletamount - $contactcost; 
+	
+	$data = array(
+			'available_limits' => $remaining_wallet_amount,
+			);
+	$where = array(
+			'provider_id' => $current_user->ID,
+			);		
+	
+	$wpdb->update($service_finder_Tables->purchase_credit,wp_unslash($data),$where);
+	
+	$paid_for_contacts = get_post_meta($jobid,'_paid_for_contact',true);
+	
+	if($paid_for_contacts == '')
+	{
+		update_post_meta($jobid,'_paid_for_contact',$providerid);
+	}else{
+		$paid_for_contacts_arr = explode(',',$paid_for_contacts);
+		$paid_for_contacts_arr[] = $providerid;
+		update_post_meta($jobid,'_paid_for_contact',implode(',',$paid_for_contacts_arr));
+	}
+	
+	$email = get_post_meta($jobid,'_application',true);
+	$location = get_post_meta($jobid,'_job_location',true);
+	$phone = get_post_meta($jobid,'_phone',true);
+	
+	$jobauthorid = service_finder_fn_get_post_author_id($jobid);
+	
+	/*$jobauthorinfo = service_finder_getUserInfo($jobauthorid);
+	
+	$phone = $jobauthorinfo['phone'];
+	$phone2 = $jobauthorinfo['phone2'];
+	
+	$contactnumbers = service_finder_get_contact_info($phone,$phone2);*/
+	
+	ob_start();
+	?>
+	<table>
+    	<tr>
+        	<td><?php echo esc_html__( 'Email', 'service-finder' ); ?>:</td>
+            <td><?php echo esc_html($email); ?></td>
+        </tr>
+        <tr>
+        	<td><?php echo esc_html__( 'Mobile', 'service-finder' ); ?>:</td>
+            <td><?php echo $phone; ?></td>
+        </tr>
+        <tr>
+            <td><?php echo esc_html__( 'Location', 'service-finder' ); ?>:</td>
+            <td><?php echo $location; ?></td>
+        </tr>
+    </table>
+	<?php
+	$contactdetails = ob_get_clean();
+	
+	service_finder_mail_after_contactpayment($jobid,$providerid,$jobauthorid);
+	
+	$paid_for_contacts = get_post_meta($jobid,'_paid_for_contact',true);
+	
+	if($paid_for_contacts != '')
+	{
+		$paid_for_contactids = explode(',',$paid_for_contacts);
+	}else{
+		$paid_for_contactids = array();
+	}
+													
+	$totalpurchased = count($paid_for_contactids);
+	
+	$success = array(
+				'status' => 'success',
+				'totalpurchased' => $totalpurchased,
+				'contactdetails' => $contactdetails,
+				'suc_message' => esc_html__('Paid for contact details successfully.', 'service-finder'),
+				);
+	echo json_encode($success);
+	exit;
+}
+
+function service_finder_fn_get_post_author_id($postid)
+{
+	$post = get_post($postid);
+	
+	$authorid = $post->post_author;
+	
+	return $authorid;
+}
+
+function service_finder_mail_after_contactpayment($jobid,$providerid,$jobauthorid){
+	global $service_finder_options;
+	
+	$msg_subject = esc_html__('Paid for Contact Details', 'service-finder');
+	
+	$noticedata = array(
+			'customer_id' => $jobauthorid,
+			'target_id' => $providerid, 
+			'topic' => esc_html__('Pay for Contact', 'service-finder'),
+			'notice' => sprintf( esc_html__('Provider has paid for job contact details. Job title is %s', 'service-finder'), get_the_title( $jobid ) ),
+			);
+	service_finder_add_notices($noticedata);
+		
+	$message = 'Provider has paid for job contact details. <br/><br/>
+		
+		Job Title: %JOBTITLE% <br/>
+		
+		Job Link: %JOBLINK%
+		
+		Profile Link: %PROFILELINK%';
+	
+	$tokens = array('%JOBTITLE%','%JOBLINK%','%PROFILELINK%');
+			
+	$jobtitle = get_the_title( $jobid );
+	$joblink = get_permalink( $jobid );		
+	$profileurl = service_finder_get_author_url($providerid);
+	$replacements = array($jobtitle,$joblink,$profileurl);
+
+	$msg_body = str_replace($tokens,$replacements,$message);
+	
+	//$customeremail = service_finder_getCustomerEmail($jobauthorid);
+	
+	$email = get_post_meta($jobid,'_application',true);
+	
+	service_finder_wpmailer($email,$msg_subject,$msg_body);
+	
+	return true;
+}
+
+function service_finder_paid_for_contact($jobid)
+{
+	global $current_user;
+	$paid_for_contacts = get_post_meta($jobid,'_paid_for_contact',true);
+														
+	$paid_for_contactids = explode(',',$paid_for_contacts);
+	if(in_array($current_user->ID,$paid_for_contactids))
+	{
+		return true;
+	}else{
+		return false;
+	}
+}
+
+add_action( 'wp_ajax_load_jobqa_form', 'service_finder_load_jobqa_form' );
+add_action( 'wp_ajax_nopriv_load_jobqa_form', 'service_finder_load_jobqa_form' );
+function service_finder_load_jobqa_form() {
+	global $wpdb,$service_finder_Tables;
+	$catid = service_finder_get_data($_POST,'catid');
+	
+	$args = array(
+		'post_type' 	=> 'jobqa',
+		'post_status' 	=> 'publish',
+		'posts_per_page' => -1,
+		'order' => 'DESC',
+		'tax_query' => array(
+			array(
+				'taxonomy' => 'job_listing_category',
+				'field'    => 'term_id',
+				'terms'    => $catid
+			)
+		)
+	);
+	$the_query = new WP_Query( $args );
+	ob_start();
+	
+	if ( $the_query->have_posts() ) {
+	echo '<div class="owl-carousel owl-theme owl-carousel-jobqa" id="jobqa-main">';
+	while( $the_query->have_posts() ) : $the_query->the_post();
+	global $post;
+	?>
+	
+    <div id="jobqa-item-<?php echo esc_attr($post->ID); ?>" class="jobqa-item-box">
+	<div class="jobqa-question"><?php echo get_the_title(); ?></div>
+    <input class="jobqaans" data-toggle="toggle" data-on="<?php esc_html_e('True', 'service-finder'); ?>" data-off="<?php esc_html_e('False', 'service-finder'); ?>" type="checkbox" name="jobqa_<?php echo esc_attr($post->ID); ?>">
+    </div>
+	
+	<?php
+	endwhile;
+	echo '</div>';
+	echo '<div id="finishjobouter" style="display:none;"><input type="button" class="btn btn-primary finishjobqa" value="'.esc_html__('Finish', 'service-finder').'"></div>';
+	wp_reset_postdata();
+	}else{
+	echo '<div id="jobqa-notfount">'.esc_html__('Not Found.', 'service-finder').'</div>';
+	}
+	
+	$html = ob_get_clean();
+
+	$success = array(
+				'status' => 'success',
+				'html' => $html
+				);
+	echo json_encode($success);	
+	exit;
+}
+
+add_action('save_post', 'service_finder_save_job_qa');
+function service_finder_save_job_qa($post_id)
+{
+	global $service_finder_options;
+	
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+	
+	if(get_post_type($post_id) == 'job_listing')
+	{
+		$jobqastring = (!empty($_POST['jobqastring'])) ? $_POST['jobqastring'] : '';
+		$submit_job = (!empty($_POST['submit_job'])) ? $_POST['submit_job'] : '';
+		if($submit_job == 'Preview' && $jobqastring != ''){
+		update_post_meta($post_id,'jobqa',$jobqastring);
+		$defaultpurchasedrequest = (!empty($service_finder_options['default-purchased-request'])) ? $service_finder_options['default-purchased-request'] : 1;
+		update_post_meta($post_id,'job_contact_cost',$defaultpurchasedrequest);
+		}
+	}
+	
+}
+
+add_action( 'wp_ajax_viewjobqa', 'service_finder_viewjobqa' );
+add_action( 'wp_ajax_nopriv_viewjobqa', 'service_finder_viewjobqa' );
+function service_finder_viewjobqa() {
+	global $wpdb,$service_finder_Tables;
+	$jobid = service_finder_get_data($_POST,'jobid');
+	
+	$jobqas = get_post_meta($jobid,'jobqa',true);
+	$jobqas = json_decode($jobqas, true);
+	
+	ob_start();
+	
+	if(!empty($jobqas))
+	{
+		echo '<ul class="jobqa-result-wrapper">';
+		foreach($jobqas as $jobqa)
+		{
+			echo '<li>';
+			echo '<span class="pix-jobqus">'.$jobqa[0].'</span>';
+			echo '<span class="pix-jobans">'.$jobqa[1].'</span>';
+			echo '</li>';
+		}
+		echo '</ul>';
+	}else{
+		echo '<div class="job-result-notfound">'.esc_html__('Not found', 'service-finder').'</div>';
+	}
+	
+	$html = ob_get_clean();
+
+	$success = array(
+				'status' => 'success',
+				'html' => $html
+				);
+	echo json_encode($success);	
+	exit;
+}
+
+function service_finder_hide_email($email)
+{
+    $mail_parts = explode("@", $email);
+    $length = strlen($mail_parts[0]);
+    $show = floor($length/2);
+    $hide = $length - $show;
+    $replace = str_repeat("*", $hide);
+
+    return substr_replace ( $mail_parts[0] , $replace , $show, $hide ) . "@" . substr_replace($mail_parts[1], "**", 0, 2);
 }

@@ -42,5 +42,5 @@
 
 	<?php wp_nonce_field( 'save-shop-settings', 'wc-product-vendor-nonce' ); ?>
 	<input type="submit" class="btn btn-inverse btn-small" style="float:none;" name="vendor_application_submit"
-		   value="<?php esc_attr_e( 'Save', 'service-finder' ); ?>"/>
+		   value="<?php esc_html_e( 'Save', 'service-finder' ); ?>"/>
 </form>

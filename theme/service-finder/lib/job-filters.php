@@ -11,24 +11,44 @@
 add_filter( 'submit_job_form_fields', 'service_finder_add_cost_field' );
 if ( !function_exists( 'service_finder_add_cost_field' ) ){
 function service_finder_add_cost_field( $fields ) {
-  $fields['job']['job_cost'] = array(
+  $catid = service_finder_get_data($_POST,'catid');
+  $location = service_finder_get_data($_POST,'location');
+  /*$fields['job']['job_cost'] = array(
     'label'       => esc_html__( 'Cost', 'service-finder' ).'('.service_finder_currencysymbol().')',
     'type'        => 'text',
     'placeholder' => esc_html__( 'e.g. 5000', 'service-finder' ),
     'priority'    => 4
-  );
-  $fields['job']['job_hours'] = array(
+  );*/
+  /*$fields['job']['job_hours'] = array(
     'label'       => esc_html__( 'Hours', 'service-finder' ),
     'type'        => 'text',
     'placeholder' => esc_html__( 'e.g. 5', 'service-finder' ),
     'priority'    => 5
-  );
+  );*/
+  
   $fields['company']['company_name'] = array(
     'label'       => esc_html__( 'Company name', 'service-finder' ),
 	'type'        => 'text',
 	'required'    => false,
 	'placeholder' => esc_html__( 'Enter the name of the company', 'service-finder' ),
 	'priority'    => 1
+  );
+  
+  $fields['job']['job_category']['type'] = 'term-select';
+  $fields['job']['job_category']['value'] = $catid;
+  
+  $fields['job']['job_location']['value'] = $location;
+  
+  $fields['job']['application']['label'] = esc_html__( 'Email', 'service-finder' );
+  $fields['job']['application']['placeholder'] = esc_html__( 'Please enter email address', 'service-finder' );
+  $fields['job']['application']['required'] = true;
+  
+  $fields['job']['phone'] = array(
+    'label'       => esc_html__( 'Phone', 'service-finder' ),
+	'type'        => 'text',
+	'required'    => true,
+	'placeholder' => esc_html__( 'Enter the phone number', 'service-finder' ),
+	'priority'    => 10
   );
   
   unset($fields['company']['company_website']);
@@ -54,6 +74,12 @@ function service_finder_admin_add_cost_field( $fields ) {
     'type'        => 'text',
     'placeholder' => 'e.g. 5',
     'description' => ''
+  );
+  $fields['job_contact_cost'] = array(
+    'label'       => esc_html__( 'Purchased Request Credit', 'service-finder' ),
+    'type'        => 'text',
+    'placeholder' => esc_html__( 'e.g. 15', 'service-finder' ),
+    'priority'    => ''
   );
   unset($fields['_company_website']);
   unset($fields['_company_tagline']);
@@ -167,6 +193,7 @@ function service_finder_columns( $columns ) {
 	$columns['job_invoice_id'] = esc_html__( "Invoice ID", 'service-finder' );
 	$columns['job_payment_status'] = esc_html__( "Payment Status", 'service-finder' );
 	$columns['job_number_of_applicants'] = esc_html__( 'Number of Applicants', 'service-finder' );
+	$columns['job_qa'] = esc_html__( 'QA', 'service-finder' );
 	return $columns;
 }
 }
@@ -209,6 +236,9 @@ switch ( $column ) {
 	case "job_payment_status" :
 		echo esc_html($paymentstatus);
 		break;
+	case "job_qa" :
+		echo '<a href="javascript:;" class="viewjobqa" data-id="'.$post->ID.'">' . esc_html__('View QA', 'service-finder') . '</a>';
+		break;	
 	case "job_number_of_applicants" :
 		if(service_finder_get_number_of_applicants($post->ID) > 0){
 		echo '<a href="javascript:;" class="admin_show_applicants" data-toggle="modal" data-target="#job-applicants-listing" data-jobid="'.esc_attr($post->ID).'">' . service_finder_get_number_of_applicants($post->ID) . '</a>'; 
@@ -243,7 +273,6 @@ if($post_type == 'job_listing' && $approve == 'yes'){
 }
 
 /*Change signin link*/
-add_filter( 'job_manager_job_dashboard_login_url', 'service_finder_custom_redirect_url' );
 add_filter( 'submit_job_form_login_url', 'service_finder_custom_redirect_url' );
 if ( !function_exists( 'service_finder_custom_redirect_url' ) ){
 function service_finder_custom_redirect_url($link) {

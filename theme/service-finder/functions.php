@@ -67,23 +67,20 @@ function service_finder_theme_setup() {
 
 	//add_theme_support( 'menus' );
 	
-	add_theme_support( 'editor-color-palette', array(
+	add_theme_support( 'editor-color-palette',
         array(
             'name' => 'dark blue',
-			'slug' => 'dark-blue',
-            'color' => '#1767ef'
+            'color' => '#1767ef',
         ),
         array(
             'name' => 'light gray',
-			'slug' => 'light-gray',
-            'color' => '#eee'
+            'color' => '#eee',
         ),
         array(
             'name' => 'dark gray',
-			'slug' => 'dark-gray',
-            'color' => '#444'
+            'color' => '#444',
         )
-    ) );
+    );
 	
 	add_editor_style( array( 'inc/css/custom-editor-style.css' ) );
 	
@@ -214,8 +211,6 @@ global $wp_customize, $service_finder_options;
 	
 	wp_register_style('custom-scrollbar', get_template_directory_uri() . '/inc/css/m-custom-scrollbar.min.css','',null);
 	
-	wp_register_style('service_finder-woocommerce', get_template_directory_uri() . '/inc/css/woocommerce.css','',null);
-	
 	// Main Stylesheet CSS
 	wp_register_style('service_finder-css-style', get_stylesheet_directory_uri() . '/style.css','',null);
 	
@@ -238,17 +233,9 @@ global $wp_customize, $service_finder_options;
 	
 	wp_register_style('service_finder-curves', get_template_directory_uri() . '/inc/css/curves.css','',null);	
 	
-	if(is_author())
+	if(service_finder_theme_get_data($service_finder_options,'left-right-curve') == false)
 	{
-		if(service_finder_theme_get_data($service_finder_options,'profile-left-right-curve') == false)
-		{
-			wp_enqueue_style( 'service_finder-curves' );	
-		}
-	}else{
-		if(service_finder_theme_get_data($service_finder_options,'left-right-curve') == false)
-		{
-			wp_enqueue_style( 'service_finder-curves' );	
-		}
+		wp_enqueue_style( 'service_finder-curves' );	
 	}
 	
 	$minifycss = (!empty($service_finder_options['minify-css'])) ? $service_finder_options['minify-css'] : '';
@@ -269,7 +256,6 @@ global $wp_customize, $service_finder_options;
 		wp_enqueue_style( 'magnific-popup' );
 		wp_enqueue_style( 'bootstrap-slider' );
 		wp_enqueue_style( 'custom-scrollbar' );
-		wp_enqueue_style( 'service_finder-woocommerce' );
 		wp_enqueue_style( 'service_finder-css-style' );
 		wp_enqueue_style( 'service_finder-layout-third' );
 		if(service_finder_themestyle_fortheme() == 'style-2'){
@@ -365,9 +351,7 @@ function service_finder_sedateAddScript() {
 	
 	wp_enqueue_script('masonry-pkgd-min', get_template_directory_uri() . '/inc/js/masonry.pkgd.min.js', array('jquery') , null, true);
 	
-	if(in_array(get_the_ID(),service_finder_get_id_by_shortcodefortheme('[service_finder_my_account')) ){
 	wp_enqueue_script('countdown-min', get_template_directory_uri() . '/inc/js/countdown.js', array('jquery') , null, true);
-	}
 	
 	if(is_rtl()){  
 	$rtl = 1;
@@ -401,8 +385,6 @@ function service_finder_sedateAddScript() {
 add_action( 'wp_enqueue_scripts', 'service_finder_sedateAddScript' );
 
 function service_finder_admin_themestyles() {
-	$current_post_type = (isset($_GET['post_type'])) ? $_GET['post_type'] : false;
-	
 	if(is_rtl()){  
 		wp_enqueue_style('service_finder-redux-admin-rtl', get_template_directory_uri() . '/inc/css/redux-admin-rtl.css','',null);
 	}
@@ -412,7 +394,7 @@ function service_finder_admin_themestyles() {
 	
 	wp_register_script('bootstrap-toggle', get_template_directory_uri() . '/inc/js/bootstrap-toggle.min.js', array('jquery') , null, false);
 	
-	if(class_exists('WP_Job_Manager') && $current_post_type == 'job_listing') {
+	if(class_exists('WP_Job_Manager')) {
 	wp_enqueue_script('service_finder-js-job-apply', get_template_directory_uri() . '/inc/js/job-apply.js', array('jquery') , null, true);
 	}
 	
@@ -588,9 +570,9 @@ function service_finder_post_class( $classes ) {
 		$classes[] = 'col-md-6';
 		$classes[] = 'col-sm-6';
 		$classes[] = 'col-xs-6';
-	}elseif($current_template == 'blog-standard.php' || $current_template == 'blog-no-sidebar.php'){
+	}elseif(is_home() || is_front_page() || $current_template == 'blog-standard.php'){
 		$classes[] = 'blog-lg';
-	}elseif(is_archive() || is_category() || is_author() || is_search() || $current_template == 'blog-right-sidebar.php' || $current_template == 'blog-left-sidebar.php'){
+	}elseif(is_archive() || is_category() || is_author() || is_search() || $current_template == 'blog-right-sidebar.php' || $current_template == 'blog-no-sidebar.php' || $current_template == 'blog-left-sidebar.php'){
 		$classes[] = 'blog-md';
 	}
 	
@@ -645,7 +627,7 @@ function service_finder_register_required_plugins() {
 		array(
 			'name'               => esc_html__('Service Finder Booking', 'service-finder'), // The plugin name.
 			'slug'               => 'sf-booking', // The plugin slug (typically the folder name).
-			'source'             => 'https://aonetheme.com/sf-plugins/sf-booking.zip', // The plugin source.
+			'source'             => get_template_directory() . '/plugins/sf-booking.zip', // The plugin source.
 			'required'           => true, // If false, the plugin is only 'recommended' instead of required.
 			'version'            => '3.0', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
@@ -657,7 +639,7 @@ function service_finder_register_required_plugins() {
 		array(
 			'name'               => esc_html__('Service Finder Shortcodes', 'service-finder'), // The plugin name.
 			'slug'               => 'sf-shortcodes', // The plugin slug (typically the folder name).
-			'source'             => 'https://aonetheme.com/sf-plugins/sf-shortcodes.zip', // The plugin source.
+			'source'             => get_template_directory() . '/plugins/sf-shortcodes.zip', // The plugin source.
 			'required'           => true, // If false, the plugin is only 'recommended' instead of required.
 			'version'            => '3.0', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
@@ -669,7 +651,7 @@ function service_finder_register_required_plugins() {
 		array(
 			'name'               => esc_html__('Service Finder Texonomy', 'service-finder'), // The plugin name.
 			'slug'               => 'sf-texonomy', // The plugin slug (typically the folder name).
-			'source'             => 'https://aonetheme.com/sf-plugins/sf-texonomy.zip', // The plugin source.
+			'source'             => get_template_directory() . '/plugins/sf-texonomy.zip', // The plugin source.
 			'required'           => true, // If false, the plugin is only 'recommended' instead of required.
 			'version'            => '3.0', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
@@ -703,7 +685,7 @@ function service_finder_register_required_plugins() {
 		array(
 			'name'               => esc_html__('Slider Revolution', 'service-finder'), // The plugin name.
 			'slug'               => 'revslider', // The plugin slug (typically the folder name).
-			'source'             => 'https://aonetheme.com/sf-plugins/revslider.zip', // The plugin source.
+			'source'             => get_template_directory() . '/plugins/revslider.zip', // The plugin source.
 			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
 			'version'            => '', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
@@ -715,7 +697,7 @@ function service_finder_register_required_plugins() {
 		array(
 			'name'               => esc_html__('WP Job Manager - Alerts', 'service-finder'), // The plugin name.
 			'slug'               => 'wp-job-manager-alerts', // The plugin slug (typically the folder name).
-			'source'             => 'https://aonetheme.com/sf-plugins/wp-job-manager-alerts.zip', // The plugin source.
+			'source'             => get_template_directory() . '/plugins/wp-job-manager-alerts.zip', // The plugin source.
 			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
 			'version'            => '', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
@@ -795,12 +777,12 @@ $post_type = get_post_type(get_the_id());
 				endif;
 		}else{
 			if ( $prev_link = get_previous_comments_link( esc_html__('Older Comments', 'service-finder' ) ) ) :
-				printf( '<div class="nav-previous">%s</div>', $prev_link );
-			endif;
+					printf( '<div class="nav-previous">%s</div>', $prev_link );
+				endif;
 
-			if ( $next_link = get_next_comments_link( esc_html__('Newer Comments', 'service-finder' ) ) ) :
-				printf( '<div class="nav-next">%s</div>', $next_link );
-			endif;
+				if ( $next_link = get_next_comments_link( esc_html__('Newer Comments', 'service-finder' ) ) ) :
+					printf( '<div class="nav-next">%s</div>', $next_link );
+				endif;
 		}		
 			?>
   </div>
@@ -999,10 +981,6 @@ global $service_finder_ThemeParams, $author, $service_finder_options;
         </script>	
         <?php
         }
-	}elseif(is_single()){
-	?>
-    <meta name="description" content="<?php echo get_the_excerpt();?>" />
-	<?php
 	}
 	}
 	add_action( 'wp_head', 'service_finder_render_head' );

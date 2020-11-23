@@ -10,26 +10,14 @@
 
 get_header();
 $service_finder_options = get_option('service_finder_options');
-$enablestickyfooter = (!empty($service_finder_options['enable-sticky-footer'])) ? $service_finder_options['enable-sticky-footer'] : ''; 
 ?>
 <?php if(is_home() || is_front_page()){ ?>
-<?php
-if ($enablestickyfooter) {
-echo '<div class="sf-home-wrapper">';
-}
-?>
 <?php if(class_exists('service_finder_booking_plugin')) { ?>
 <?php require get_template_directory() . '/frontend/home-sections/header-home.php'; //Home page header ?>
 <?php } ?>
 <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 <?php the_content();  ?>
 <?php endwhile; ?>
-<?php
-if ($enablestickyfooter) {
-echo '</div>';
-}
-
-?>
 <?php }elseif(in_array(get_the_ID(),service_finder_get_id_by_shortcodefortheme('[service_finder_my_account')) ){ ?>
 <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 <?php the_content(); ?>

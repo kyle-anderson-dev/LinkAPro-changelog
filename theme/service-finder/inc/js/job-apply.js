@@ -5,6 +5,301 @@ jQuery(document).ready(function() {
 	var ratingflag = 1;
 	var rating = '';
 	var feedbookingid;
+	var $jobqa = [];
+	var $qa = [];
+	var bootboxdialog;
+	var owlflag = 0;
+	var $owl;
+	
+	/*jQuery('body').on('click', '.finishjobqa', function(){
+		var i = 0;
+		jQuery("#jobqa-main .jobqa-item-box").each( function() {														
+			var $qa = [];
+			var question = jQuery(this).find('.jobqa-question').html();
+			var answere = jQuery(this).find('.jobqaans').prop("checked");
+			//alert(answere);
+			if(answere == true)
+			{
+				var ans = 'yes';
+			}else
+			{
+				var ans = 'no';
+			}
+			$qa[0] = question;
+			$qa[1] = ans;
+			$jobqa[i] = $qa;
+			//alert(JSON.stringify($jobqa, null, 4));
+			i++;
+		});						
+		
+		var $jobqaobj = JSON.stringify($jobqa);
+		//alert(JSON.stringify($jobqaobj, null, 4));
+		jQuery('input[name="jobqastring"]').val($jobqaobj);
+		bootboxdialog.modal('hide');
+	});*/
+	
+	/*jQuery('body').on('change', '#job_category', function(){
+			var catid = jQuery(this).val();											  
+			jQuery('.loading-area').show();												
+
+			var qualificationid = jQuery(this).attr('data-id');
+	
+			var data = {
+				  "action": "load_jobqa_form",
+				  "catid": catid
+				};
+	
+		  var formdata = jQuery.param(data);
+	
+		  jQuery.ajax({
+			type: 'POST',
+			url: ajaxurl,
+			data: formdata,
+			dataType: "json",
+			success:function (data, textStatus) {
+			jQuery('#jobqaform').html(data['html']).end();
+			jQuery('.jobqaans').bootstrapToggle(true);
+			jQuery('#finishjobouter').hide();
+			
+		    $owl = jQuery(".owl-carousel-jobqa").owlCarousel({
+				items:1,									   
+				loop:false,
+				margin:0,
+				dots: false,
+				nav:true,
+				rewindNav: true,
+				navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+			})
+			/*if(owlflag == 1)
+			{
+			$owl.trigger('resized.owl.carousel');	
+			}
+			owlflag = 1;
+			
+			
+			
+			jQuery('.owl-carousel-jobqa').on('changed.owl.carousel', function(e) {
+			  if (e.item.index+1 == e.item.count) {
+				jQuery('#finishjobouter').show();
+			  }
+			});
+			// Show the dialog
+			bootboxdialog = bootbox
+				.dialog({
+					title: 'Job QA',
+					message: jQuery('#jobqaform'),
+					show: false
+				})
+				.on('shown.bs.modal', function() {
+					jQuery('.loading-area').hide();
+					jQuery('#jobqaform')
+					.show();
+				})
+				.on('hide.bs.modal', function(e) {
+					jQuery('#jobqaform').hide().appendTo('body');
+				})
+				.modal('show');
+			},
+			error:function (data, textStatus) {
+				jQuery('.loading-area').hide();
+			}
+	
+			});
+	});*/
+	
+	jQuery('body').on('click', '.viewjobqa', function(){
+												  
+			jQuery('.loading-area').show();												
+
+			var jobid = jQuery(this).data('id');
+	
+			var data = {
+				  "action": "viewjobqa",
+				  "jobid": jobid
+				};
+	
+		  var formdata = jQuery.param(data);
+	
+		  jQuery.ajax({
+			type: 'POST',
+			url: ajaxurl,
+			data: formdata,
+			dataType: "json",
+			success:function (data, textStatus) {
+			//jQuery('#viewjobqa').html(data['html']).end();
+			
+		    
+			// Show the dialog
+			bootboxdialog = bootbox
+				.dialog({
+					title: 'Job QA',
+					message: data['html'],
+					show: false
+				})
+				.on('shown.bs.modal', function() {
+					jQuery('.loading-area').hide();
+					/*jQuery('#viewjobqa')
+					.show();*/
+				})
+				.on('hide.bs.modal', function(e) {
+					//jQuery('#viewjobqa').hide().appendTo('body');
+				})
+				.modal('show');
+			},
+			error:function (data, textStatus) {
+				jQuery('.loading-area').hide();
+			}
+	
+			});
+	});
+	
+	
+	/*Pay for contact details*/
+	jQuery('body').on('click', '.payforcontact', function(){
+			var providerid = jQuery(this).data('providerid');
+			var walletamount = jQuery(this).data('walletamount');
+			var jobid = jQuery(this).data('jobid');
+			var contactcost = jQuery(this).data('contactcost');
+			
+			bootbox.dialog({
+                title: "Pay To View Contact Details",
+                message: '<div class="row">  ' +
+                    '<div class="col-md-12"> ' +
+					'<div class="pix-wallet-amount"><strong>Available Credit:</strong> <span>'+walletamount+'</span></div> ' +
+					'<div class="pix-pay-amount"><strong>Pay Credit:</strong> <span>'+contactcost+'</span></div> ' +
+					'<div class="pix-pay-button"><a href="javascript:;" class="btn btn-success paycontactlink" data-providerid="'+providerid+'" data-walletamount="'+walletamount+'" data-contactcost="'+contactcost+'" data-jobid="'+jobid+'">Pay</a></div> ' +
+                    '</div>  </div>',
+                buttons: {
+                    success: {
+                        label: "Cancel",
+                        className: "btn-danger",
+                        callback: function () {
+                        }
+                    }
+                }
+            })
+			.on('shown.bs.modal',function () {
+                
+            });
+	});
+	
+	 jQuery('body').on('click', '.paycontactlink', function(){
+			var providerid = jQuery(this).data('providerid');
+			var walletamount = jQuery(this).data('walletamount');
+			var jobid = jQuery(this).data('jobid');
+			var contactcost = jQuery(this).data('contactcost');
+			
+			if(walletamount < contactcost)
+			{
+				jQuery( "<div class='alert alert-danger'>Wallet amount must be greater than "+currencysymbol+contactcost+"</div>" ).insertBefore( ".sf-job-info-section" );
+				bootbox.hideAll();
+				return false;
+			}
+			
+			var data = {
+			  "action": "pay_for_conatct",
+			  "providerid": providerid,
+			  "jobid": jobid,
+			  "walletamount": walletamount,
+			  "contactcost": contactcost
+			};
+			
+			var formdata = jQuery.param(data);
+			
+			jQuery.ajax({
+
+						type: 'POST',
+
+						url: ajaxurl,
+						
+						dataType: "json",
+						
+						beforeSend: function() {
+							jQuery(".alert-success,.alert-danger").remove();
+							jQuery('.loading-area').show();
+						},
+						
+						data: formdata,
+
+						success:function (data, textStatus) {
+							jQuery('.loading-area').hide();
+							if(data['status'] == 'success'){
+								jQuery( "<div class='alert alert-success'>"+data['suc_message']+"</div>" ).insertBefore( ".sf-job-info-section" );	
+								jQuery('#pix-contact-info').html(data['contactdetails']);
+								jQuery('#pix-purchased-contacts').html(data['totalpurchased']);
+								jQuery('.payforcontact').remove();
+								jQuery('.jobavlcredits').remove();
+								jQuery('.jobclosed').remove();
+								jQuery('.pixjobapplybtn').show();
+								bootbox.hideAll();
+							}
+						},
+						error:function (data, textStatus) {
+							jQuery('.loading-area').hide();
+						}
+
+					});
+			
+	 }); 
+	
+	jQuery('.jobattachment-update')
+        .bootstrapValidator({
+            message: param.not_valid,
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {}
+        })
+		.on('error.field.bv', function(e, data) {
+            data.bv.disableSubmitButtons(false); // disable submit buttons on errors
+	    })
+		.on('status.field.bv', function(e, data) {
+            data.bv.disableSubmitButtons(false); // disable submit buttons on valid
+        })
+        .on('success.form.bv', function(form) {
+            form.preventDefault();
+			
+			// Get the form instance
+            var $form = jQuery(form.target);
+            // Get the BootstrapValidator instance
+            var bv = $form.data('bootstrapValidator');
+			var data = {
+			  "action": "save_job_attachment",
+			};
+			
+			var formdata = jQuery($form).serialize() + "&" + jQuery.param(data);
+			
+			jQuery.ajax({
+
+						type: 'POST',
+
+						url: ajaxurl,
+						
+						dataType: "json",
+						
+						beforeSend: function() {
+							jQuery(".alert-success,.alert-danger").remove();
+							jQuery('.loading-area').show();
+						},
+						
+						data: formdata,
+
+						success:function (data, textStatus) {
+							jQuery('.loading-area').hide();
+							$form.find('button[type="submit"]').prop('disabled', false);
+							if(data['status'] == 'success'){
+								jQuery( "<div class='alert alert-success'>"+data['suc_message']+"</div>" ).insertBefore( "form.jobattachment-update" );
+							}else if(data['status'] == 'error'){
+								jQuery( "<div class='alert alert-danger'>"+data['err_message']+"</div>" ).insertBefore( "form.jobattachment-update" );
+							}
+							
+						}
+
+					});
+			
+        });
 	
 	/*Select Action*/
 	 jQuery('body').on('change', '.jobOptionSelect', function(){

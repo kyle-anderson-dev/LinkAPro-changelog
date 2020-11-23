@@ -151,7 +151,6 @@ $string_array = array(
 	'seconds' => esc_html__( 'Seconds', 'service-finder' ),
 );
 
-wp_localize_script( 'bootstrap-select', 'param', $string_array );
 wp_localize_script( 'service_finder-js-custom', 'param', $string_array );
 wp_localize_script( 'service_finder-js-job-apply', 'param', $string_array );
 wp_localize_script( 'countdown-min', 'param', $string_array );
